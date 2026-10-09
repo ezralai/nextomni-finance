@@ -53,10 +53,12 @@ import {
   Check,
   Trophy,
   Flag,
+  Upload,
 } from 'lucide-vue-next'
 import { useReportStore } from '~/stores/reports'
 import { useRecurringStore } from '~/stores/recurring'
 import { useGoalStore } from '~/stores/goals'
+import { useImportStore } from '~/stores/imports'
 
 const config = useRuntimeConfig()
 const apiBase = config.public.apiBase
@@ -68,6 +70,7 @@ const currencyStore = useCurrencyStore()
 const reportStore = useReportStore()
 const recurringStore = useRecurringStore()
 const goalStore = useGoalStore()
+const importStore = useImportStore()
 
 interface HealthResponse {
   status: string
@@ -193,6 +196,13 @@ const newGoalForm = ref({
   account_id: '',
   color: '#10b981',
 })
+
+// Bank Statement Import Modal State
+const showImportModal = ref(false)
+const importAccountId = ref('')
+const selectedImportFile = ref<File | null>(null)
+const importError = ref<string | null>(null)
+const importSuccessMessage = ref<string | null>(null)
 
 // Transaction Filter State
 const filterType = ref<'all' | 'income' | 'expense' | 'transfer'>('all')
@@ -611,6 +621,37 @@ const handleContribute = async () => {
     await refreshDashboard()
   } catch (err: any) {
     goalError.value = err.message || 'Failed to record contribution.'
+  }
+}
+
+// Statement Import Handlers
+const openImportModal = () => {
+  if (accountStore.accounts.length > 0 && !importAccountId.value) {
+    importAccountId.value = accountStore.accounts[0]?.id || ''
+  }
+  selectedImportFile.value = null
+  importError.value = null
+  importSuccessMessage.value = null
+  showImportModal.value = true
+}
+
+const handleFileSelect = (e: Event) => {
+  const target = e.target as HTMLInputElement
+  if (target.files && target.files.length > 0) {
+    selectedImportFile.value = target.files[0] || null
+  }
+}
+
+const handleUploadStatement = async () => {
+  if (!selectedImportFile.value || !importAccountId.value) return
+  importError.value = null
+  importSuccessMessage.value = null
+  try {
+    const res = await importStore.uploadStatement(importAccountId.value, selectedImportFile.value)
+    importSuccessMessage.value = `Statement reconciled: ${res.imported_count} new transactions posted, ${res.duplicate_count} duplicates skipped.`
+    await refreshDashboard()
+  } catch (err: any) {
+    importError.value = err.message || 'Failed to reconcile bank statement.'
   }
 }
 
@@ -1694,8 +1735,16 @@ onMounted(async () => {
               </button>
             </div>
 
-            <!-- Statement Export Buttons -->
+            <!-- Statement Export & Import Actions -->
             <div class="flex items-center space-x-1.5 pl-1 border-l border-slate-800">
+              <button
+                @click="openImportModal"
+                title="Upload & reconcile bank statement CSV"
+                class="px-2.5 py-1 text-xs rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 transition flex items-center space-x-1.5 cursor-pointer"
+              >
+                <Upload class="w-3.5 h-3.5" />
+                <span>Import CSV</span>
+              </button>
               <button
                 @click="handleExportCsv"
                 :disabled="reportStore.isExporting"
@@ -2953,6 +3002,88 @@ onMounted(async () => {
           >
             <Check class="w-4 h-4" />
             <span>{{ goalStore.isSubmitting ? 'Recording Deposit...' : 'Confirm Deposit' }}</span>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Bank Statement Import & Reconciliation Modal -->
+    <div
+      v-if="showImportModal"
+      class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4"
+    >
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl relative space-y-6">
+        <button
+          @click="showImportModal = false"
+          class="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+        >
+          <X class="w-5 h-5" />
+        </button>
+
+        <div class="space-y-1">
+          <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+            <Upload class="w-5 h-5 text-emerald-400" />
+            <span>Reconcile Bank Statement (CSV)</span>
+          </h3>
+          <p class="text-xs text-slate-400">
+            Upload exported statement from Maybank, CIMB, or any financial CSV with automated deduplication
+          </p>
+        </div>
+
+        <div v-if="importError" class="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-300 flex items-start space-x-2">
+          <AlertCircle class="w-4 h-4 flex-shrink-0 mt-0.5 text-red-400" />
+          <span>{{ importError }}</span>
+        </div>
+
+        <div v-if="importSuccessMessage" class="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-300 flex items-start space-x-2">
+          <CheckCircle2 class="w-4 h-4 flex-shrink-0 mt-0.5 text-emerald-400" />
+          <span>{{ importSuccessMessage }}</span>
+        </div>
+
+        <form @submit.prevent="handleUploadStatement" class="space-y-4">
+          <div class="space-y-1.5">
+            <label class="text-xs font-medium text-slate-300">Target Account</label>
+            <select
+              v-model="importAccountId"
+              required
+              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500"
+            >
+              <option v-for="acc in accountStore.accounts" :key="acc.id" :value="acc.id">
+                {{ acc.name }} ({{ acc.currency }}) - {{ acc.institution?.name || 'Manual' }}
+              </option>
+            </select>
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="text-xs font-medium text-slate-300">Statement CSV File</label>
+            <div class="border-2 border-dashed border-slate-800 hover:border-emerald-500/50 rounded-xl p-4 text-center transition bg-slate-950/50">
+              <input
+                id="statementFileInput"
+                type="file"
+                accept=".csv,.txt"
+                required
+                @change="handleFileSelect"
+                class="hidden"
+              />
+              <label for="statementFileInput" class="cursor-pointer block space-y-2">
+                <Upload class="w-6 h-6 text-slate-400 mx-auto" />
+                <div class="text-xs text-slate-300 font-medium">
+                  {{ selectedImportFile ? selectedImportFile.name : 'Click to select CSV file' }}
+                </div>
+                <div class="text-[11px] text-slate-500">
+                  Supports Maybank, CIMB, generic Date/Amount/Payee CSV files
+                </div>
+              </label>
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            :disabled="importStore.isUploading || !selectedImportFile"
+            class="w-full py-2.5 rounded-xl text-sm font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer"
+          >
+            <Upload class="w-4 h-4" />
+            <span>{{ importStore.isUploading ? 'Reconciling Ledger...' : 'Parse & Reconcile Statement' }}</span>
           </button>
         </form>
       </div>

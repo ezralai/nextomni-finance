@@ -71,5 +71,11 @@ Route::prefix('v1')->group(function () {
             Route::get('/transactions/csv', [ExportController::class, 'exportCsv'])->name('api.v1.reports.transactions.csv');
             Route::get('/transactions/json', [ExportController::class, 'exportJson'])->name('api.v1.reports.transactions.json');
         });
+
+        // Bank Statement Reconciliation & CSV Ingestion Engine
+        Route::prefix('imports')->group(function () {
+            Route::post('/statements', [\App\Http\Controllers\Api\V1\Imports\BankStatementImportController::class, 'import'])->name('api.v1.imports.statements');
+            Route::get('/statements/history', [\App\Http\Controllers\Api\V1\Imports\BankStatementImportController::class, 'history'])->name('api.v1.imports.statements.history');
+        });
     });
 });
