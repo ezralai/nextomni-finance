@@ -2,8 +2,11 @@
 
 use App\Http\Controllers\Api\V1\Accounts\AccountController;
 use App\Http\Controllers\Api\V1\Auth\AuthController;
+use App\Http\Controllers\Api\V1\Categories\CategoryController;
 use App\Http\Controllers\Api\V1\HealthController;
 use App\Http\Controllers\Api\V1\Institutions\InstitutionController;
+use App\Http\Controllers\Api\V1\Transactions\TransactionController;
+use App\Http\Controllers\Api\V1\Transactions\TransferController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -30,5 +33,14 @@ Route::prefix('v1')->group(function () {
 
         // Financial Accounts
         Route::apiResource('accounts', AccountController::class)->names('api.v1.accounts');
+
+        // Categories
+        Route::get('/categories', [CategoryController::class, 'index'])->name('api.v1.categories.index');
+
+        // Transactions & Transfers
+        Route::apiResource('transactions', TransactionController::class)
+            ->except(['update'])
+            ->names('api.v1.transactions');
+        Route::post('/transfers', [TransferController::class, 'store'])->name('api.v1.transfers.store');
     });
 });
