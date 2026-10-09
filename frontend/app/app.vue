@@ -46,7 +46,10 @@ import {
   BarChart3,
   Percent,
   ArrowLeftRight,
+  Download,
+  FileSpreadsheet,
 } from 'lucide-vue-next'
+import { useReportStore } from '~/stores/reports'
 
 const config = useRuntimeConfig()
 const apiBase = config.public.apiBase
@@ -55,6 +58,7 @@ const accountStore = useAccountStore()
 const transactionStore = useTransactionStore()
 const budgetStore = useBudgetStore()
 const currencyStore = useCurrencyStore()
+const reportStore = useReportStore()
 
 interface HealthResponse {
   status: string
@@ -453,6 +457,28 @@ const applyTransactionFilters = () => {
     account_id: filterAccountId.value || undefined,
     search: filterSearch.value.trim() || undefined,
   })
+}
+
+const handleExportCsv = async () => {
+  try {
+    await reportStore.downloadCsv({
+      type: filterType.value === 'all' ? undefined : filterType.value,
+      account_id: filterAccountId.value || undefined,
+    })
+  } catch (err: any) {
+    alert(err?.message || 'Failed to export CSV')
+  }
+}
+
+const handleExportJson = async () => {
+  try {
+    await reportStore.downloadJson({
+      type: filterType.value === 'all' ? undefined : filterType.value,
+      account_id: filterAccountId.value || undefined,
+    })
+  } catch (err: any) {
+    alert(err?.message || 'Failed to export JSON')
+  }
 }
 
 // Seed a quick 4-account starter portfolio with foreign multi-currency account
@@ -1264,6 +1290,28 @@ onMounted(async () => {
                 :class="filterType === 'transfer' ? 'bg-sky-500/20 text-sky-400 font-semibold' : 'text-slate-400 hover:text-white'"
               >
                 Transfer
+              </button>
+            </div>
+
+            <!-- Statement Export Buttons -->
+            <div class="flex items-center space-x-1.5 pl-1 border-l border-slate-800">
+              <button
+                @click="handleExportCsv"
+                :disabled="reportStore.isExporting"
+                title="Download RFC 4180 CSV Financial Statement (Formula-Safe)"
+                class="px-2.5 py-1 text-xs rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center space-x-1.5 disabled:opacity-50 cursor-pointer"
+              >
+                <FileSpreadsheet class="w-3.5 h-3.5 text-emerald-400" />
+                <span>{{ reportStore.isExporting ? 'Exporting...' : 'Export CSV' }}</span>
+              </button>
+              <button
+                @click="handleExportJson"
+                :disabled="reportStore.isExporting"
+                title="Download Structured Open Financial JSON Statement"
+                class="px-2.5 py-1 text-xs rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition flex items-center space-x-1.5 disabled:opacity-50 cursor-pointer"
+              >
+                <Download class="w-3.5 h-3.5 text-sky-400" />
+                <span>JSON</span>
               </button>
             </div>
           </div>

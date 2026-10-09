@@ -9,6 +9,7 @@ use App\Models\Transfer;
 use App\Models\User;
 use App\Repositories\Contracts\AccountRepositoryInterface;
 use App\Repositories\Contracts\TransactionRepositoryInterface;
+use App\Services\Audit\AuditLogService;
 use App\Support\Money;
 use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
@@ -19,7 +20,8 @@ class TransactionService
 {
     public function __construct(
         protected TransactionRepositoryInterface $transactionRepository,
-        protected AccountRepositoryInterface $accountRepository
+        protected AccountRepositoryInterface $accountRepository,
+        protected AuditLogService $auditLogService
     ) {}
 
     /**
@@ -80,7 +82,7 @@ class TransactionService
             // Adjust Account Balance
             $this->applyBalanceDelta($account, $type, $amountMoney);
 
-            return $this->transactionRepository->create([
+            $transaction = $this->transactionRepository->create([
                 'user_id' => $user->id,
                 'account_id' => $account->id,
                 'category_id' => $data['category_id'] ?? null,
@@ -94,6 +96,10 @@ class TransactionService
                 'deduplication_hash' => $hash,
                 'status' => $data['status'] ?? 'posted',
             ]);
+
+            $this->auditLogService->log($user, 'transaction.created', $transaction, null, $transaction->toArray());
+
+            return $transaction;
         });
     }
 
@@ -166,7 +172,7 @@ class TransactionService
             ]);
 
             // 3. Persist Transfer record
-            return Transfer::create([
+            $transfer = Transfer::create([
                 'user_id' => $user->id,
                 'source_account_id' => $sourceAccount->id,
                 'destination_account_id' => $destinationAccount->id,
@@ -178,6 +184,10 @@ class TransactionService
                 'transacted_at' => $transactedAt,
                 'notes' => $notes,
             ]);
+
+            $this->auditLogService->log($user, 'transfer.created', $transfer, null, $transfer->toArray());
+
+            return $transfer;
         });
     }
 
@@ -203,6 +213,8 @@ class TransactionService
             // Reverse effect: if it was income, reverse as expense; if expense, reverse as income
             $reversalType = $transaction->type === 'income' ? 'expense' : 'income';
             $this->applyBalanceDelta($account, $reversalType, $amountMoney);
+
+            $this->auditLogService->log($transaction->user, 'transaction.deleted', $transaction, $transaction->toArray(), null);
 
             return $this->transactionRepository->delete($transaction);
         });

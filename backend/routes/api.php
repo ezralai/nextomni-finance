@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\V1\Budgets\BudgetController;
 use App\Http\Controllers\Api\V1\Categories\CategoryController;
 use App\Http\Controllers\Api\V1\HealthController;
 use App\Http\Controllers\Api\V1\Institutions\InstitutionController;
+use App\Http\Controllers\Api\V1\Reports\ExportController;
 use App\Http\Controllers\Api\V1\Transactions\TransactionController;
 use App\Http\Controllers\Api\V1\Transactions\TransferController;
 use Illuminate\Support\Facades\Route;
@@ -56,5 +57,11 @@ Route::prefix('v1')->group(function () {
 
         // Cash Flow Analytics
         Route::get('/analytics/cash-flow', [AnalyticsController::class, 'cashFlow'])->name('api.v1.analytics.cash_flow');
+
+        // Financial Statements & Export Engine
+        Route::prefix('reports')->group(function () {
+            Route::get('/transactions/csv', [ExportController::class, 'exportCsv'])->name('api.v1.reports.transactions.csv');
+            Route::get('/transactions/json', [ExportController::class, 'exportJson'])->name('api.v1.reports.transactions.json');
+        });
     });
 });
