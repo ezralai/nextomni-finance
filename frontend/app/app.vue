@@ -48,8 +48,12 @@ import {
   ArrowLeftRight,
   Download,
   FileSpreadsheet,
+  CalendarClock,
+  Repeat,
+  Check,
 } from 'lucide-vue-next'
 import { useReportStore } from '~/stores/reports'
+import { useRecurringStore } from '~/stores/recurring'
 
 const config = useRuntimeConfig()
 const apiBase = config.public.apiBase
@@ -59,6 +63,7 @@ const transactionStore = useTransactionStore()
 const budgetStore = useBudgetStore()
 const currencyStore = useCurrencyStore()
 const reportStore = useReportStore()
+const recurringStore = useRecurringStore()
 
 interface HealthResponse {
   status: string
@@ -152,6 +157,22 @@ const converterForm = ref({
 })
 const conversionResult = ref<ConversionResult | null>(null)
 const converterError = ref<string | null>(null)
+
+// Recurring Transactions & Subscription Modal State
+const showRecurringModal = ref(false)
+const recurringError = ref<string | null>(null)
+const newRecurringForm = ref({
+  account_id: '',
+  category_id: '',
+  type: 'expense' as 'income' | 'expense',
+  description: '',
+  amount: '',
+  frequency: 'monthly',
+  start_date: new Date().toISOString().slice(0, 10),
+  end_date: '',
+  auto_post: true,
+  notes: '',
+})
 
 // Transaction Filter State
 const filterType = ref<'all' | 'income' | 'expense' | 'transfer'>('all')
@@ -451,6 +472,65 @@ const runConversion = async () => {
   }
 }
 
+// Recurring Transactions Handlers
+const openAddRecurringModal = () => {
+  if (accountStore.accounts.length > 0 && !newRecurringForm.value.account_id) {
+    newRecurringForm.value.account_id = accountStore.accounts[0]?.id || ''
+  }
+  if (transactionStore.categories.length > 0 && !newRecurringForm.value.category_id) {
+    const expenseCats = transactionStore.categories.filter(c => c.type === 'expense')
+    newRecurringForm.value.category_id = expenseCats[0]?.id || ''
+  }
+  newRecurringForm.value.description = ''
+  newRecurringForm.value.amount = ''
+  newRecurringForm.value.notes = ''
+  recurringError.value = null
+  showRecurringModal.value = true
+}
+
+const handleCreateRecurring = async () => {
+  recurringError.value = null
+  try {
+    await recurringStore.createRecurring({
+      account_id: newRecurringForm.value.account_id,
+      category_id: newRecurringForm.value.category_id || undefined,
+      type: newRecurringForm.value.type,
+      description: newRecurringForm.value.description,
+      amount: newRecurringForm.value.amount,
+      frequency: newRecurringForm.value.frequency,
+      start_date: newRecurringForm.value.start_date,
+      end_date: newRecurringForm.value.end_date || undefined,
+      auto_post: newRecurringForm.value.auto_post,
+      notes: newRecurringForm.value.notes || undefined,
+    })
+    showRecurringModal.value = false
+    await refreshDashboard()
+  } catch (err: any) {
+    recurringError.value = err.message || 'Failed to establish recurring transaction.'
+  }
+}
+
+const handleDeleteRecurring = async (id: string, desc: string) => {
+  if (confirm(`Cancel recurring schedule for "${desc}"?`)) {
+    try {
+      await recurringStore.deleteRecurring(id)
+      await refreshDashboard()
+    } catch (err: any) {
+      alert(err.message || 'Failed to delete recurring schedule.')
+    }
+  }
+}
+
+const handleToggleRecurringActive = async (recurring: any) => {
+  try {
+    await recurringStore.updateRecurring(recurring.id, {
+      is_active: !recurring.is_active,
+    })
+  } catch (err: any) {
+    alert(err.message || 'Failed to toggle status.')
+  }
+}
+
 const applyTransactionFilters = () => {
   transactionStore.fetchTransactions({
     type: filterType.value === 'all' ? undefined : filterType.value,
@@ -619,6 +699,7 @@ const refreshDashboard = async () => {
       transactionStore.fetchCategories(),
       budgetStore.fetchBudgets(),
       budgetStore.fetchCashFlow(),
+      recurringStore.fetchRecurring(),
       currencyStore.fetchRates(baseCur),
       applyTransactionFilters(),
     ])
@@ -1119,6 +1200,110 @@ onMounted(async () => {
             >
               <Plus class="w-4 h-4" />
               <span>Set Your First Budget</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Recurring Bills, Subscriptions & Scheduled Posting -->
+      <section v-if="authStore.isAuthenticated" class="space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <CalendarClock class="w-5 h-5 text-sky-400" />
+            <h2 class="text-lg font-bold text-white">Recurring Bills & Subscriptions ({{ recurringStore.recurringTransactions.length }})</h2>
+          </div>
+          <button
+            @click="openAddRecurringModal"
+            class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-sky-500/10 hover:bg-sky-500/20 text-sky-400 border border-sky-500/30 transition flex items-center space-x-1"
+          >
+            <Plus class="w-3.5 h-3.5" />
+            <span>Schedule Bill / Subscription</span>
+          </button>
+        </div>
+
+        <!-- Recurring Grid -->
+        <div v-if="recurringStore.recurringTransactions.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div
+            v-for="rec in recurringStore.recurringTransactions"
+            :key="rec.id"
+            class="p-5 rounded-xl bg-slate-900/70 border border-slate-800 hover:border-slate-700 transition relative group space-y-4"
+          >
+            <div class="flex items-start justify-between">
+              <div class="space-y-1">
+                <div class="flex items-center space-x-2">
+                  <h3 class="font-bold text-sm text-white truncate max-w-[170px]">{{ rec.description }}</h3>
+                  <span
+                    class="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase"
+                    :class="rec.type === 'income' ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-rose-500/10 text-rose-400 border border-rose-500/20'"
+                  >
+                    {{ rec.frequency }}
+                  </span>
+                </div>
+                <p class="text-xs text-slate-400 flex items-center space-x-1">
+                  <span>{{ rec.account?.name || 'Account' }}</span>
+                  <span v-if="rec.category">&bull; {{ rec.category.name }}</span>
+                </p>
+              </div>
+
+              <div class="flex items-center space-x-1">
+                <button
+                  @click="handleToggleRecurringActive(rec)"
+                  :title="rec.is_active ? 'Pause subscription' : 'Activate subscription'"
+                  class="px-2 py-1 rounded text-[10px] font-mono uppercase font-bold transition"
+                  :class="rec.is_active ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-slate-800 text-slate-400 border border-slate-700'"
+                >
+                  {{ rec.is_active ? 'Active' : 'Paused' }}
+                </button>
+                <button
+                  @click="handleDeleteRecurring(rec.id, rec.description)"
+                  class="text-slate-600 hover:text-rose-400 p-1 opacity-0 group-hover:opacity-100 transition"
+                  title="Cancel & Delete Schedule"
+                >
+                  <Trash2 class="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+
+            <!-- Amount & Recurrence Rate -->
+            <div class="flex items-baseline justify-between pt-1">
+              <div>
+                <span class="text-2xl font-extrabold font-mono tracking-tight text-white">{{ rec.amount_formatted }}</span>
+                <span class="text-xs text-slate-400 ml-1.5 font-medium">/ {{ rec.frequency }}</span>
+              </div>
+              <span
+                v-if="rec.auto_post"
+                class="px-2 py-0.5 rounded-full text-[10px] font-medium bg-sky-500/10 text-sky-400 border border-sky-500/20 flex items-center space-x-1"
+              >
+                <Repeat class="w-3 h-3" />
+                <span>Auto-Post</span>
+              </span>
+            </div>
+
+            <!-- Timeline Status -->
+            <div class="p-2.5 rounded-lg bg-slate-950/60 border border-slate-800/80 flex items-center justify-between text-[11px]">
+              <span class="text-slate-400">Next Due Date:</span>
+              <span class="font-mono font-bold text-sky-400">{{ rec.next_due_date }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div v-else class="p-8 rounded-2xl bg-slate-900/40 border border-dashed border-slate-800 text-center space-y-3">
+          <div class="w-12 h-12 rounded-2xl bg-slate-800/80 mx-auto flex items-center justify-center text-slate-400">
+            <CalendarClock class="w-6 h-6 text-sky-400" />
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-base font-bold text-white">No Recurring Bills or Subscriptions Scheduled</h3>
+            <p class="text-xs text-slate-400 max-w-md mx-auto">
+              Automate tracking for home internet (Unifi), Netflix, cloud servers (AWS), insurance, or salary with automatic ledger postings.
+            </p>
+          </div>
+          <div class="pt-1">
+            <button
+              @click="openAddRecurringModal"
+              class="px-4 py-2 rounded-xl text-xs font-bold bg-sky-500 hover:bg-sky-400 text-slate-950 transition inline-flex items-center space-x-1.5"
+            >
+              <Plus class="w-4 h-4" />
+              <span>Schedule Your First Bill</span>
             </button>
           </div>
         </div>
@@ -2182,6 +2367,175 @@ onMounted(async () => {
             </span>
           </div>
         </div>
+      </div>
+    </div>
+
+    <!-- Set Recurring Bill / Subscription Modal -->
+    <div
+      v-if="showRecurringModal"
+      class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4"
+    >
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl relative space-y-6">
+        <button
+          @click="showRecurringModal = false"
+          class="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+        >
+          <X class="w-5 h-5" />
+        </button>
+
+        <div class="space-y-1">
+          <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+            <CalendarClock class="w-5 h-5 text-sky-400" />
+            <span>Schedule Recurring Bill / Subscription</span>
+          </h3>
+          <p class="text-xs text-slate-400">Automate recurring expenses or salary inflows with cadence intervals</p>
+        </div>
+
+        <div v-if="recurringError" class="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-300 flex items-start space-x-2">
+          <AlertCircle class="w-4 h-4 flex-shrink-0 mt-0.5 text-red-400" />
+          <span>{{ recurringError }}</span>
+        </div>
+
+        <form @submit.prevent="handleCreateRecurring" class="space-y-4">
+          <!-- Type Toggle -->
+          <div class="flex rounded-lg bg-slate-950 p-1 border border-slate-800">
+            <button
+              type="button"
+              @click="newRecurringForm.type = 'expense'"
+              class="flex-1 py-1.5 text-xs font-semibold rounded-md transition"
+              :class="newRecurringForm.type === 'expense' ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30' : 'text-slate-400 hover:text-white'"
+            >
+              Expense / Bill
+            </button>
+            <button
+              type="button"
+              @click="newRecurringForm.type = 'income'"
+              class="flex-1 py-1.5 text-xs font-semibold rounded-md transition"
+              :class="newRecurringForm.type === 'income' ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30' : 'text-slate-400 hover:text-white'"
+            >
+              Income / Retainer
+            </button>
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="text-xs font-medium text-slate-300">Description / Merchant</label>
+            <input
+              v-model="newRecurringForm.description"
+              type="text"
+              required
+              placeholder="e.g. Unifi 300Mbps, Netflix 4K, AWS Cloud"
+              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500"
+            />
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1.5">
+              <label class="text-xs font-medium text-slate-300">Linked Account</label>
+              <select
+                v-model="newRecurringForm.account_id"
+                required
+                class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-sky-500"
+              >
+                <option v-for="acc in accountStore.accounts" :key="acc.id" :value="acc.id">
+                  {{ acc.name }} ({{ acc.currency }})
+                </option>
+              </select>
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="text-xs font-medium text-slate-300">Category</label>
+              <select
+                v-model="newRecurringForm.category_id"
+                class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-sky-500"
+              >
+                <option value="">(Uncategorized)</option>
+                <option
+                  v-for="cat in transactionStore.categories"
+                  :key="cat.id"
+                  :value="cat.id"
+                >
+                  {{ cat.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1.5">
+              <label class="text-xs font-medium text-slate-300">Amount</label>
+              <div class="relative">
+                <span class="absolute left-3 top-2.5 text-slate-400 font-mono text-xs">{{ currencySymbol }}</span>
+                <input
+                  v-model="newRecurringForm.amount"
+                  type="number"
+                  step="0.01"
+                  min="0.01"
+                  required
+                  placeholder="149.00"
+                  class="w-full pl-10 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white font-mono placeholder-slate-500 focus:outline-none focus:border-sky-500"
+                />
+              </div>
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="text-xs font-medium text-slate-300">Cadence / Frequency</label>
+              <select
+                v-model="newRecurringForm.frequency"
+                required
+                class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-sky-500"
+              >
+                <option value="daily">Daily</option>
+                <option value="weekly">Weekly</option>
+                <option value="biweekly">Bi-weekly (14 days)</option>
+                <option value="monthly">Monthly</option>
+                <option value="quarterly">Quarterly (3 months)</option>
+                <option value="yearly">Yearly</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1.5">
+              <label class="text-xs font-medium text-slate-300">Start Date</label>
+              <input
+                v-model="newRecurringForm.start_date"
+                type="date"
+                required
+                class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-sky-500"
+              />
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="text-xs font-medium text-slate-300">End Date (Optional)</label>
+              <input
+                v-model="newRecurringForm.end_date"
+                type="date"
+                class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-sky-500"
+              />
+            </div>
+          </div>
+
+          <div class="flex items-center space-x-2 pt-1">
+            <input
+              id="autoPostCheckbox"
+              v-model="newRecurringForm.auto_post"
+              type="checkbox"
+              class="rounded bg-slate-950 border-slate-800 text-sky-500 focus:ring-0 focus:ring-offset-0 cursor-pointer"
+            />
+            <label for="autoPostCheckbox" class="text-xs text-slate-300 cursor-pointer">
+              Automatically post to ledger on recurrence date
+            </label>
+          </div>
+
+          <button
+            type="submit"
+            :disabled="recurringStore.isSubmitting"
+            class="w-full py-2.5 rounded-xl text-sm font-bold bg-sky-500 hover:bg-sky-400 text-slate-950 transition flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer"
+          >
+            <CalendarClock class="w-4 h-4" />
+            <span>{{ recurringStore.isSubmitting ? 'Establishing Schedule...' : 'Confirm & Schedule' }}</span>
+          </button>
+        </form>
       </div>
     </div>
   </div>

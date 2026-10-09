@@ -55,6 +55,10 @@ Route::prefix('v1')->group(function () {
         // Budgets & Spending Limits
         Route::apiResource('budgets', BudgetController::class)->names('api.v1.budgets');
 
+        // Recurring Transactions & Scheduled Posting
+        Route::apiResource('recurring-transactions', \App\Http\Controllers\Api\V1\Transactions\RecurringTransactionController::class)
+            ->names('api.v1.recurring_transactions');
+
         // Cash Flow Analytics
         Route::get('/analytics/cash-flow', [AnalyticsController::class, 'cashFlow'])->name('api.v1.analytics.cash_flow');
 

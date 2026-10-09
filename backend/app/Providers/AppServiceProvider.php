@@ -27,6 +27,10 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\Contracts\ExchangeRateRepositoryInterface::class,
             \App\Repositories\Eloquent\ExchangeRateRepository::class
         );
+        $this->app->bind(
+            \App\Repositories\Contracts\RecurringTransactionRepositoryInterface::class,
+            \App\Repositories\Eloquent\RecurringTransactionRepository::class
+        );
     }
 
     /**
