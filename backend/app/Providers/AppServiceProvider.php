@@ -19,6 +19,10 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\Contracts\TransactionRepositoryInterface::class,
             \App\Repositories\Eloquent\TransactionRepository::class
         );
+        $this->app->bind(
+            \App\Repositories\Contracts\BudgetRepositoryInterface::class,
+            \App\Repositories\Eloquent\BudgetRepository::class
+        );
     }
 
     /**

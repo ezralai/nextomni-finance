@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\Api\V1\Accounts\AccountController;
+use App\Http\Controllers\Api\V1\Analytics\AnalyticsController;
 use App\Http\Controllers\Api\V1\Auth\AuthController;
+use App\Http\Controllers\Api\V1\Budgets\BudgetController;
 use App\Http\Controllers\Api\V1\Categories\CategoryController;
 use App\Http\Controllers\Api\V1\HealthController;
 use App\Http\Controllers\Api\V1\Institutions\InstitutionController;
@@ -42,5 +44,11 @@ Route::prefix('v1')->group(function () {
             ->except(['update'])
             ->names('api.v1.transactions');
         Route::post('/transfers', [TransferController::class, 'store'])->name('api.v1.transfers.store');
+
+        // Budgets & Spending Limits
+        Route::apiResource('budgets', BudgetController::class)->names('api.v1.budgets');
+
+        // Cash Flow Analytics
+        Route::get('/analytics/cash-flow', [AnalyticsController::class, 'cashFlow'])->name('api.v1.analytics.cash_flow');
     });
 });

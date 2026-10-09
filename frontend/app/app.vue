@@ -1,8 +1,9 @@
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useAuthStore } from '~/stores/auth'
 import { useAccountStore } from '~/stores/accounts'
 import { useTransactionStore } from '~/stores/transactions'
+import { useBudgetStore } from '~/stores/budgets'
 import {
   Wallet,
   ArrowUpRight,
@@ -40,6 +41,10 @@ import {
   Tag,
   ReceiptText,
   DollarSign,
+  Target,
+  PieChart,
+  BarChart3,
+  Percent,
 } from 'lucide-vue-next'
 
 const config = useRuntimeConfig()
@@ -47,6 +52,7 @@ const apiBase = config.public.apiBase
 const authStore = useAuthStore()
 const accountStore = useAccountStore()
 const transactionStore = useTransactionStore()
+const budgetStore = useBudgetStore()
 
 interface HealthResponse {
   status: string
@@ -112,6 +118,23 @@ const newTransferForm = ref({
   fee: '0.00',
   notes: '',
   transacted_at: new Date().toISOString().slice(0, 16),
+})
+
+// Budget Modal State
+const showBudgetModal = ref(false)
+const budgetError = ref<string | null>(null)
+
+const now = new Date()
+const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10)
+const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().slice(0, 10)
+
+const newBudgetForm = ref({
+  category_id: '',
+  amount: '',
+  period: 'monthly',
+  start_date: firstDayOfMonth,
+  end_date: lastDayOfMonth,
+  notes: '',
 })
 
 // Transaction Filter State
@@ -347,6 +370,47 @@ const handleDeleteTransaction = async (id: string, desc: string) => {
   }
 }
 
+// Budget Modal Handlers
+const openAddBudgetModal = () => {
+  if (transactionStore.categories.length > 0 && !newBudgetForm.value.category_id) {
+    const expenseCats = transactionStore.categories.filter(c => c.type === 'expense')
+    newBudgetForm.value.category_id = expenseCats[0]?.id || ''
+  }
+  newBudgetForm.value.amount = ''
+  newBudgetForm.value.notes = ''
+  budgetError.value = null
+  showBudgetModal.value = true
+}
+
+const handleCreateBudget = async () => {
+  budgetError.value = null
+  try {
+    await budgetStore.createBudget({
+      category_id: newBudgetForm.value.category_id,
+      amount: newBudgetForm.value.amount,
+      period: newBudgetForm.value.period,
+      start_date: newBudgetForm.value.start_date,
+      end_date: newBudgetForm.value.end_date,
+      notes: newBudgetForm.value.notes || undefined,
+    })
+    showBudgetModal.value = false
+    await refreshDashboard()
+  } catch (err: any) {
+    budgetError.value = err.message || 'Failed to create budget limit.'
+  }
+}
+
+const handleDeleteBudget = async (id: string, catName: string) => {
+  if (confirm(`Remove budget limit for "${catName}"?`)) {
+    try {
+      await budgetStore.deleteBudget(id)
+      await refreshDashboard()
+    } catch (err: any) {
+      alert(err.message || 'Failed to delete budget.')
+    }
+  }
+}
+
 const applyTransactionFilters = () => {
   transactionStore.fetchTransactions({
     type: filterType.value === 'all' ? undefined : filterType.value,
@@ -355,7 +419,7 @@ const applyTransactionFilters = () => {
   })
 }
 
-// Seed a quick 3-account starter portfolio with real transactions
+// Seed a quick 3-account starter portfolio with real transactions and budgets
 const seedSamplePortfolio = async () => {
   if (!authStore.isAuthenticated) return
   isAccountSubmitting.value = true
@@ -397,18 +461,36 @@ const seedSamplePortfolio = async () => {
     }
 
     // Seed Sample Transactions
+    const salaryCat = transactionStore.categories.find(c => c.slug === 'income')?.children?.find(c => c.slug === 'salary-wages')
+    const foodCat = transactionStore.categories.find(c => c.slug === 'food-dining')
+    const groceriesCat = foodCat?.children?.find(c => c.slug === 'groceries-supermarket')
+    const transportCat = transactionStore.categories.find(c => c.slug === 'transportation')
+    const fuelCat = transportCat?.children?.find(c => c.slug === 'fuel-petrol')
+
     if (mbbAcc) {
       await transactionStore.createTransaction({
         account_id: mbbAcc.id,
+        category_id: salaryCat?.id,
         type: 'income',
         amount: 8500.00,
         description: 'Monthly Salary Oct 2026',
       })
       await transactionStore.createTransaction({
         account_id: mbbAcc.id,
+        category_id: groceriesCat?.id,
         type: 'expense',
-        amount: 185.50,
+        amount: 320.50,
         description: 'Jaya Grocer Weekly Shopping',
+      })
+    }
+
+    if (cimbAcc && fuelCat) {
+      await transactionStore.createTransaction({
+        account_id: cimbAcc.id,
+        category_id: fuelCat.id,
+        type: 'expense',
+        amount: 95.00,
+        description: 'Petronas RON97 Fuel',
       })
     }
 
@@ -419,6 +501,29 @@ const seedSamplePortfolio = async () => {
         amount: 200.00,
         fee: 0,
         notes: 'Top-up TNG RFID for highway tolls',
+      })
+    }
+
+    // Seed Sample Budgets
+    if (foodCat) {
+      await budgetStore.createBudget({
+        category_id: foodCat.id,
+        amount: 1200.00,
+        period: 'monthly',
+        start_date: firstDayOfMonth,
+        end_date: lastDayOfMonth,
+        notes: 'Monthly food and groceries cap',
+      })
+    }
+
+    if (transportCat) {
+      await budgetStore.createBudget({
+        category_id: transportCat.id,
+        amount: 400.00,
+        period: 'monthly',
+        start_date: firstDayOfMonth,
+        end_date: lastDayOfMonth,
+        notes: 'Monthly petrol and tolls cap',
       })
     }
 
@@ -435,6 +540,8 @@ const refreshDashboard = async () => {
     await Promise.all([
       accountStore.fetchAccounts(),
       transactionStore.fetchCategories(),
+      budgetStore.fetchBudgets(),
+      budgetStore.fetchCashFlow(),
       applyTransactionFilters(),
     ])
   }
@@ -497,9 +604,9 @@ onMounted(async () => {
           <div>
             <div class="flex items-center space-x-2">
               <span class="font-extrabold text-lg tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">NextOmni Finance</span>
-              <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Phase 4 Active</span>
+              <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Phase 5 Active</span>
             </div>
-            <p class="text-[11px] text-slate-400 font-mono">Enterprise Personal Finance & Ledger</p>
+            <p class="text-[11px] text-slate-400 font-mono">Enterprise Financial Architecture</p>
           </div>
         </div>
 
@@ -595,22 +702,23 @@ onMounted(async () => {
           <div>
             <div class="flex items-center space-x-2">
               <h2 class="text-xl font-bold text-white">{{ authStore.user?.name }}'s Financial Hub</h2>
-              <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Double-Entry Ledger</span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Double-Entry & Budgets</span>
             </div>
             <p class="text-xs text-slate-400 mt-0.5">
-              Base Ledger: <span class="text-emerald-400 font-mono font-bold">{{ authStore.user?.base_currency }}</span> &bull;
+              Ledger: <span class="text-emerald-400 font-mono font-bold">{{ authStore.user?.base_currency }}</span> &bull;
               Accounts: <span class="text-slate-200 font-mono">{{ accountStore.accounts.length }}</span> &bull;
+              Budgets: <span class="text-slate-200 font-mono">{{ budgetStore.budgets.length }}</span> &bull;
               Transactions: <span class="text-slate-200 font-mono">{{ transactionStore.meta.total }}</span>
             </p>
           </div>
         </div>
 
-        <!-- Quick Transaction & Transfer Action Buttons -->
+        <!-- Quick Transaction, Transfer, and Budget Action Buttons -->
         <div class="flex flex-wrap items-center gap-2">
           <button
             @click="openAddTransactionModal('expense')"
             :disabled="accountStore.accounts.length === 0"
-            class="px-3.5 py-2 rounded-xl text-xs font-bold bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 transition flex items-center space-x-1.5 disabled:opacity-50"
+            class="px-3 py-2 rounded-xl text-xs font-bold bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 transition flex items-center space-x-1.5 disabled:opacity-50"
           >
             <ArrowUpRight class="w-4 h-4 text-rose-400" />
             <span>Record Expense</span>
@@ -619,7 +727,7 @@ onMounted(async () => {
           <button
             @click="openAddTransactionModal('income')"
             :disabled="accountStore.accounts.length === 0"
-            class="px-3.5 py-2 rounded-xl text-xs font-bold bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 transition flex items-center space-x-1.5 disabled:opacity-50"
+            class="px-3 py-2 rounded-xl text-xs font-bold bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 transition flex items-center space-x-1.5 disabled:opacity-50"
           >
             <ArrowDownLeft class="w-4 h-4 text-emerald-400" />
             <span>Record Income</span>
@@ -628,10 +736,18 @@ onMounted(async () => {
           <button
             @click="openAddTransferModal"
             :disabled="accountStore.accounts.length < 2"
-            class="px-3.5 py-2 rounded-xl text-xs font-bold bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/40 transition flex items-center space-x-1.5 disabled:opacity-50"
+            class="px-3 py-2 rounded-xl text-xs font-bold bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/40 transition flex items-center space-x-1.5 disabled:opacity-50"
           >
             <ArrowRightLeft class="w-4 h-4 text-sky-400" />
             <span>Transfer Funds</span>
+          </button>
+
+          <button
+            @click="openAddBudgetModal"
+            class="px-3 py-2 rounded-xl text-xs font-bold bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 border border-indigo-500/40 transition flex items-center space-x-1.5"
+          >
+            <Target class="w-4 h-4 text-indigo-400" />
+            <span>Set Budget</span>
           </button>
 
           <button
@@ -652,18 +768,18 @@ onMounted(async () => {
         <div class="relative z-10 max-w-3xl space-y-4">
           <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700 text-xs font-semibold text-emerald-400">
             <Sparkles class="w-3.5 h-3.5" />
-            <span>Phase 4 — Categories, Transactions & Double-Entry Transfers</span>
+            <span>Phase 5 — Spending Budgets & Real-time Analytics</span>
           </div>
 
           <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
-            NextOmni Finance — High-Precision Personal Ledger & Transactions
+            NextOmni Finance — High-Precision Personal Financial Architecture
           </h1>
 
           <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
             Engineered with <span class="text-emerald-400 font-medium">Laravel 11 (PHP 8.3)</span>,
             <span class="text-emerald-400 font-medium">PostgreSQL 16 UUIDv7</span>, and
             <span class="text-emerald-400 font-medium">Nuxt 3</span>. Features strict <code class="text-emerald-400 font-mono">NUMERIC(15, 4)</code>
-            BCMath precision, SHA-256 idempotency deduplication, and double-entry atomic inter-account transfers.
+            BCMath precision, SHA-256 deduplication, atomic double-entry transfers, and real-time category budget tracking.
           </p>
 
           <div class="flex flex-wrap items-center gap-3 pt-2">
@@ -746,6 +862,181 @@ onMounted(async () => {
         </div>
       </section>
 
+      <!-- Cash Flow & Monthly Analytics (Phase 5 Feature) -->
+      <section v-if="authStore.isAuthenticated && budgetStore.cashFlow" class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div>
+            <h3 class="text-base font-bold text-white flex items-center space-x-2">
+              <BarChart3 class="w-5 h-5 text-indigo-400" />
+              <span>Monthly Cash Flow & Savings Rate</span>
+            </h3>
+            <p class="text-xs text-slate-400 mt-0.5">Period: {{ budgetStore.cashFlow.period.start_date }} to {{ budgetStore.cashFlow.period.end_date }}</p>
+          </div>
+
+          <div class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold">
+            <Percent class="w-4 h-4" />
+            <span>Savings Rate: {{ budgetStore.cashFlow.summary.savings_rate }}%</span>
+          </div>
+        </div>
+
+        <!-- 3-Column Cash Flow Breakdown -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-1">
+            <span class="text-xs text-slate-400 font-medium">Total Inflows (Income)</span>
+            <div class="text-xl font-bold font-mono text-emerald-400">
+              {{ budgetStore.cashFlow.summary.total_income_formatted }}
+            </div>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-1">
+            <span class="text-xs text-slate-400 font-medium">Total Outflows (Expenses)</span>
+            <div class="text-xl font-bold font-mono text-rose-400">
+              {{ budgetStore.cashFlow.summary.total_expense_formatted }}
+            </div>
+          </div>
+
+          <div class="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-1">
+            <span class="text-xs text-slate-400 font-medium">Net Monthly Savings</span>
+            <div
+              class="text-xl font-bold font-mono"
+              :class="Number(budgetStore.cashFlow.summary.net_cash_flow) >= 0 ? 'text-emerald-400' : 'text-rose-400'"
+            >
+              {{ budgetStore.cashFlow.summary.net_cash_flow_formatted }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Category Spending Distribution -->
+        <div v-if="budgetStore.cashFlow.categories.length > 0" class="space-y-3 pt-2">
+          <span class="text-xs font-bold text-slate-300 uppercase tracking-wider block">Spending Distribution by Category</span>
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+            <div
+              v-for="cat in budgetStore.cashFlow.categories"
+              :key="cat.name"
+              class="p-3 rounded-lg bg-slate-950/40 border border-slate-800 flex items-center justify-between"
+            >
+              <div class="overflow-hidden pr-2">
+                <div class="text-xs font-semibold text-white truncate">{{ cat.name }}</div>
+                <div class="text-[11px] font-mono text-slate-400">{{ cat.amount_formatted }}</div>
+              </div>
+              <span
+                class="px-2 py-0.5 rounded text-[10px] font-mono font-bold"
+                :style="{ backgroundColor: `${cat.color}20`, color: cat.color || '#38bdf8' }"
+              >
+                {{ cat.percentage }}%
+              </span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Budgets & Spending Progress (Phase 5 Core Feature) -->
+      <section v-if="authStore.isAuthenticated" class="space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <Target class="w-5 h-5 text-indigo-400" />
+            <h2 class="text-lg font-bold text-white">Monthly Budgets & Category Spending Limits ({{ budgetStore.budgets.length }})</h2>
+          </div>
+          <button
+            @click="openAddBudgetModal"
+            class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 transition flex items-center space-x-1"
+          >
+            <Plus class="w-3.5 h-3.5" />
+            <span>Set Category Budget</span>
+          </button>
+        </div>
+
+        <!-- Budget Cards Grid -->
+        <div v-if="budgetStore.budgets.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div
+            v-for="item in budgetStore.budgets"
+            :key="item.budget.id"
+            class="p-5 rounded-xl bg-slate-900/70 border border-slate-800 hover:border-slate-700 transition relative group space-y-4"
+          >
+            <div class="flex items-start justify-between">
+              <div>
+                <div class="flex items-center space-x-2">
+                  <h3 class="font-bold text-sm text-white">{{ item.category?.name || 'Category' }}</h3>
+                  <span
+                    class="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase"
+                    :class="{
+                      'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20': item.status === 'healthy',
+                      'bg-amber-500/10 text-amber-400 border border-amber-500/20': item.status === 'warning',
+                      'bg-rose-500/10 text-rose-400 border border-rose-500/20': item.status === 'exceeded',
+                    }"
+                  >
+                    {{ item.status === 'exceeded' ? 'Over Budget' : `${item.percent_used}%` }}
+                  </span>
+                </div>
+                <p class="text-[11px] text-slate-400 font-mono mt-0.5">
+                  {{ item.budget.start_date }} &rarr; {{ item.budget.end_date }}
+                </p>
+              </div>
+
+              <button
+                @click="handleDeleteBudget(item.budget.id, item.category?.name || 'budget')"
+                class="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-slate-800 opacity-0 group-hover:opacity-100 transition"
+                title="Remove Budget Limit"
+              >
+                <Trash2 class="w-4 h-4" />
+              </button>
+            </div>
+
+            <!-- Visual Progress Meter -->
+            <div class="space-y-1.5">
+              <div class="w-full h-2 rounded-full bg-slate-800 overflow-hidden">
+                <div
+                  class="h-full rounded-full transition-all duration-500"
+                  :style="{ width: `${Math.min(item.percent_used, 100)}%` }"
+                  :class="{
+                    'bg-emerald-500': item.status === 'healthy',
+                    'bg-amber-500': item.status === 'warning',
+                    'bg-rose-500': item.status === 'exceeded',
+                  }"
+                ></div>
+              </div>
+
+              <div class="flex items-center justify-between text-xs font-mono">
+                <span class="text-slate-400">Spent: <strong class="text-white">{{ item.spent_formatted }}</strong></span>
+                <span class="text-slate-400">Cap: <strong class="text-slate-200">{{ item.amount_formatted }}</strong></span>
+              </div>
+            </div>
+
+            <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between text-xs">
+              <span class="text-slate-400">Remaining</span>
+              <span
+                class="font-mono font-bold"
+                :class="item.is_over_budget ? 'text-rose-400' : 'text-emerald-400'"
+              >
+                {{ item.remaining_formatted }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty State for Budgets -->
+        <div v-else class="p-8 rounded-2xl bg-slate-900/40 border border-dashed border-slate-800 text-center space-y-3">
+          <div class="w-12 h-12 rounded-2xl bg-slate-800/80 mx-auto flex items-center justify-center text-slate-400">
+            <Target class="w-6 h-6" />
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-base font-bold text-white">No Category Budgets Configured Yet</h3>
+            <p class="text-xs text-slate-400 max-w-md mx-auto">
+              Set monthly spending targets for Food & Dining, Transportation, or Utilities to monitor burn rate with visual warning meters.
+            </p>
+          </div>
+          <div class="pt-1">
+            <button
+              @click="openAddBudgetModal"
+              class="px-4 py-2 rounded-xl text-xs font-bold bg-indigo-500 hover:bg-indigo-400 text-slate-950 transition inline-flex items-center space-x-1.5"
+            >
+              <Plus class="w-4 h-4" />
+              <span>Set Your First Budget</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
       <!-- User's Financial Accounts Grid -->
       <section v-if="authStore.isAuthenticated" class="space-y-4">
         <div class="flex items-center justify-between">
@@ -807,7 +1098,7 @@ onMounted(async () => {
           </div>
         </div>
 
-        <!-- Empty State for Authenticated User with no accounts -->
+        <!-- Empty State for Accounts -->
         <div v-else class="p-8 rounded-2xl bg-slate-900/40 border border-dashed border-slate-800 text-center space-y-4">
           <div class="w-12 h-12 rounded-2xl bg-slate-800/80 mx-auto flex items-center justify-center text-slate-400">
             <Wallet class="w-6 h-6" />
@@ -831,13 +1122,13 @@ onMounted(async () => {
               :disabled="isAccountSubmitting"
               class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition"
             >
-              Seed Sample Portfolio & Ledger Activity
+              Seed Sample Portfolio & Activity
             </button>
           </div>
         </div>
       </section>
 
-      <!-- Transaction Ledger & Feed (Phase 4 Core Feature) -->
+      <!-- Transaction Ledger & Feed (Phase 4 Feature) -->
       <section v-if="authStore.isAuthenticated" class="space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div class="flex items-center space-x-2">
@@ -913,9 +1204,7 @@ onMounted(async () => {
               :key="txn.id"
               class="p-4 hover:bg-slate-800/40 transition flex items-center justify-between gap-4 group"
             >
-              <!-- Left: Icon + Description + Metadata -->
               <div class="flex items-center space-x-3.5 min-w-0">
-                <!-- Type Icon -->
                 <div
                   class="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
                   :class="{
@@ -929,7 +1218,6 @@ onMounted(async () => {
                   <ArrowRightLeft v-else class="w-5 h-5" />
                 </div>
 
-                <!-- Info -->
                 <div class="min-w-0">
                   <div class="flex items-center space-x-2">
                     <span class="font-bold text-sm text-white truncate">{{ txn.description }}</span>
@@ -954,7 +1242,6 @@ onMounted(async () => {
                 </div>
               </div>
 
-              <!-- Right: Amount + Delete Button -->
               <div class="flex items-center space-x-4 flex-shrink-0">
                 <div class="text-right">
                   <div
@@ -1344,7 +1631,6 @@ onMounted(async () => {
           <p class="text-xs text-slate-400">Atomic ledger posting with balance adjustment</p>
         </div>
 
-        <!-- Type Selector -->
         <div class="flex rounded-lg bg-slate-800/60 p-1 border border-slate-700/50">
           <button
             @click="newTransactionForm.type = 'expense'"
@@ -1370,7 +1656,6 @@ onMounted(async () => {
         </div>
 
         <form @submit.prevent="handleCreateTransaction" class="space-y-4">
-          <!-- Account Selection -->
           <div class="space-y-1.5">
             <label class="text-xs font-medium text-slate-300">Financial Account</label>
             <select
@@ -1384,7 +1669,6 @@ onMounted(async () => {
             </select>
           </div>
 
-          <!-- Category Selection -->
           <div class="space-y-1.5">
             <label class="text-xs font-medium text-slate-300">Category</label>
             <select
@@ -1409,7 +1693,6 @@ onMounted(async () => {
             </select>
           </div>
 
-          <!-- Amount -->
           <div class="space-y-1.5">
             <label class="text-xs font-medium text-slate-300">Amount</label>
             <div class="relative">
@@ -1426,7 +1709,6 @@ onMounted(async () => {
             </div>
           </div>
 
-          <!-- Description -->
           <div class="space-y-1.5">
             <label class="text-xs font-medium text-slate-300">Description</label>
             <input
@@ -1438,7 +1720,6 @@ onMounted(async () => {
             />
           </div>
 
-          <!-- Date & Time -->
           <div class="space-y-1.5">
             <label class="text-xs font-medium text-slate-300">Date & Time</label>
             <input
@@ -1448,7 +1729,6 @@ onMounted(async () => {
             />
           </div>
 
-          <!-- Notes -->
           <div class="space-y-1.5">
             <label class="text-xs font-medium text-slate-300">Optional Notes</label>
             <input
@@ -1499,7 +1779,6 @@ onMounted(async () => {
         </div>
 
         <form @submit.prevent="handleCreateTransfer" class="space-y-4">
-          <!-- Source Account -->
           <div class="space-y-1.5">
             <label class="text-xs font-medium text-slate-300">From Account (Source)</label>
             <select
@@ -1513,7 +1792,6 @@ onMounted(async () => {
             </select>
           </div>
 
-          <!-- Destination Account -->
           <div class="space-y-1.5">
             <label class="text-xs font-medium text-slate-300">To Account (Destination)</label>
             <select
@@ -1531,7 +1809,6 @@ onMounted(async () => {
             </select>
           </div>
 
-          <!-- Transfer Amount & Fee -->
           <div class="grid grid-cols-2 gap-3">
             <div class="space-y-1.5">
               <label class="text-xs font-medium text-slate-300">Transfer Amount</label>
@@ -1565,7 +1842,6 @@ onMounted(async () => {
             </div>
           </div>
 
-          <!-- Date & Time -->
           <div class="space-y-1.5">
             <label class="text-xs font-medium text-slate-300">Date & Time</label>
             <input
@@ -1575,7 +1851,6 @@ onMounted(async () => {
             />
           </div>
 
-          <!-- Notes -->
           <div class="space-y-1.5">
             <label class="text-xs font-medium text-slate-300">Notes / Purpose</label>
             <input
@@ -1593,6 +1868,113 @@ onMounted(async () => {
           >
             <RefreshCw v-if="transactionStore.isSubmitting" class="w-4 h-4 animate-spin" />
             <span>{{ transactionStore.isSubmitting ? 'Executing Transfer...' : 'Confirm & Execute Transfer' }}</span>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Set Budget Modal (Phase 5 Feature) -->
+    <div
+      v-if="showBudgetModal"
+      class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4"
+    >
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl relative space-y-6">
+        <button
+          @click="showBudgetModal = false"
+          class="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+        >
+          <X class="w-5 h-5" />
+        </button>
+
+        <div class="space-y-1">
+          <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+            <Target class="w-5 h-5 text-indigo-400" />
+            <span>Set Category Spending Target</span>
+          </h3>
+          <p class="text-xs text-slate-400">Establish budget caps with threshold progress tracking</p>
+        </div>
+
+        <div v-if="budgetError" class="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-300 flex items-start space-x-2">
+          <AlertCircle class="w-4 h-4 flex-shrink-0 mt-0.5 text-red-400" />
+          <span>{{ budgetError }}</span>
+        </div>
+
+        <form @submit.prevent="handleCreateBudget" class="space-y-4">
+          <!-- Category Selector -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-medium text-slate-300">Expense Category</label>
+            <select
+              v-model="newBudgetForm.category_id"
+              required
+              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-indigo-500"
+            >
+              <option
+                v-for="cat in transactionStore.categories.filter(c => c.type === 'expense')"
+                :key="cat.id"
+                :value="cat.id"
+              >
+                {{ cat.name }} (Parent & Subcategories)
+              </option>
+            </select>
+          </div>
+
+          <!-- Budget Amount -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-medium text-slate-300">Spending Cap Limit</label>
+            <div class="relative">
+              <span class="absolute left-3 top-2.5 text-slate-400 font-mono text-xs">{{ currencySymbol }}</span>
+              <input
+                v-model="newBudgetForm.amount"
+                type="number"
+                step="0.01"
+                min="0.01"
+                required
+                placeholder="1000.00"
+                class="w-full pl-10 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white font-mono placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+              />
+            </div>
+          </div>
+
+          <!-- Date Interval -->
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1.5">
+              <label class="text-xs font-medium text-slate-300">Start Date</label>
+              <input
+                v-model="newBudgetForm.start_date"
+                type="date"
+                required
+                class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-indigo-500"
+              />
+            </div>
+            <div class="space-y-1.5">
+              <label class="text-xs font-medium text-slate-300">End Date</label>
+              <input
+                v-model="newBudgetForm.end_date"
+                type="date"
+                required
+                class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-indigo-500"
+              />
+            </div>
+          </div>
+
+          <!-- Notes -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-medium text-slate-300">Optional Notes</label>
+            <input
+              v-model="newBudgetForm.notes"
+              type="text"
+              placeholder="e.g. Monthly groceries and food cap"
+              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
+            />
+          </div>
+
+          <button
+            type="submit"
+            :disabled="budgetStore.isSubmitting"
+            class="w-full py-2.5 rounded-lg text-xs font-bold bg-indigo-500 hover:bg-indigo-400 text-slate-950 transition flex items-center justify-center space-x-2 disabled:opacity-50"
+          >
+            <RefreshCw v-if="budgetStore.isSubmitting" class="w-4 h-4 animate-spin" />
+            <span>{{ budgetStore.isSubmitting ? 'Establishing Limit...' : 'Confirm & Set Budget Cap' }}</span>
           </button>
         </form>
       </div>
