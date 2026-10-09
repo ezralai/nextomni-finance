@@ -31,6 +31,10 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\Contracts\RecurringTransactionRepositoryInterface::class,
             \App\Repositories\Eloquent\RecurringTransactionRepository::class
         );
+        $this->app->bind(
+            \App\Repositories\Contracts\GoalRepositoryInterface::class,
+            \App\Repositories\Eloquent\GoalRepository::class
+        );
     }
 
     /**

@@ -51,9 +51,12 @@ import {
   CalendarClock,
   Repeat,
   Check,
+  Trophy,
+  Flag,
 } from 'lucide-vue-next'
 import { useReportStore } from '~/stores/reports'
 import { useRecurringStore } from '~/stores/recurring'
+import { useGoalStore } from '~/stores/goals'
 
 const config = useRuntimeConfig()
 const apiBase = config.public.apiBase
@@ -64,6 +67,7 @@ const budgetStore = useBudgetStore()
 const currencyStore = useCurrencyStore()
 const reportStore = useReportStore()
 const recurringStore = useRecurringStore()
+const goalStore = useGoalStore()
 
 interface HealthResponse {
   status: string
@@ -172,6 +176,22 @@ const newRecurringForm = ref({
   end_date: '',
   auto_post: true,
   notes: '',
+})
+
+// Financial Goals & Savings Milestones Modal State
+const showGoalModal = ref(false)
+const showContributeModal = ref(false)
+const selectedGoalForContribution = ref<any>(null)
+const contributionAmount = ref('')
+const goalError = ref<string | null>(null)
+const newGoalForm = ref({
+  name: '',
+  description: '',
+  target_amount: '',
+  current_amount: '',
+  target_date: '',
+  account_id: '',
+  color: '#10b981',
 })
 
 // Transaction Filter State
@@ -531,6 +551,69 @@ const handleToggleRecurringActive = async (recurring: any) => {
   }
 }
 
+// Financial Goals Handlers
+const openAddGoalModal = () => {
+  if (accountStore.accounts.length > 0 && !newGoalForm.value.account_id) {
+    newGoalForm.value.account_id = accountStore.accounts[0]?.id || ''
+  }
+  newGoalForm.value.name = ''
+  newGoalForm.value.description = ''
+  newGoalForm.value.target_amount = ''
+  newGoalForm.value.current_amount = ''
+  newGoalForm.value.target_date = ''
+  goalError.value = null
+  showGoalModal.value = true
+}
+
+const handleCreateGoal = async () => {
+  goalError.value = null
+  try {
+    await goalStore.createGoal({
+      name: newGoalForm.value.name,
+      description: newGoalForm.value.description || undefined,
+      target_amount: newGoalForm.value.target_amount,
+      current_amount: newGoalForm.value.current_amount || undefined,
+      target_date: newGoalForm.value.target_date || undefined,
+      account_id: newGoalForm.value.account_id || undefined,
+      color: newGoalForm.value.color,
+    })
+    showGoalModal.value = false
+    await refreshDashboard()
+  } catch (err: any) {
+    goalError.value = err.message || 'Failed to establish financial goal.'
+  }
+}
+
+const handleDeleteGoal = async (id: string, name: string) => {
+  if (confirm(`Remove financial goal "${name}"?`)) {
+    try {
+      await goalStore.deleteGoal(id)
+      await refreshDashboard()
+    } catch (err: any) {
+      alert(err.message || 'Failed to delete goal.')
+    }
+  }
+}
+
+const openContributeModal = (goalItem: any) => {
+  selectedGoalForContribution.value = goalItem
+  contributionAmount.value = ''
+  goalError.value = null
+  showContributeModal.value = true
+}
+
+const handleContribute = async () => {
+  if (!selectedGoalForContribution.value) return
+  goalError.value = null
+  try {
+    await goalStore.contribute(selectedGoalForContribution.value.goal.id, contributionAmount.value)
+    showContributeModal.value = false
+    await refreshDashboard()
+  } catch (err: any) {
+    goalError.value = err.message || 'Failed to record contribution.'
+  }
+}
+
 const applyTransactionFilters = () => {
   transactionStore.fetchTransactions({
     type: filterType.value === 'all' ? undefined : filterType.value,
@@ -700,6 +783,7 @@ const refreshDashboard = async () => {
       budgetStore.fetchBudgets(),
       budgetStore.fetchCashFlow(),
       recurringStore.fetchRecurring(),
+      goalStore.fetchGoals(),
       currencyStore.fetchRates(baseCur),
       applyTransactionFilters(),
     ])
@@ -1304,6 +1388,138 @@ onMounted(async () => {
             >
               <Plus class="w-4 h-4" />
               <span>Schedule Your First Bill</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Financial Goals & Savings Milestones -->
+      <section v-if="authStore.isAuthenticated" class="space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <Trophy class="w-5 h-5 text-amber-400" />
+            <h2 class="text-lg font-bold text-white">Financial Goals & Savings Targets ({{ goalStore.goals.length }})</h2>
+            <span
+              v-if="goalStore.summary && goalStore.goals.length > 0"
+              class="hidden sm:inline-flex px-2 py-0.5 rounded-full text-[11px] font-mono bg-amber-500/10 text-amber-400 border border-amber-500/20"
+            >
+              Saved {{ goalStore.summary.total_saved_formatted }} of {{ goalStore.summary.total_target_formatted }} ({{ goalStore.summary.overall_percent }}%)
+            </span>
+          </div>
+          <button
+            @click="openAddGoalModal"
+            class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-amber-500/10 hover:bg-amber-500/20 text-amber-400 border border-amber-500/30 transition flex items-center space-x-1"
+          >
+            <Plus class="w-3.5 h-3.5" />
+            <span>Create Goal</span>
+          </button>
+        </div>
+
+        <!-- Goals Cards Grid -->
+        <div v-if="goalStore.goals.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div
+            v-for="item in goalStore.goals"
+            :key="item.goal.id"
+            class="p-5 rounded-xl bg-slate-900/70 border border-slate-800 hover:border-slate-700 transition relative group space-y-4"
+          >
+            <div class="flex items-start justify-between">
+              <div class="space-y-1">
+                <div class="flex items-center space-x-2">
+                  <div
+                    class="w-3 h-3 rounded-full flex-shrink-0"
+                    :style="{ backgroundColor: item.goal.color || '#10b981' }"
+                  />
+                  <h3 class="font-bold text-sm text-white truncate max-w-[170px]">{{ item.goal.name }}</h3>
+                  <span
+                    class="px-2 py-0.5 rounded text-[10px] font-mono font-bold uppercase"
+                    :class="item.is_achieved ? 'bg-emerald-500/10 text-emerald-400 border border-emerald-500/20' : 'bg-amber-500/10 text-amber-400 border border-amber-500/20'"
+                  >
+                    {{ item.is_achieved ? 'Achieved!' : `${item.percent_achieved}%` }}
+                  </span>
+                </div>
+                <p v-if="item.goal.description" class="text-xs text-slate-400 truncate max-w-[220px]">
+                  {{ item.goal.description }}
+                </p>
+              </div>
+
+              <div class="flex items-center space-x-1">
+                <button
+                  @click="openContributeModal(item)"
+                  class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 transition flex items-center space-x-1"
+                  title="Add savings funds toward target"
+                >
+                  <Plus class="w-3 h-3" />
+                  <span>Deposit</span>
+                </button>
+                <button
+                  @click="handleDeleteGoal(item.goal.id, item.goal.name)"
+                  class="text-slate-600 hover:text-rose-400 p-1 opacity-0 group-hover:opacity-100 transition"
+                  title="Delete Goal"
+                >
+                  <Trash2 class="w-3.5 h-3.5" />
+                </button>
+              </div>
+            </div>
+
+            <!-- Visual Progress Bar -->
+            <div class="space-y-1.5">
+              <div class="flex justify-between text-xs">
+                <span class="text-slate-400 font-mono">
+                  Saved: <strong class="text-white">{{ item.current_amount_formatted }}</strong>
+                </span>
+                <span class="text-slate-400 font-mono">
+                  Target: <strong class="text-slate-300">{{ item.target_amount_formatted }}</strong>
+                </span>
+              </div>
+              <div class="h-2 w-full bg-slate-950 rounded-full overflow-hidden p-0.5 border border-slate-800">
+                <div
+                  class="h-full rounded-full transition-all duration-500"
+                  :style="{
+                    width: `${item.percent_achieved}%`,
+                    backgroundColor: item.goal.color || '#10b981',
+                  }"
+                />
+              </div>
+            </div>
+
+            <!-- Pacing Metrics & Deadline -->
+            <div class="grid grid-cols-2 gap-2 text-[11px] pt-1 border-t border-slate-800/80">
+              <div class="p-2 rounded-lg bg-slate-950/60 border border-slate-800/60">
+                <span class="text-slate-400 block text-[10px]">Monthly Required</span>
+                <span class="font-mono font-bold" :class="item.is_achieved ? 'text-emerald-400' : 'text-amber-400'">
+                  {{ item.is_achieved ? 'Target Met!' : item.monthly_required_formatted }}
+                </span>
+              </div>
+              <div class="p-2 rounded-lg bg-slate-950/60 border border-slate-800/60">
+                <span class="text-slate-400 block text-[10px]">Target Date</span>
+                <span class="font-mono font-bold text-slate-300">
+                  {{ item.goal.target_date || 'Ongoing' }}
+                  <span v-if="item.days_remaining !== null && item.days_remaining > 0" class="text-[10px] text-slate-500">
+                    ({{ item.days_remaining }}d)
+                  </span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div v-else class="p-8 rounded-2xl bg-slate-900/40 border border-dashed border-slate-800 text-center space-y-3">
+          <div class="w-12 h-12 rounded-2xl bg-slate-800/80 mx-auto flex items-center justify-center text-slate-400">
+            <Trophy class="w-6 h-6 text-amber-400" />
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-base font-bold text-white">No Financial Goals Created Yet</h3>
+            <p class="text-xs text-slate-400 max-w-md mx-auto">
+              Set milestones for Emergency Funds, Property Down Payments, or Vacation Reserves with automated monthly pacing calculations.
+            </p>
+          </div>
+          <div class="pt-1">
+            <button
+              @click="openAddGoalModal"
+              class="px-4 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition inline-flex items-center space-x-1.5"
+            >
+              <Plus class="w-4 h-4" />
+              <span>Create Your First Goal</span>
             </button>
           </div>
         </div>
@@ -2534,6 +2750,209 @@ onMounted(async () => {
           >
             <CalendarClock class="w-4 h-4" />
             <span>{{ recurringStore.isSubmitting ? 'Establishing Schedule...' : 'Confirm & Schedule' }}</span>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Create Financial Goal Modal -->
+    <div
+      v-if="showGoalModal"
+      class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4"
+    >
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl relative space-y-6">
+        <button
+          @click="showGoalModal = false"
+          class="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+        >
+          <X class="w-5 h-5" />
+        </button>
+
+        <div class="space-y-1">
+          <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+            <Trophy class="w-5 h-5 text-amber-400" />
+            <span>Create Financial Savings Goal</span>
+          </h3>
+          <p class="text-xs text-slate-400">Track target accumulation with automated monthly savings pace calculations</p>
+        </div>
+
+        <div v-if="goalError" class="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-300 flex items-start space-x-2">
+          <AlertCircle class="w-4 h-4 flex-shrink-0 mt-0.5 text-red-400" />
+          <span>{{ goalError }}</span>
+        </div>
+
+        <form @submit.prevent="handleCreateGoal" class="space-y-4">
+          <div class="space-y-1.5">
+            <label class="text-xs font-medium text-slate-300">Goal Name</label>
+            <input
+              v-model="newGoalForm.name"
+              type="text"
+              required
+              placeholder="e.g. Emergency Fund (6 Months), House Down Payment"
+              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"
+            />
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1.5">
+              <label class="text-xs font-medium text-slate-300">Target Amount</label>
+              <div class="relative">
+                <span class="absolute left-3 top-2.5 text-slate-400 font-mono text-xs">{{ currencySymbol }}</span>
+                <input
+                  v-model="newGoalForm.target_amount"
+                  type="number"
+                  step="0.01"
+                  min="0.01"
+                  required
+                  placeholder="30000.00"
+                  class="w-full pl-10 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white font-mono placeholder-slate-500 focus:outline-none focus:border-amber-500"
+                />
+              </div>
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="text-xs font-medium text-slate-300">Initial Saved</label>
+              <div class="relative">
+                <span class="absolute left-3 top-2.5 text-slate-400 font-mono text-xs">{{ currencySymbol }}</span>
+                <input
+                  v-model="newGoalForm.current_amount"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder="5000.00"
+                  class="w-full pl-10 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white font-mono placeholder-slate-500 focus:outline-none focus:border-amber-500"
+                />
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1.5">
+              <label class="text-xs font-medium text-slate-300">Target Deadline</label>
+              <input
+                v-model="newGoalForm.target_date"
+                type="date"
+                class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-amber-500"
+              />
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="text-xs font-medium text-slate-300">Accent Color</label>
+              <select
+                v-model="newGoalForm.color"
+                class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-amber-500"
+              >
+                <option value="#10b981">Emerald Green</option>
+                <option value="#0ea5e9">Sky Blue</option>
+                <option value="#f59e0b">Amber Gold</option>
+                <option value="#8b5cf6">Purple</option>
+                <option value="#ec4899">Pink</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="text-xs font-medium text-slate-300">Dedicated Account (Optional)</label>
+            <select
+              v-model="newGoalForm.account_id"
+              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-amber-500"
+            >
+              <option value="">(Unlinked / Portfolio-wide)</option>
+              <option v-for="acc in accountStore.accounts" :key="acc.id" :value="acc.id">
+                {{ acc.name }} ({{ acc.currency }})
+              </option>
+            </select>
+          </div>
+
+          <div class="space-y-1.5">
+            <label class="text-xs font-medium text-slate-300">Notes / Strategy</label>
+            <textarea
+              v-model="newGoalForm.description"
+              rows="2"
+              placeholder="e.g. Save 20% of monthly salary into fixed deposit"
+              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"
+            ></textarea>
+          </div>
+
+          <button
+            type="submit"
+            :disabled="goalStore.isSubmitting"
+            class="w-full py-2.5 rounded-xl text-sm font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer"
+          >
+            <Trophy class="w-4 h-4" />
+            <span>{{ goalStore.isSubmitting ? 'Establishing Goal...' : 'Establish Goal' }}</span>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Contribute to Goal Modal -->
+    <div
+      v-if="showContributeModal && selectedGoalForContribution"
+      class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4"
+    >
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm p-6 shadow-2xl relative space-y-5">
+        <button
+          @click="showContributeModal = false"
+          class="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+        >
+          <X class="w-5 h-5" />
+        </button>
+
+        <div class="space-y-1">
+          <h3 class="text-base font-bold text-white flex items-center space-x-2">
+            <Flag class="w-4 h-4 text-emerald-400" />
+            <span>Deposit Savings Funds</span>
+          </h3>
+          <p class="text-xs text-slate-400">
+            Contributing to <strong class="text-white">{{ selectedGoalForContribution.goal.name }}</strong>
+          </p>
+        </div>
+
+        <div class="p-3 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1 text-xs">
+          <div class="flex justify-between text-slate-400">
+            <span>Current Saved:</span>
+            <span class="font-mono text-white font-bold">{{ selectedGoalForContribution.current_amount_formatted }}</span>
+          </div>
+          <div class="flex justify-between text-slate-400">
+            <span>Target Goal:</span>
+            <span class="font-mono text-slate-300">{{ selectedGoalForContribution.target_amount_formatted }}</span>
+          </div>
+          <div class="flex justify-between text-slate-400 pt-1 border-t border-slate-800">
+            <span>Remaining Target:</span>
+            <span class="font-mono text-emerald-400 font-bold">{{ selectedGoalForContribution.remaining_amount_formatted }}</span>
+          </div>
+        </div>
+
+        <div v-if="goalError" class="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-300 flex items-start space-x-2">
+          <AlertCircle class="w-4 h-4 flex-shrink-0 mt-0.5 text-red-400" />
+          <span>{{ goalError }}</span>
+        </div>
+
+        <form @submit.prevent="handleContribute" class="space-y-4">
+          <div class="space-y-1.5">
+            <label class="text-xs font-medium text-slate-300">Deposit Amount</label>
+            <div class="relative">
+              <span class="absolute left-3 top-2.5 text-slate-400 font-mono text-xs">{{ currencySymbol }}</span>
+              <input
+                v-model="contributionAmount"
+                type="number"
+                step="0.01"
+                min="0.01"
+                required
+                placeholder="500.00"
+                class="w-full pl-10 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white font-mono placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+              />
+            </div>
+          </div>
+
+          <button
+            type="submit"
+            :disabled="goalStore.isSubmitting"
+            class="w-full py-2.5 rounded-xl text-sm font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer"
+          >
+            <Check class="w-4 h-4" />
+            <span>{{ goalStore.isSubmitting ? 'Recording Deposit...' : 'Confirm Deposit' }}</span>
           </button>
         </form>
       </div>

@@ -86,6 +86,32 @@ class Money
         return bccomp($this->amount, '0', self::DEFAULT_SCALE) === 0;
     }
 
+    public function compareTo(self|string|int|float $other): int
+    {
+        $otherAmount = $other instanceof self ? $other->getAmount() : self::normalize($other);
+        return bccomp($this->amount, $otherAmount, self::DEFAULT_SCALE);
+    }
+
+    public function isGreaterThan(self|string|int|float $other): bool
+    {
+        return $this->compareTo($other) > 0;
+    }
+
+    public function isGreaterThanOrEqualTo(self|string|int|float $other): bool
+    {
+        return $this->compareTo($other) >= 0;
+    }
+
+    public function isLessThan(self|string|int|float $other): bool
+    {
+        return $this->compareTo($other) < 0;
+    }
+
+    public function isLessThanOrEqualTo(self|string|int|float $other): bool
+    {
+        return $this->compareTo($other) <= 0;
+    }
+
     public function toDecimal(): string
     {
         return number_format((float) $this->amount, self::DISPLAY_SCALE, '.', '');

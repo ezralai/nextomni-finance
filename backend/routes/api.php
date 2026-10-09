@@ -59,6 +59,10 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('recurring-transactions', \App\Http\Controllers\Api\V1\Transactions\RecurringTransactionController::class)
             ->names('api.v1.recurring_transactions');
 
+        // Financial Goals & Savings Milestones
+        Route::apiResource('goals', \App\Http\Controllers\Api\V1\Goals\GoalController::class)->names('api.v1.goals');
+        Route::post('/goals/{goal}/contribute', [\App\Http\Controllers\Api\V1\Goals\GoalController::class, 'contribute'])->name('api.v1.goals.contribute');
+
         // Cash Flow Analytics
         Route::get('/analytics/cash-flow', [AnalyticsController::class, 'cashFlow'])->name('api.v1.analytics.cash_flow');
 
