@@ -1,0 +1,94 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: nextomni_finance_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-nextomni_finance}
+      POSTGRES_USER: ${DB_USERNAME:-nextomni_finance_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-nextomni_finance_secret}
+    ports:
+      - "${FORWARD_DB_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - nextomni_finance_net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USERNAME:-nextomni_finance_user} -d ${DB_DATABASE:-nextomni_finance}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    container_name: nextomni_finance_redis
+    restart: unless-stopped
+    ports:
+      - "${FORWARD_REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - nextomni_finance_net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: nextomni_finance_backend
+    restart: unless-stopped
+    ports:
+      - "${FORWARD_BACKEND_PORT:-8000}:8000"
+    environment:
+      APP_ENV: local
+      APP_DEBUG: "true"
+      DB_CONNECTION: pgsql
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_DATABASE: ${DB_DATABASE:-nextomni_finance}
+      DB_USERNAME: ${DB_USERNAME:-nextomni_finance_user}
+      DB_PASSWORD: ${DB_PASSWORD:-nextomni_finance_secret}
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      FRONTEND_URL: "http://localhost:3000"
+    volumes:
+      - ./backend:/var/www/html
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - nextomni_finance_net
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: nextomni_finance_frontend
+    restart: unless-stopped
+    ports:
+      - "${FORWARD_FRONTEND_PORT:-3000}:3000"
+    environment:
+      NUXT_PUBLIC_API_BASE: "http://localhost:8000/api/v1"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - nextomni_finance_net
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+
+networks:
+  nextomni_finance_net:
+    driver: bridge

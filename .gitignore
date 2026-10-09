@@ -1,0 +1,31 @@
+# OS & IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment variables & secrets
+.env
+.env.*
+!.env.example
+*.key
+
+# Dependencies
+node_modules/
+vendor/
+
+# Build and runtime outputs
+.output/
+.nuxt/
+.nitro/
+.cache/
+dist/
+build/
+*.log
+
+# Databases & caches
+*.sqlite*
+.phpunit.result.cache
+.phpunit.cache/
