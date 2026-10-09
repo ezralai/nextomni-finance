@@ -49,6 +49,8 @@ class AuthenticationTest extends TestCase
             'email' => 'ezra@nextomni.com',
             'base_currency' => 'MYR',
         ]);
+
+        $this->assertMatchesRegularExpression('/^[0-9a-fA-F-]{36}$/', $response->json('user.id'));
     }
 
     public function test_registration_requires_unique_email(): void

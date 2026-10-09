@@ -1,6 +1,7 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useAuthStore } from '~/stores/auth'
+import { useAccountStore } from '~/stores/accounts'
 import {
   Wallet,
   ArrowUpRight,
@@ -23,11 +24,20 @@ import {
   UserCheck,
   ShieldCheck,
   Globe,
+  Plus,
+  CreditCard,
+  Building,
+  Smartphone,
+  Coins,
+  PiggyBank,
+  Trash2,
+  ExternalLink,
 } from 'lucide-vue-next'
 
 const config = useRuntimeConfig()
 const apiBase = config.public.apiBase
 const authStore = useAuthStore()
+const accountStore = useAccountStore()
 
 interface HealthResponse {
   status: string
@@ -50,22 +60,27 @@ const showAuthModal = ref(false)
 const authMode = ref<'login' | 'register'>('login')
 const isAuthSubmitting = ref(false)
 const authError = ref<string | null>(null)
-const authSuccess = ref<string | null>(null)
 
 // Forms
-const loginForm = ref({
-  email: '',
-  password: '',
-})
+const loginForm = ref({ email: '', password: '' })
+const registerForm = ref({ name: '', email: '', password: '', base_currency: 'MYR' })
 
-const registerForm = ref({
+// Add Account Modal State
+const showAddAccountModal = ref(false)
+const isAccountSubmitting = ref(false)
+const accountError = ref<string | null>(null)
+
+const newAccountForm = ref({
+  institution_id: '',
   name: '',
-  email: '',
-  password: '',
-  base_currency: 'MYR',
+  account_type: 'bank',
+  currency: 'MYR',
+  opening_balance: 0,
+  account_number_masked: '',
+  notes: '',
 })
 
-// Currency Switcher State
+// Currency Switcher
 const isUpdatingCurrency = ref(false)
 
 const currencySymbol = computed(() => {
@@ -106,6 +121,7 @@ const handleLogin = async () => {
     await authStore.login(loginForm.value)
     showAuthModal.value = false
     loginForm.value = { email: '', password: '' }
+    await accountStore.fetchAccounts()
   } catch (err: any) {
     authError.value = err?.data?.message || err?.message || 'Login failed. Please check credentials.'
   } finally {
@@ -120,6 +136,7 @@ const handleRegister = async () => {
     await authStore.register(registerForm.value)
     showAuthModal.value = false
     registerForm.value = { name: '', email: '', password: '', base_currency: 'MYR' }
+    await accountStore.fetchAccounts()
   } catch (err: any) {
     authError.value = err?.data?.message || err?.message || 'Registration failed.'
   } finally {
@@ -134,11 +151,10 @@ const handleDemoLogin = async () => {
   const demoPass = 'NextOmniDemo2026!'
 
   try {
-    // Attempt login first
     await authStore.login({ email: demoEmail, password: demoPass })
     showAuthModal.value = false
+    await accountStore.fetchAccounts()
   } catch {
-    // If not exists, register demo user
     try {
       await authStore.register({
         name: 'Demo Investor',
@@ -147,6 +163,7 @@ const handleDemoLogin = async () => {
         base_currency: 'MYR',
       })
       showAuthModal.value = false
+      await accountStore.fetchAccounts()
     } catch (regErr: any) {
       authError.value = regErr?.data?.message || 'Failed to create demo session.'
     }
@@ -160,6 +177,7 @@ const handleCurrencyChange = async (newCurrency: string) => {
   isUpdatingCurrency.value = true
   try {
     await authStore.updateProfile({ base_currency: newCurrency })
+    await accountStore.fetchAccounts()
   } catch (err: any) {
     console.error('Failed to update base currency:', err)
   } finally {
@@ -167,8 +185,122 @@ const handleCurrencyChange = async (newCurrency: string) => {
   }
 }
 
+const openAddAccountModal = () => {
+  if (accountStore.institutions.length > 0 && !newAccountForm.value.institution_id) {
+    newAccountForm.value.institution_id = accountStore.institutions[0].id
+  }
+  newAccountForm.value.currency = authStore.user?.base_currency || 'MYR'
+  accountError.value = null
+  showAddAccountModal.value = true
+}
+
+const handleCreateAccount = async () => {
+  isAccountSubmitting.value = true
+  accountError.value = null
+  try {
+    await accountStore.createAccount({
+      ...newAccountForm.value,
+      opening_balance: Number(newAccountForm.value.opening_balance),
+    })
+    showAddAccountModal.value = false
+    newAccountForm.value = {
+      institution_id: accountStore.institutions[0]?.id || '',
+      name: '',
+      account_type: 'bank',
+      currency: authStore.user?.base_currency || 'MYR',
+      opening_balance: 0,
+      account_number_masked: '',
+      notes: '',
+    }
+  } catch (err: any) {
+    accountError.value = err?.data?.message || err?.message || 'Failed to create account.'
+  } finally {
+    isAccountSubmitting.value = false
+  }
+}
+
+const handleDeleteAccount = async (id: string, name: string) => {
+  if (confirm(`Are you sure you want to remove ${name}?`)) {
+    try {
+      await accountStore.deleteAccount(id)
+    } catch (err: any) {
+      alert(err?.data?.message || 'Failed to delete account.')
+    }
+  }
+}
+
+// Seed a quick 3-account starter portfolio for immediate portfolio demo
+const seedSamplePortfolio = async () => {
+  if (!authStore.isAuthenticated) return
+  isAccountSubmitting.value = true
+  try {
+    const mbb = accountStore.institutions.find(i => i.code === 'MBB')
+    const tng = accountStore.institutions.find(i => i.code === 'TNG')
+    const cimb = accountStore.institutions.find(i => i.code === 'CIMB')
+
+    if (mbb) {
+      await accountStore.createAccount({
+        institution_id: mbb.id,
+        name: 'Maybank Premier Savings',
+        account_type: 'bank',
+        currency: authStore.user?.base_currency || 'MYR',
+        opening_balance: 14250.00,
+        account_number_masked: '••••4198',
+      })
+    }
+    if (tng) {
+      await accountStore.createAccount({
+        institution_id: tng.id,
+        name: 'Touch n Go eWallet',
+        account_type: 'e_wallet',
+        currency: authStore.user?.base_currency || 'MYR',
+        opening_balance: 850.50,
+      })
+    }
+    if (cimb) {
+      await accountStore.createAccount({
+        institution_id: cimb.id,
+        name: 'CIMB Visa Signature',
+        account_type: 'credit_card',
+        currency: authStore.user?.base_currency || 'MYR',
+        opening_balance: 1240.20,
+        account_number_masked: '••••8821',
+      })
+    }
+  } catch (err: any) {
+    console.error('Error seeding portfolio:', err)
+  } finally {
+    isAccountSubmitting.value = false
+  }
+}
+
+const getAccountIcon = (type: string) => {
+  switch (type) {
+    case 'bank':
+      return Building
+    case 'e_wallet':
+      return Smartphone
+    case 'credit_card':
+      return CreditCard
+    case 'cash':
+      return Coins
+    case 'investment':
+      return PiggyBank
+    default:
+      return Wallet
+  }
+}
+
 onMounted(async () => {
-  await Promise.all([checkHealth(), authStore.fetchMe()])
+  await Promise.all([
+    checkHealth(),
+    accountStore.fetchInstitutions(),
+    authStore.fetchMe(),
+  ])
+
+  if (authStore.isAuthenticated) {
+    await accountStore.fetchAccounts()
+  }
 })
 </script>
 
@@ -184,7 +316,7 @@ onMounted(async () => {
           <div>
             <div class="flex items-center space-x-2">
               <span class="font-extrabold text-lg tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">NextOmni Finance</span>
-              <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Phase 2</span>
+              <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Phase 3</span>
             </div>
             <p class="text-[11px] text-slate-400 font-mono">Personal Finance & Budget Platform</p>
           </div>
@@ -273,7 +405,7 @@ onMounted(async () => {
 
     <!-- Main Content -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      <!-- Authenticated User Banner or Hero -->
+      <!-- Authenticated User Banner or Guest Hero -->
       <section v-if="authStore.isAuthenticated" class="p-6 rounded-2xl bg-gradient-to-r from-emerald-950/40 via-slate-900 to-slate-900/60 border border-emerald-500/30 shadow-xl backdrop-blur-md flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div class="flex items-center space-x-4">
           <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
@@ -281,19 +413,24 @@ onMounted(async () => {
           </div>
           <div>
             <div class="flex items-center space-x-2">
-              <h2 class="text-xl font-bold text-white">Welcome back, {{ authStore.user?.name }}</h2>
-              <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Session Active</span>
+              <h2 class="text-xl font-bold text-white">{{ authStore.user?.name }}'s Financial Hub</h2>
+              <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">UUIDv7 Tenant Active</span>
             </div>
             <p class="text-xs text-slate-400 mt-0.5">
-              Base Ledger Currency: <span class="text-emerald-400 font-mono font-bold">{{ authStore.user?.base_currency }}</span> &bull;
-              Account Isolation: <span class="text-slate-300 font-mono">User ID #{{ authStore.user?.id }}</span>
+              Base Ledger: <span class="text-emerald-400 font-mono font-bold">{{ authStore.user?.base_currency }}</span> &bull;
+              User UUID: <span class="text-slate-300 font-mono text-[10px]">{{ authStore.user?.id }}</span>
             </p>
           </div>
         </div>
 
-        <div class="flex items-center space-x-3 text-xs text-slate-400 font-mono">
-          <ShieldCheck class="w-4 h-4 text-emerald-400" />
-          <span>Sanctum Token Authentication Enabled</span>
+        <div class="flex items-center space-x-3">
+          <button
+            @click="openAddAccountModal"
+            class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition flex items-center space-x-2 shadow-lg shadow-emerald-500/20"
+          >
+            <Plus class="w-4 h-4" />
+            <span>Add Financial Account</span>
+          </button>
         </div>
       </section>
 
@@ -305,18 +442,18 @@ onMounted(async () => {
         <div class="relative z-10 max-w-3xl space-y-4">
           <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700 text-xs font-semibold text-emerald-400">
             <Sparkles class="w-3.5 h-3.5" />
-            <span>Architecture & Portfolio Specification</span>
+            <span>Phase 3 — Financial Accounts Domain</span>
           </div>
 
           <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
-            NextOmni Finance — Enterprise Financial Intelligence
+            NextOmni Finance — Multi-Account Ledger & Ingestion Engine
           </h1>
 
           <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
-            Engineered with <span class="text-emerald-400 font-medium">Laravel 11 REST API</span>,
-            <span class="text-emerald-400 font-medium">PostgreSQL 16</span>, and
-            <span class="text-emerald-400 font-medium">Nuxt 3 (TypeScript)</span>. Featuring non-custodial statement ETL,
-            deterministic duplicate detection, and canonical financial normalization.
+            Engineered with <span class="text-emerald-400 font-medium">Laravel 11 (PHP 8.3)</span>,
+            <span class="text-emerald-400 font-medium">PostgreSQL 16 UUIDv7</span>, and
+            <span class="text-emerald-400 font-medium">Nuxt 3</span>. Features strict <code class="text-emerald-400 font-mono">NUMERIC(15, 4)</code>
+            BCMath precision across banking, e-wallets, credit cards, and cash.
           </p>
 
           <div class="flex flex-wrap items-center gap-3 pt-2">
@@ -332,180 +469,183 @@ onMounted(async () => {
               @click="authMode = 'register'; showAuthModal = true"
               class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition"
             >
-              Create Personal Account
+              Create Account
             </button>
           </div>
         </div>
       </section>
 
-      <!-- System Connectivity & Health Grid -->
-      <section class="space-y-4">
-        <div class="flex items-center justify-between">
-          <h2 class="text-lg font-bold text-white flex items-center space-x-2">
-            <Activity class="w-5 h-5 text-emerald-400" />
-            <span>System Health & Authentication Verification</span>
-          </h2>
-          <span class="text-xs text-slate-400 font-mono">Phase 2 Verification</span>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <!-- Backend API Card -->
-          <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700/80 transition space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center space-x-1.5">
-                <Server class="w-4 h-4 text-emerald-400" />
-                <span>Backend Gateway</span>
-              </span>
-              <span
-                class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold"
-                :class="health?.status === 'ok' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-red-500/20 text-red-300 border border-red-500/30'"
-              >
-                {{ health ? health.status.toUpperCase() : 'PENDING' }}
-              </span>
-            </div>
-            <div>
-              <div class="text-xl font-bold text-white">{{ health?.app || 'NextOmni Finance API' }}</div>
-              <p class="text-xs text-slate-400 font-mono mt-0.5">Version: {{ health?.version || '1.0.0' }} (Env: {{ health?.environment || 'local' }})</p>
-            </div>
-            <div class="pt-2 border-t border-slate-800/80 text-xs text-slate-400">
-              Auth Guard: <code class="text-emerald-400 font-mono text-[11px]">Sanctum Bearer Token</code>
-            </div>
-          </div>
-
-          <!-- Database Card -->
-          <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700/80 transition space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center space-x-1.5">
-                <Database class="w-4 h-4 text-emerald-400" />
-                <span>Database Engine</span>
-              </span>
-              <span
-                class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold"
-                :class="health?.database?.status === 'connected' ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/30' : 'bg-amber-500/20 text-amber-300 border border-amber-500/30'"
-              >
-                {{ health?.database?.status ? health.database.status.toUpperCase() : 'CHECKING' }}
-              </span>
-            </div>
-            <div>
-              <div class="text-xl font-bold text-white capitalize">{{ health?.database?.driver || 'PostgreSQL / SQLite' }}</div>
-              <p class="text-xs text-slate-400 font-mono mt-0.5">Numeric(15,4) precision & multi-tenant user schema</p>
-            </div>
-            <div class="pt-2 border-t border-slate-800/80 text-xs text-slate-400">
-              User Isolation: <code class="text-emerald-400 font-mono text-[11px]">users.base_currency (Migrated)</code>
-            </div>
-          </div>
-
-          <!-- Security Card -->
-          <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700/80 transition space-y-3">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider flex items-center space-x-1.5">
-                <ShieldCheck class="w-4 h-4 text-emerald-400" />
-                <span>Security & Rate Limiting</span>
-              </span>
-              <span class="px-2 py-0.5 rounded text-[10px] font-mono font-semibold bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                ENFORCED
-              </span>
-            </div>
-            <div>
-              <div class="text-xl font-bold text-white">5 Attempts / Min</div>
-              <p class="text-xs text-slate-400 font-mono mt-0.5">Brute-force protection & strict password entropy</p>
-            </div>
-            <div class="pt-2 border-t border-slate-800/80 text-xs text-slate-400">
-              Feature Tests: <code class="text-emerald-400 font-mono text-[11px]">13 Passed (58 assertions)</code>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <!-- Preview Financial Metrics (Reactive to Base Currency) -->
+      <!-- Live Financial Metrics Grid (Bound to Real API Aggregations) -->
       <section class="space-y-4">
         <div class="flex items-center justify-between">
           <h2 class="text-lg font-bold text-white flex items-center space-x-2">
             <TrendingUp class="w-5 h-5 text-emerald-400" />
-            <span>Target Portfolio Dashboard (Preview Layout)</span>
+            <span>Portfolio Net Worth & Liquidity Overview</span>
           </h2>
-          <span class="text-xs text-slate-400 font-mono">Base Currency: {{ authStore.user?.base_currency || 'MYR' }}</span>
+          <span class="text-xs text-slate-400 font-mono">Calculated with BCMath Arbitrary Precision</span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <!-- Metric 1 -->
-          <div class="p-5 rounded-xl bg-slate-900/40 border border-slate-800/80 space-y-2">
+          <!-- Total Net Worth Card -->
+          <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition space-y-2">
             <div class="text-xs font-medium text-slate-400">Total Net Worth</div>
-            <div class="text-2xl font-extrabold text-white font-mono">{{ currencySymbol }} 48,250.00</div>
+            <div class="text-2xl font-extrabold text-white font-mono">
+              {{ accountStore.summary ? accountStore.summary.net_worth_formatted : `${currencySymbol} 0.00` }}
+            </div>
             <div class="flex items-center text-xs text-emerald-400 font-medium space-x-1">
               <ArrowUpRight class="w-3.5 h-3.5" />
-              <span>+4.2% from last month</span>
+              <span>Assets minus Liabilities</span>
             </div>
           </div>
 
-          <!-- Metric 2 -->
-          <div class="p-5 rounded-xl bg-slate-900/40 border border-slate-800/80 space-y-2">
-            <div class="text-xs font-medium text-slate-400">Monthly Cash Inflow</div>
-            <div class="text-2xl font-extrabold text-white font-mono">{{ currencySymbol }} 7,500.00</div>
-            <div class="flex items-center text-xs text-emerald-400 font-medium space-x-1">
-              <ArrowUpRight class="w-3.5 h-3.5" />
-              <span>Salary & dividend yield</span>
+          <!-- Liquid Cash & Bank Deposits -->
+          <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition space-y-2">
+            <div class="text-xs font-medium text-slate-400">Bank Deposits</div>
+            <div class="text-2xl font-extrabold text-white font-mono">
+              {{ currencySymbol }} {{ accountStore.summary ? accountStore.summary.breakdown.bank : '0.00' }}
+            </div>
+            <div class="flex items-center text-xs text-slate-400 font-medium space-x-1">
+              <Building class="w-3.5 h-3.5 text-blue-400" />
+              <span>Checking & Savings</span>
             </div>
           </div>
 
-          <!-- Metric 3 -->
-          <div class="p-5 rounded-xl bg-slate-900/40 border border-slate-800/80 space-y-2">
-            <div class="text-xs font-medium text-slate-400">Monthly Expenses</div>
-            <div class="text-2xl font-extrabold text-white font-mono">{{ currencySymbol }} 3,820.45</div>
-            <div class="flex items-center text-xs text-amber-400 font-medium space-x-1">
-              <ArrowDownLeft class="w-3.5 h-3.5" />
-              <span>50.9% of total income</span>
+          <!-- E-Wallets & Digital Cash -->
+          <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition space-y-2">
+            <div class="text-xs font-medium text-slate-400">E-Wallets & Digital Cash</div>
+            <div class="text-2xl font-extrabold text-white font-mono">
+              {{ currencySymbol }} {{ accountStore.summary ? accountStore.summary.breakdown.e_wallet : '0.00' }}
+            </div>
+            <div class="flex items-center text-xs text-slate-400 font-medium space-x-1">
+              <Smartphone class="w-3.5 h-3.5 text-emerald-400" />
+              <span>TNG, GrabPay, ShopeePay</span>
             </div>
           </div>
 
-          <!-- Metric 4 -->
-          <div class="p-5 rounded-xl bg-slate-900/40 border border-slate-800/80 space-y-2">
-            <div class="text-xs font-medium text-slate-400">Savings Rate</div>
-            <div class="text-2xl font-extrabold text-emerald-400 font-mono">49.1%</div>
-            <div class="flex items-center text-xs text-slate-400 space-x-1">
-              <span>Target: &gt; 40.0%</span>
+          <!-- Liabilities (Credit Cards & Loans) -->
+          <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition space-y-2">
+            <div class="text-xs font-medium text-slate-400">Credit Card Debt</div>
+            <div class="text-2xl font-extrabold text-amber-400 font-mono">
+              {{ currencySymbol }} {{ accountStore.summary ? accountStore.summary.breakdown.credit_card : '0.00' }}
+            </div>
+            <div class="flex items-center text-xs text-amber-400/80 space-x-1">
+              <CreditCard class="w-3.5 h-3.5" />
+              <span>Deducted from Net Worth</span>
             </div>
           </div>
         </div>
       </section>
 
-      <!-- Malaysian Financial Connectors & Institutions Preview -->
+      <!-- User's Financial Accounts Grid (Phase 3 Core Feature) -->
+      <section v-if="authStore.isAuthenticated" class="space-y-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <Wallet class="w-5 h-5 text-emerald-400" />
+            <h2 class="text-lg font-bold text-white">Your Financial Accounts ({{ accountStore.accounts.length }})</h2>
+          </div>
+          <button
+            @click="openAddAccountModal"
+            class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 transition flex items-center space-x-1"
+          >
+            <Plus class="w-3.5 h-3.5" />
+            <span>Add Account</span>
+          </button>
+        </div>
+
+        <!-- Account Cards -->
+        <div v-if="accountStore.accounts.length > 0" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div
+            v-for="acc in accountStore.accounts"
+            :key="acc.id"
+            class="p-5 rounded-xl bg-slate-900/70 border border-slate-800 hover:border-slate-700 transition relative group space-y-4"
+          >
+            <div class="flex items-start justify-between">
+              <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-emerald-400">
+                  <component :is="getAccountIcon(acc.account_type)" class="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 class="font-bold text-sm text-white">{{ acc.name }}</h3>
+                  <p class="text-xs text-slate-400 flex items-center space-x-1.5 mt-0.5">
+                    <span>{{ acc.institution?.name || 'Manual Account' }}</span>
+                    <span v-if="acc.account_number_masked" class="font-mono text-[11px] text-slate-500">({{ acc.account_number_masked }})</span>
+                  </p>
+                </div>
+              </div>
+
+              <!-- Delete button -->
+              <button
+                @click="handleDeleteAccount(acc.id, acc.name)"
+                class="p-1.5 rounded-lg text-slate-500 hover:text-red-400 hover:bg-slate-800 opacity-0 group-hover:opacity-100 transition"
+                title="Remove Account"
+              >
+                <Trash2 class="w-4 h-4" />
+              </button>
+            </div>
+
+            <div class="pt-2 border-t border-slate-800/80 flex items-end justify-between">
+              <div>
+                <span class="text-[10px] uppercase tracking-wider text-slate-400 font-semibold block">Balance</span>
+                <span class="text-xl font-extrabold font-mono" :class="acc.account_type === 'credit_card' ? 'text-amber-400' : 'text-white'">
+                  {{ acc.current_balance_formatted }}
+                </span>
+              </div>
+              <span class="px-2 py-0.5 rounded text-[10px] font-mono font-medium uppercase bg-slate-800 text-slate-400 border border-slate-700/60">
+                {{ acc.account_type }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Empty State for Authenticated User with no accounts -->
+        <div v-else class="p-8 rounded-2xl bg-slate-900/40 border border-dashed border-slate-800 text-center space-y-4">
+          <div class="w-12 h-12 rounded-2xl bg-slate-800/80 mx-auto flex items-center justify-center text-slate-400">
+            <Wallet class="w-6 h-6" />
+          </div>
+          <div class="space-y-1">
+            <h3 class="text-base font-bold text-white">No Financial Accounts Configured Yet</h3>
+            <p class="text-xs text-slate-400 max-w-md mx-auto">
+              Add your Malaysian bank accounts (Maybank, CIMB), e-wallets (TNG, GrabPay), or physical cash to track your net worth.
+            </p>
+          </div>
+          <div class="flex items-center justify-center space-x-3 pt-2">
+            <button
+              @click="openAddAccountModal"
+              class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition flex items-center space-x-2"
+            >
+              <Plus class="w-4 h-4" />
+              <span>Add Your First Account</span>
+            </button>
+            <button
+              @click="seedSamplePortfolio"
+              :disabled="isAccountSubmitting"
+              class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition"
+            >
+              Seed Sample Portfolio (Maybank + TNG + CIMB)
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- Malaysian Financial Institutions Directory -->
       <section class="p-6 rounded-2xl bg-slate-900/50 border border-slate-800 space-y-4">
-        <h3 class="text-base font-bold text-white">Supported Malaysian Institutions & Connector Architecture</h3>
-        <p class="text-xs text-slate-400 leading-relaxed">
-          Standardized via the <code class="text-emerald-400 font-mono">FinancialConnectorInterface</code> with non-custodial CSV statement parsing (M2U, CIMB Clicks, TNG eWallet, GrabPay) and deterministic deduplication.
-        </p>
+        <div class="flex items-center justify-between">
+          <h3 class="text-base font-bold text-white">Supported Institutions & Connectors ({{ accountStore.institutions.length }})</h3>
+          <span class="text-xs text-slate-400 font-mono">SE Asia Financial Registry</span>
+        </div>
 
         <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
-          <div class="p-3 rounded-lg bg-slate-800/40 border border-slate-700/50 flex items-center space-x-3">
-            <div class="w-8 h-8 rounded-md bg-yellow-500/20 text-yellow-400 flex items-center justify-center font-bold text-xs">MB</div>
-            <div>
-              <div class="text-xs font-semibold text-white">Maybank</div>
-              <div class="text-[10px] text-slate-400 font-mono">M2U CSV Parser</div>
+          <div
+            v-for="inst in accountStore.institutions"
+            :key="inst.id"
+            class="p-3 rounded-lg bg-slate-800/40 border border-slate-700/50 flex items-center space-x-3"
+          >
+            <div class="w-8 h-8 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 flex items-center justify-center font-bold text-xs font-mono">
+              {{ inst.code.slice(0, 4) }}
             </div>
-          </div>
-
-          <div class="p-3 rounded-lg bg-slate-800/40 border border-slate-700/50 flex items-center space-x-3">
-            <div class="w-8 h-8 rounded-md bg-red-500/20 text-red-400 flex items-center justify-center font-bold text-xs">CIMB</div>
-            <div>
-              <div class="text-xs font-semibold text-white">CIMB Bank</div>
-              <div class="text-[10px] text-slate-400 font-mono">Clicks Statement</div>
-            </div>
-          </div>
-
-          <div class="p-3 rounded-lg bg-slate-800/40 border border-slate-700/50 flex items-center space-x-3">
-            <div class="w-8 h-8 rounded-md bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold text-xs">TNG</div>
-            <div>
-              <div class="text-xs font-semibold text-white">TNG eWallet</div>
-              <div class="text-[10px] text-slate-400 font-mono">Statement Parser</div>
-            </div>
-          </div>
-
-          <div class="p-3 rounded-lg bg-slate-800/40 border border-slate-700/50 flex items-center space-x-3">
-            <div class="w-8 h-8 rounded-md bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold text-xs">GRAB</div>
-            <div>
-              <div class="text-xs font-semibold text-white">GrabPay</div>
-              <div class="text-[10px] text-slate-400 font-mono">Activity Export</div>
+            <div class="overflow-hidden">
+              <div class="text-xs font-semibold text-white truncate">{{ inst.name }}</div>
+              <div class="text-[10px] text-slate-400 font-mono">Country: {{ inst.country }}</div>
             </div>
           </div>
         </div>
@@ -530,7 +670,6 @@ onMounted(async () => {
           <X class="w-5 h-5" />
         </button>
 
-        <!-- Modal Header / Tabs -->
         <div class="space-y-3">
           <div class="flex items-center space-x-2">
             <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
@@ -559,7 +698,6 @@ onMounted(async () => {
           </div>
         </div>
 
-        <!-- Alert messages -->
         <div v-if="authError" class="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-300 flex items-start space-x-2">
           <AlertCircle class="w-4 h-4 flex-shrink-0 mt-0.5 text-red-400" />
           <span>{{ authError }}</span>
@@ -665,7 +803,6 @@ onMounted(async () => {
           </button>
         </form>
 
-        <!-- Quick Demo Session Option -->
         <div class="pt-4 border-t border-slate-800 text-center">
           <p class="text-xs text-slate-400 mb-2">Need a quick preview for review?</p>
           <button
@@ -677,6 +814,130 @@ onMounted(async () => {
             Launch Instant Demo Account
           </button>
         </div>
+      </div>
+    </div>
+
+    <!-- Add Account Modal -->
+    <div
+      v-if="showAddAccountModal"
+      class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4"
+    >
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl relative space-y-6">
+        <button
+          @click="showAddAccountModal = false"
+          class="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+        >
+          <X class="w-5 h-5" />
+        </button>
+
+        <div class="space-y-1">
+          <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+            <Plus class="w-5 h-5 text-emerald-400" />
+            <span>Add Financial Account</span>
+          </h3>
+          <p class="text-xs text-slate-400">Configure a bank, e-wallet, or credit card ledger</p>
+        </div>
+
+        <div v-if="accountError" class="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-300 flex items-start space-x-2">
+          <AlertCircle class="w-4 h-4 flex-shrink-0 mt-0.5 text-red-400" />
+          <span>{{ accountError }}</span>
+        </div>
+
+        <form @submit.prevent="handleCreateAccount" class="space-y-4">
+          <!-- Financial Institution Selector -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-medium text-slate-300">Financial Institution</label>
+            <select
+              v-model="newAccountForm.institution_id"
+              required
+              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500"
+            >
+              <option
+                v-for="inst in accountStore.institutions"
+                :key="inst.id"
+                :value="inst.id"
+              >
+                {{ inst.name }} ({{ inst.code }})
+              </option>
+            </select>
+          </div>
+
+          <!-- Account Name -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-medium text-slate-300">Account Label</label>
+            <input
+              v-model="newAccountForm.name"
+              type="text"
+              required
+              placeholder="e.g. Maybank Premier Savings"
+              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+            />
+          </div>
+
+          <!-- Account Type -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-medium text-slate-300">Account Category</label>
+            <select
+              v-model="newAccountForm.account_type"
+              required
+              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500"
+            >
+              <option value="bank">Bank Account (Checking / Savings)</option>
+              <option value="e_wallet">E-Wallet (TNG, GrabPay, ShopeePay)</option>
+              <option value="credit_card">Credit Card (Liability)</option>
+              <option value="cash">Physical Cash / Wallet</option>
+              <option value="investment">Investment / Brokerage</option>
+              <option value="loan">Loan / Mortgage</option>
+            </select>
+          </div>
+
+          <!-- Opening Balance & Currency -->
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1.5">
+              <label class="text-xs font-medium text-slate-300">Opening Balance</label>
+              <input
+                v-model.number="newAccountForm.opening_balance"
+                type="number"
+                step="0.01"
+                required
+                class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white font-mono focus:outline-none focus:border-emerald-500"
+              />
+            </div>
+            <div class="space-y-1.5">
+              <label class="text-xs font-medium text-slate-300">Currency</label>
+              <select
+                v-model="newAccountForm.currency"
+                class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500"
+              >
+                <option value="MYR">MYR</option>
+                <option value="SGD">SGD</option>
+                <option value="USD">USD</option>
+                <option value="EUR">EUR</option>
+                <option value="GBP">GBP</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Masked Number (Optional) -->
+          <div class="space-y-1.5">
+            <label class="text-xs font-medium text-slate-300">Masked Account Number (Optional)</label>
+            <input
+              v-model="newAccountForm.account_number_masked"
+              type="text"
+              placeholder="e.g. ••••4198"
+              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
+            />
+          </div>
+
+          <button
+            type="submit"
+            :disabled="isAccountSubmitting"
+            class="w-full py-2.5 rounded-lg text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition flex items-center justify-center space-x-2 disabled:opacity-50"
+          >
+            <RefreshCw v-if="isAccountSubmitting" class="w-4 h-4 animate-spin" />
+            <span>{{ isAccountSubmitting ? 'Provisioning Account...' : 'Confirm & Create Account' }}</span>
+          </button>
+        </form>
       </div>
     </div>
   </div>
