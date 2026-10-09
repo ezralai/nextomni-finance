@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useAuthStore } from '~/stores/auth'
 import { useAccountStore } from '~/stores/accounts'
 import { useTransactionStore } from '~/stores/transactions'
 import { useBudgetStore } from '~/stores/budgets'
+import { useCurrencyStore, type ConversionResult } from '~/stores/currencies'
 import {
   Wallet,
   ArrowUpRight,
@@ -42,9 +43,9 @@ import {
   ReceiptText,
   DollarSign,
   Target,
-  PieChart,
   BarChart3,
   Percent,
+  ArrowLeftRight,
 } from 'lucide-vue-next'
 
 const config = useRuntimeConfig()
@@ -53,6 +54,7 @@ const authStore = useAuthStore()
 const accountStore = useAccountStore()
 const transactionStore = useTransactionStore()
 const budgetStore = useBudgetStore()
+const currencyStore = useCurrencyStore()
 
 interface HealthResponse {
   status: string
@@ -136,6 +138,16 @@ const newBudgetForm = ref({
   end_date: lastDayOfMonth,
   notes: '',
 })
+
+// FX Converter Modal State
+const showConverterModal = ref(false)
+const converterForm = ref({
+  amount: 100,
+  from: 'USD',
+  to: 'MYR',
+})
+const conversionResult = ref<ConversionResult | null>(null)
+const converterError = ref<string | null>(null)
 
 // Transaction Filter State
 const filterType = ref<'all' | 'income' | 'expense' | 'transfer'>('all')
@@ -411,6 +423,30 @@ const handleDeleteBudget = async (id: string, catName: string) => {
   }
 }
 
+// FX Converter Handlers
+const openConverterModal = () => {
+  converterForm.value.from = 'USD'
+  converterForm.value.to = authStore.user?.base_currency || 'MYR'
+  converterForm.value.amount = 100
+  conversionResult.value = null
+  converterError.value = null
+  showConverterModal.value = true
+  runConversion()
+}
+
+const runConversion = async () => {
+  converterError.value = null
+  try {
+    conversionResult.value = await currencyStore.convert(
+      converterForm.value.amount,
+      converterForm.value.from,
+      converterForm.value.to
+    )
+  } catch (err: any) {
+    converterError.value = err.message || 'Conversion failed.'
+  }
+}
+
 const applyTransactionFilters = () => {
   transactionStore.fetchTransactions({
     type: filterType.value === 'all' ? undefined : filterType.value,
@@ -419,7 +455,7 @@ const applyTransactionFilters = () => {
   })
 }
 
-// Seed a quick 3-account starter portfolio with real transactions and budgets
+// Seed a quick 4-account starter portfolio with foreign multi-currency account
 const seedSamplePortfolio = async () => {
   if (!authStore.isAuthenticated) return
   isAccountSubmitting.value = true
@@ -428,35 +464,49 @@ const seedSamplePortfolio = async () => {
     const tng = accountStore.institutions.find(i => i.code === 'TNG')
     const cimb = accountStore.institutions.find(i => i.code === 'CIMB')
 
-    let mbbAcc, tngAcc, cimbAcc
+    let mbbAcc, tngAcc, cimbAcc, foreignAcc
 
+    // 1. Maybank MYR (RM 14,250.00)
     if (mbb) {
       mbbAcc = await accountStore.createAccount({
         institution_id: mbb.id,
         name: 'Maybank Premier Savings',
         account_type: 'bank',
-        currency: authStore.user?.base_currency || 'MYR',
+        currency: 'MYR',
         opening_balance: 14250.00,
         account_number_masked: '••••4198',
       })
     }
+    // 2. TNG E-Wallet (RM 850.50)
     if (tng) {
       tngAcc = await accountStore.createAccount({
         institution_id: tng.id,
         name: 'Touch n Go eWallet',
         account_type: 'e_wallet',
-        currency: authStore.user?.base_currency || 'MYR',
+        currency: 'MYR',
         opening_balance: 850.50,
       })
     }
+    // 3. CIMB Visa (RM 1,240.20 debt)
     if (cimb) {
       cimbAcc = await accountStore.createAccount({
         institution_id: cimb.id,
         name: 'CIMB Visa Signature',
         account_type: 'credit_card',
-        currency: authStore.user?.base_currency || 'MYR',
+        currency: 'MYR',
         opening_balance: 1240.20,
         account_number_masked: '••••8821',
+      })
+    }
+    // 4. US Brokerage in USD ($1,500.00 USD)
+    if (mbb) {
+      foreignAcc = await accountStore.createAccount({
+        institution_id: mbb.id,
+        name: 'Interactive Brokers Global',
+        account_type: 'investment',
+        currency: 'USD',
+        opening_balance: 1500.00,
+        account_number_masked: '••••9902',
       })
     }
 
@@ -537,11 +587,13 @@ const seedSamplePortfolio = async () => {
 
 const refreshDashboard = async () => {
   if (authStore.isAuthenticated) {
+    const baseCur = authStore.user?.base_currency || 'MYR'
     await Promise.all([
       accountStore.fetchAccounts(),
       transactionStore.fetchCategories(),
       budgetStore.fetchBudgets(),
       budgetStore.fetchCashFlow(),
+      currencyStore.fetchRates(baseCur),
       applyTransactionFilters(),
     ])
   }
@@ -583,6 +635,7 @@ onMounted(async () => {
   await Promise.all([
     checkHealth(),
     accountStore.fetchInstitutions(),
+    currencyStore.fetchRates('MYR'),
     authStore.fetchMe(),
   ])
 
@@ -604,9 +657,9 @@ onMounted(async () => {
           <div>
             <div class="flex items-center space-x-2">
               <span class="font-extrabold text-lg tracking-tight bg-gradient-to-r from-white via-slate-100 to-slate-400 bg-clip-text text-transparent">NextOmni Finance</span>
-              <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Phase 5 Active</span>
+              <span class="px-2 py-0.5 text-xs font-semibold rounded-full bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">Phase 6 Active</span>
             </div>
-            <p class="text-[11px] text-slate-400 font-mono">Enterprise Financial Architecture</p>
+            <p class="text-[11px] text-slate-400 font-mono">Multi-Currency Financial Architecture</p>
           </div>
         </div>
 
@@ -629,6 +682,16 @@ onMounted(async () => {
             <span>{{ health?.status === 'ok' ? 'Backend Online' : (isHealthLoading ? 'Connecting...' : 'API Offline') }}</span>
             <span v-if="responseTimeMs !== null" class="text-[10px] text-slate-400 font-mono">({{ responseTimeMs }}ms)</span>
           </div>
+
+          <!-- FX Converter Quick Button -->
+          <button
+            @click="openConverterModal"
+            class="px-2.5 py-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700/80 text-sky-400 hover:text-sky-300 transition border border-slate-700/60 text-xs font-semibold flex items-center space-x-1.5"
+            title="Real-time Foreign Exchange Converter"
+          >
+            <ArrowLeftRight class="w-3.5 h-3.5" />
+            <span class="hidden md:inline">FX Rates</span>
+          </button>
 
           <button
             @click="checkHealth"
@@ -654,7 +717,7 @@ onMounted(async () => {
                 @change="handleCurrencyChange(($event.target as HTMLSelectElement).value)"
                 :disabled="isUpdatingCurrency"
                 class="bg-slate-900 border border-slate-700 text-emerald-400 text-xs rounded px-1.5 py-0.5 font-mono cursor-pointer focus:outline-none focus:border-emerald-500"
-                title="Change Base Currency"
+                title="Change Base Ledger Currency"
               >
                 <option value="MYR">MYR</option>
                 <option value="SGD">SGD</option>
@@ -702,10 +765,10 @@ onMounted(async () => {
           <div>
             <div class="flex items-center space-x-2">
               <h2 class="text-xl font-bold text-white">{{ authStore.user?.name }}'s Financial Hub</h2>
-              <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Double-Entry & Budgets</span>
+              <span class="px-2 py-0.5 rounded text-[11px] font-mono bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">Multi-Currency FX Engine</span>
             </div>
             <p class="text-xs text-slate-400 mt-0.5">
-              Ledger: <span class="text-emerald-400 font-mono font-bold">{{ authStore.user?.base_currency }}</span> &bull;
+              Base Ledger: <span class="text-emerald-400 font-mono font-bold">{{ authStore.user?.base_currency }}</span> &bull;
               Accounts: <span class="text-slate-200 font-mono">{{ accountStore.accounts.length }}</span> &bull;
               Budgets: <span class="text-slate-200 font-mono">{{ budgetStore.budgets.length }}</span> &bull;
               Transactions: <span class="text-slate-200 font-mono">{{ transactionStore.meta.total }}</span>
@@ -713,7 +776,7 @@ onMounted(async () => {
           </div>
         </div>
 
-        <!-- Quick Transaction, Transfer, and Budget Action Buttons -->
+        <!-- Quick Financial Action Buttons -->
         <div class="flex flex-wrap items-center gap-2">
           <button
             @click="openAddTransactionModal('expense')"
@@ -768,18 +831,18 @@ onMounted(async () => {
         <div class="relative z-10 max-w-3xl space-y-4">
           <div class="inline-flex items-center space-x-2 px-3 py-1 rounded-full bg-slate-800/80 border border-slate-700 text-xs font-semibold text-emerald-400">
             <Sparkles class="w-3.5 h-3.5" />
-            <span>Phase 5 — Spending Budgets & Real-time Analytics</span>
+            <span>Phase 6 — Multi-Currency FX Engine & Real-Time Portfolio Consolidation</span>
           </div>
 
           <h1 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-white leading-tight">
-            NextOmni Finance — High-Precision Personal Financial Architecture
+            NextOmni Finance — Enterprise Multi-Currency Financial Architecture
           </h1>
 
           <p class="text-slate-300 text-sm sm:text-base leading-relaxed">
             Engineered with <span class="text-emerald-400 font-medium">Laravel 11 (PHP 8.3)</span>,
             <span class="text-emerald-400 font-medium">PostgreSQL 16 UUIDv7</span>, and
-            <span class="text-emerald-400 font-medium">Nuxt 3</span>. Features strict <code class="text-emerald-400 font-mono">NUMERIC(15, 4)</code>
-            BCMath precision, SHA-256 deduplication, atomic double-entry transfers, and real-time category budget tracking.
+            <span class="text-emerald-400 font-medium">Nuxt 3</span>. Features strict <code class="text-emerald-400 font-mono">NUMERIC(15, 6)</code>
+            FX rates, automated cross-currency triangulation, and consolidated multi-currency net worth tracking across ASEAN & global assets.
           </p>
 
           <div class="flex flex-wrap items-center gap-3 pt-2">
@@ -801,26 +864,26 @@ onMounted(async () => {
         </div>
       </section>
 
-      <!-- Live Financial Metrics Grid (Bound to Real API Aggregations) -->
+      <!-- Live Financial Metrics Grid (Bound to Real API Aggregations with Multi-Currency Consolidation) -->
       <section class="space-y-4">
         <div class="flex items-center justify-between">
           <h2 class="text-lg font-bold text-white flex items-center space-x-2">
             <TrendingUp class="w-5 h-5 text-emerald-400" />
-            <span>Portfolio Net Worth & Liquidity Overview</span>
+            <span>Consolidated Portfolio Net Worth & Liquidity (In {{ authStore.user?.base_currency || 'MYR' }})</span>
           </h2>
-          <span class="text-xs text-slate-400 font-mono">Calculated with BCMath Arbitrary Precision</span>
+          <span class="text-xs text-slate-400 font-mono">Multi-Currency Consolidated with BCMath Arbitrary Precision</span>
         </div>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <!-- Total Net Worth Card -->
           <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition space-y-2">
-            <div class="text-xs font-medium text-slate-400">Total Net Worth</div>
+            <div class="text-xs font-medium text-slate-400">Total Consolidated Net Worth</div>
             <div class="text-2xl font-extrabold text-white font-mono">
               {{ accountStore.summary ? accountStore.summary.net_worth_formatted : `${currencySymbol} 0.00` }}
             </div>
             <div class="flex items-center text-xs text-emerald-400 font-medium space-x-1">
               <ArrowUpRight class="w-3.5 h-3.5" />
-              <span>Assets minus Liabilities</span>
+              <span>Consolidated Assets &minus; Liabilities</span>
             </div>
           </div>
 
@@ -836,15 +899,15 @@ onMounted(async () => {
             </div>
           </div>
 
-          <!-- E-Wallets & Digital Cash -->
+          <!-- Investments -->
           <div class="p-5 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-slate-700 transition space-y-2">
-            <div class="text-xs font-medium text-slate-400">E-Wallets & Digital Cash</div>
-            <div class="text-2xl font-extrabold text-white font-mono">
-              {{ currencySymbol }} {{ accountStore.summary ? accountStore.summary.breakdown.e_wallet : '0.00' }}
+            <div class="text-xs font-medium text-slate-400">Global Investments & Brokerage</div>
+            <div class="text-2xl font-extrabold text-sky-400 font-mono">
+              {{ currencySymbol }} {{ accountStore.summary ? accountStore.summary.breakdown.investment : '0.00' }}
             </div>
-            <div class="flex items-center text-xs text-slate-400 font-medium space-x-1">
-              <Smartphone class="w-3.5 h-3.5 text-emerald-400" />
-              <span>TNG, GrabPay, ShopeePay</span>
+            <div class="flex items-center text-xs text-sky-400/80 space-x-1">
+              <PiggyBank class="w-3.5 h-3.5" />
+              <span>Foreign FX Consolidated</span>
             </div>
           </div>
 
@@ -862,7 +925,7 @@ onMounted(async () => {
         </div>
       </section>
 
-      <!-- Cash Flow & Monthly Analytics (Phase 5 Feature) -->
+      <!-- Cash Flow & Monthly Analytics -->
       <section v-if="authStore.isAuthenticated && budgetStore.cashFlow" class="p-6 rounded-2xl bg-slate-900/60 border border-slate-800 space-y-6">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
@@ -879,7 +942,6 @@ onMounted(async () => {
           </div>
         </div>
 
-        <!-- 3-Column Cash Flow Breakdown -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div class="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-1">
             <span class="text-xs text-slate-400 font-medium">Total Inflows (Income)</span>
@@ -930,7 +992,7 @@ onMounted(async () => {
         </div>
       </section>
 
-      <!-- Budgets & Spending Progress (Phase 5 Core Feature) -->
+      <!-- Budgets & Spending Progress -->
       <section v-if="authStore.isAuthenticated" class="space-y-4">
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-2">
@@ -1014,7 +1076,6 @@ onMounted(async () => {
           </div>
         </div>
 
-        <!-- Empty State for Budgets -->
         <div v-else class="p-8 rounded-2xl bg-slate-900/40 border border-dashed border-slate-800 text-center space-y-3">
           <div class="w-12 h-12 rounded-2xl bg-slate-800/80 mx-auto flex items-center justify-center text-slate-400">
             <Target class="w-6 h-6" />
@@ -1037,7 +1098,7 @@ onMounted(async () => {
         </div>
       </section>
 
-      <!-- User's Financial Accounts Grid -->
+      <!-- User's Financial Accounts Grid (With Multi-Currency FX Tags) -->
       <section v-if="authStore.isAuthenticated" class="space-y-4">
         <div class="flex items-center justify-between">
           <div class="flex items-center space-x-2">
@@ -1090,10 +1151,22 @@ onMounted(async () => {
                 <span class="text-xl font-extrabold font-mono" :class="acc.account_type === 'credit_card' ? 'text-amber-400' : 'text-white'">
                   {{ acc.current_balance_formatted }}
                 </span>
+                <!-- FX tag if account is in foreign currency -->
+                <span
+                  v-if="acc.currency !== authStore.user?.base_currency"
+                  class="block text-[11px] text-sky-400 font-mono mt-0.5"
+                >
+                  &asymp; Multi-Currency FX Consolidated
+                </span>
               </div>
-              <span class="px-2 py-0.5 rounded text-[10px] font-mono font-medium uppercase bg-slate-800 text-slate-400 border border-slate-700/60">
-                {{ acc.account_type }}
-              </span>
+              <div class="flex flex-col items-end space-y-1">
+                <span class="px-2 py-0.5 rounded text-[10px] font-mono font-medium uppercase bg-slate-800 text-slate-400 border border-slate-700/60">
+                  {{ acc.account_type }}
+                </span>
+                <span class="px-1.5 py-0.5 rounded text-[9px] font-mono font-bold bg-sky-500/10 text-sky-400 border border-sky-500/20">
+                  {{ acc.currency }}
+                </span>
+              </div>
             </div>
           </div>
         </div>
@@ -1106,7 +1179,7 @@ onMounted(async () => {
           <div class="space-y-1">
             <h3 class="text-base font-bold text-white">No Financial Accounts Configured Yet</h3>
             <p class="text-xs text-slate-400 max-w-md mx-auto">
-              Add your Malaysian bank accounts (Maybank, CIMB), e-wallets (TNG, GrabPay), or physical cash to track your net worth.
+              Add your Malaysian bank accounts (Maybank, CIMB), global investments (USD), or e-wallets (TNG) to track your consolidated net worth.
             </p>
           </div>
           <div class="flex items-center justify-center space-x-3 pt-2">
@@ -1122,13 +1195,13 @@ onMounted(async () => {
               :disabled="isAccountSubmitting"
               class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition"
             >
-              Seed Sample Portfolio & Activity
+              Seed Sample Portfolio & Multi-Currency Assets
             </button>
           </div>
         </div>
       </section>
 
-      <!-- Transaction Ledger & Feed (Phase 4 Feature) -->
+      <!-- Transaction Ledger & Feed -->
       <section v-if="authStore.isAuthenticated" class="space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div class="flex items-center space-x-2">
@@ -1158,7 +1231,7 @@ onMounted(async () => {
             >
               <option value="">All Accounts</option>
               <option v-for="acc in accountStore.accounts" :key="acc.id" :value="acc.id">
-                {{ acc.name }}
+                {{ acc.name }} ({{ acc.currency }})
               </option>
             </select>
 
@@ -1273,7 +1346,6 @@ onMounted(async () => {
           </div>
         </div>
 
-        <!-- Empty State for Transactions -->
         <div v-else class="p-8 rounded-2xl bg-slate-900/40 border border-dashed border-slate-800 text-center space-y-3">
           <div class="w-12 h-12 rounded-2xl bg-slate-800/80 mx-auto flex items-center justify-center text-slate-400">
             <ReceiptText class="w-6 h-6" />
@@ -1509,7 +1581,7 @@ onMounted(async () => {
             <Plus class="w-5 h-5 text-emerald-400" />
             <span>Add Financial Account</span>
           </h3>
-          <p class="text-xs text-slate-400">Configure a bank, e-wallet, or credit card ledger</p>
+          <p class="text-xs text-slate-400">Configure a bank, e-wallet, or foreign currency ledger</p>
         </div>
 
         <div v-if="accountError" class="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-300 flex items-start space-x-2">
@@ -1541,7 +1613,7 @@ onMounted(async () => {
               v-model="newAccountForm.name"
               type="text"
               required
-              placeholder="e.g. Maybank Premier Savings"
+              placeholder="e.g. Maybank Premier Savings / US Brokerage"
               class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
             />
           </div>
@@ -1574,7 +1646,7 @@ onMounted(async () => {
               />
             </div>
             <div class="space-y-1.5">
-              <label class="text-xs font-medium text-slate-300">Currency</label>
+              <label class="text-xs font-medium text-slate-300">Account Currency</label>
               <select
                 v-model="newAccountForm.currency"
                 class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500"
@@ -1664,7 +1736,7 @@ onMounted(async () => {
               class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500"
             >
               <option v-for="acc in accountStore.accounts" :key="acc.id" :value="acc.id">
-                {{ acc.name }} &mdash; Balance: {{ acc.current_balance_formatted }}
+                {{ acc.name }} ({{ acc.currency }}) &mdash; Balance: {{ acc.current_balance_formatted }}
               </option>
             </select>
           </div>
@@ -1787,7 +1859,7 @@ onMounted(async () => {
               class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-sky-500"
             >
               <option v-for="acc in accountStore.accounts" :key="acc.id" :value="acc.id">
-                {{ acc.name }} &mdash; Balance: {{ acc.current_balance_formatted }}
+                {{ acc.name }} ({{ acc.currency }}) &mdash; Balance: {{ acc.current_balance_formatted }}
               </option>
             </select>
           </div>
@@ -1804,7 +1876,7 @@ onMounted(async () => {
                 :key="acc.id"
                 :value="acc.id"
               >
-                {{ acc.name }} &mdash; Balance: {{ acc.current_balance_formatted }}
+                {{ acc.name }} ({{ acc.currency }}) &mdash; Balance: {{ acc.current_balance_formatted }}
               </option>
             </select>
           </div>
@@ -1873,7 +1945,7 @@ onMounted(async () => {
       </div>
     </div>
 
-    <!-- Set Budget Modal (Phase 5 Feature) -->
+    <!-- Set Budget Modal -->
     <div
       v-if="showBudgetModal"
       class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4"
@@ -1900,7 +1972,6 @@ onMounted(async () => {
         </div>
 
         <form @submit.prevent="handleCreateBudget" class="space-y-4">
-          <!-- Category Selector -->
           <div class="space-y-1.5">
             <label class="text-xs font-medium text-slate-300">Expense Category</label>
             <select
@@ -1918,7 +1989,6 @@ onMounted(async () => {
             </select>
           </div>
 
-          <!-- Budget Amount -->
           <div class="space-y-1.5">
             <label class="text-xs font-medium text-slate-300">Spending Cap Limit</label>
             <div class="relative">
@@ -1935,7 +2005,6 @@ onMounted(async () => {
             </div>
           </div>
 
-          <!-- Date Interval -->
           <div class="grid grid-cols-2 gap-3">
             <div class="space-y-1.5">
               <label class="text-xs font-medium text-slate-300">Start Date</label>
@@ -1957,7 +2026,6 @@ onMounted(async () => {
             </div>
           </div>
 
-          <!-- Notes -->
           <div class="space-y-1.5">
             <label class="text-xs font-medium text-slate-300">Optional Notes</label>
             <input
@@ -1977,6 +2045,95 @@ onMounted(async () => {
             <span>{{ budgetStore.isSubmitting ? 'Establishing Limit...' : 'Confirm & Set Budget Cap' }}</span>
           </button>
         </form>
+      </div>
+    </div>
+
+    <!-- Real-Time Foreign Exchange (FX) Converter Modal -->
+    <div
+      v-if="showConverterModal"
+      class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4"
+    >
+      <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl relative space-y-6">
+        <button
+          @click="showConverterModal = false"
+          class="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
+        >
+          <X class="w-5 h-5" />
+        </button>
+
+        <div class="space-y-1">
+          <h3 class="text-lg font-bold text-white flex items-center space-x-2">
+            <ArrowLeftRight class="w-5 h-5 text-sky-400" />
+            <span>Foreign Exchange (FX) Rate Engine</span>
+          </h3>
+          <p class="text-xs text-slate-400">Strict 6-decimal arbitrary precision currency conversion</p>
+        </div>
+
+        <div v-if="converterError" class="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-300 flex items-start space-x-2">
+          <AlertCircle class="w-4 h-4 flex-shrink-0 mt-0.5 text-red-400" />
+          <span>{{ converterError }}</span>
+        </div>
+
+        <form @submit.prevent="runConversion" class="space-y-4">
+          <div class="space-y-1.5">
+            <label class="text-xs font-medium text-slate-300">Amount to Convert</label>
+            <input
+              v-model.number="converterForm.amount"
+              @input="runConversion"
+              type="number"
+              step="0.01"
+              min="0.01"
+              required
+              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white font-mono focus:outline-none focus:border-sky-500"
+            />
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div class="space-y-1.5">
+              <label class="text-xs font-medium text-slate-300">From</label>
+              <select
+                v-model="converterForm.from"
+                @change="runConversion"
+                class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-sky-500"
+              >
+                <option value="USD">USD ($)</option>
+                <option value="MYR">MYR (RM)</option>
+                <option value="SGD">SGD (S$)</option>
+                <option value="EUR">EUR (€)</option>
+                <option value="GBP">GBP (£)</option>
+              </select>
+            </div>
+
+            <div class="space-y-1.5">
+              <label class="text-xs font-medium text-slate-300">To</label>
+              <select
+                v-model="converterForm.to"
+                @change="runConversion"
+                class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-sky-500"
+              >
+                <option value="MYR">MYR (RM)</option>
+                <option value="SGD">SGD (S$)</option>
+                <option value="USD">USD ($)</option>
+                <option value="EUR">EUR (€)</option>
+                <option value="GBP">GBP (£)</option>
+              </select>
+            </div>
+          </div>
+        </form>
+
+        <!-- Live Conversion Calculation Result Card -->
+        <div v-if="conversionResult" class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
+          <div class="text-xs text-slate-400 flex items-center justify-between">
+            <span>Exchange Rate (6 Decimals)</span>
+            <span class="font-mono text-sky-400 font-bold">1 {{ conversionResult.from_currency }} = {{ conversionResult.rate }} {{ conversionResult.to_currency }}</span>
+          </div>
+          <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between">
+            <span class="text-xs text-slate-400">Converted Value</span>
+            <span class="text-xl font-extrabold font-mono text-white">
+              {{ conversionResult.converted_formatted }}
+            </span>
+          </div>
+        </div>
       </div>
     </div>
   </div>

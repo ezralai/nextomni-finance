@@ -5,6 +5,7 @@ namespace App\Services\Accounts;
 use App\Models\Account;
 use App\Models\User;
 use App\Repositories\Contracts\AccountRepositoryInterface;
+use App\Services\Currencies\CurrencyConversionService;
 use App\Support\Money;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\DB;
@@ -12,7 +13,8 @@ use Illuminate\Support\Facades\DB;
 class AccountService
 {
     public function __construct(
-        protected AccountRepositoryInterface $accountRepository
+        protected AccountRepositoryInterface $accountRepository,
+        protected CurrencyConversionService $currencyConversionService
     ) {}
 
     /**
@@ -104,17 +106,18 @@ class AccountService
         ];
 
         foreach ($accounts as $account) {
-            $balance = Money::of($account->current_balance, $account->currency);
+            $rawBalance = Money::of($account->current_balance ?? '0.0000', $account->currency);
+            $convertedBalance = $this->currencyConversionService->convert($rawBalance, $baseCurrency);
             $type = $account->account_type;
 
             if (isset($breakdowns[$type])) {
-                $breakdowns[$type] = $breakdowns[$type]->add($balance);
+                $breakdowns[$type] = $breakdowns[$type]->add($convertedBalance);
             }
 
             if (in_array($type, ['credit_card', 'loan'])) {
-                $totalNetWorth = $totalNetWorth->subtract($balance);
+                $totalNetWorth = $totalNetWorth->subtract($convertedBalance);
             } else {
-                $totalNetWorth = $totalNetWorth->add($balance);
+                $totalNetWorth = $totalNetWorth->add($convertedBalance);
             }
         }
 

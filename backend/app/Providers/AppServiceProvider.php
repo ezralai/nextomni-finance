@@ -23,6 +23,10 @@ class AppServiceProvider extends ServiceProvider
             \App\Repositories\Contracts\BudgetRepositoryInterface::class,
             \App\Repositories\Eloquent\BudgetRepository::class
         );
+        $this->app->bind(
+            \App\Repositories\Contracts\ExchangeRateRepositoryInterface::class,
+            \App\Repositories\Eloquent\ExchangeRateRepository::class
+        );
     }
 
     /**

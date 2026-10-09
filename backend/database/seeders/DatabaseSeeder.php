@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             InstitutionSeeder::class,
             CategorySeeder::class,
+            ExchangeRateSeeder::class,
         ]);
     }
 }

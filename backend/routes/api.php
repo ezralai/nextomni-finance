@@ -18,6 +18,12 @@ Route::prefix('v1')->group(function () {
     // Public Financial Institutions Directory
     Route::get('/institutions', [InstitutionController::class, 'index'])->name('api.v1.institutions.index');
 
+    // Public Foreign Exchange Rates & Real-Time Converter
+    Route::prefix('currencies')->group(function () {
+        Route::get('/rates', [\App\Http\Controllers\Api\V1\Currencies\ExchangeRateController::class, 'index'])->name('api.v1.currencies.rates');
+        Route::post('/convert', [\App\Http\Controllers\Api\V1\Currencies\ExchangeRateController::class, 'convert'])->name('api.v1.currencies.convert');
+    });
+
     // Public Authentication
     Route::prefix('auth')->group(function () {
         Route::post('/register', [AuthController::class, 'register'])->name('api.v1.auth.register');
