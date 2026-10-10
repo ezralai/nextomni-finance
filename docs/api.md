@@ -52,6 +52,6 @@
 - **`GET /api/v1/imports/{id}/status`**: Check import job status and summary.
 
 ### 6. Budgets & Goals
-- **`GET /api/v1/budgets`**: Current month budget allocations and real-time utilization.
+- **`GET /api/v1/budgets`**: Current month budget allocation and real-time utilization.
 - **`POST /api/v1/budgets`**: Set category monthly budget.
 - **`GET /api/v1/goals`**: Track savings targets and progress.
