@@ -7,7 +7,7 @@ use Tests\TestCase;
 class HealthCheckTest extends TestCase
 {
     /**
-     * Test health check endpoint returns 200 and expected schema.
+     * Test health check endpoint returns 200 and expected schema with latency metrics.
      */
     public function test_health_check_returns_ok(): void
     {
@@ -23,6 +23,17 @@ class HealthCheckTest extends TestCase
                 'database' => [
                     'status',
                     'driver',
+                    'latency_ms',
+                ],
+                'cache' => [
+                    'status',
+                    'driver',
+                    'latency_ms',
+                ],
+                'system' => [
+                    'php_version',
+                    'laravel_version',
+                    'memory_usage_mb',
                 ],
             ])
             ->assertJson([
@@ -31,5 +42,10 @@ class HealthCheckTest extends TestCase
                     'status' => 'connected',
                 ],
             ]);
+
+        $responseData = $response->json();
+        $this->assertIsNumeric($responseData['database']['latency_ms']);
+        $this->assertGreaterThanOrEqual(0, $responseData['database']['latency_ms']);
+        $this->assertIsNumeric($responseData['system']['memory_usage_mb']);
     }
 }
