@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\Analytics\AnalyticsController;
 use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\Budgets\BudgetController;
 use App\Http\Controllers\Api\V1\Categories\CategoryController;
+use App\Http\Controllers\Api\V1\DocsController;
 use App\Http\Controllers\Api\V1\HealthController;
 use App\Http\Controllers\Api\V1\Institutions\InstitutionController;
 use App\Http\Controllers\Api\V1\Reports\ExportController;
@@ -12,7 +13,15 @@ use App\Http\Controllers\Api\V1\Transactions\TransactionController;
 use App\Http\Controllers\Api\V1\Transactions\TransferController;
 use Illuminate\Support\Facades\Route;
 
+// Public OpenAPI & Interactive Documentation
+Route::get('/docs', [DocsController::class, 'ui'])->name('api.docs');
+Route::get('/openapi.json', [DocsController::class, 'schema'])->name('api.openapi');
+
 Route::prefix('v1')->group(function () {
+    // Public Documentation Spec
+    Route::get('/docs', [DocsController::class, 'ui'])->name('api.v1.docs');
+    Route::get('/openapi.json', [DocsController::class, 'schema'])->name('api.v1.openapi');
+
     // Public Health Check
     Route::get('/health', HealthController::class)->name('api.v1.health');
 
