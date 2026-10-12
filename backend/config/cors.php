@@ -1,5 +1,23 @@
 <?php
 
+$configuredOrigins = array_filter(array_map('trim', explode(',', env('CORS_ALLOWED_ORIGINS', ''))));
+
+$defaultOrigins = [
+    env('FRONTEND_URL', 'http://localhost:3000'),
+    'http://localhost:3000',
+    'http://127.0.0.1:3000',
+];
+
+$allowedOrigins = array_values(array_unique(array_filter(array_merge($defaultOrigins, $configuredOrigins))));
+
+$configuredPatterns = array_filter(array_map('trim', explode(',', env('CORS_ALLOWED_ORIGIN_PATTERNS', ''))));
+
+$defaultPatterns = [
+    '{^https:\/\/.*\.vercel\.app$}i',
+];
+
+$allowedPatterns = array_values(array_unique(array_filter(array_merge($defaultPatterns, $configuredPatterns))));
+
 return [
 
     /*
@@ -19,19 +37,15 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => [
-        env('FRONTEND_URL', 'http://localhost:3000'),
-        'http://localhost:3000',
-        'http://127.0.0.1:3000',
-    ],
+    'allowed_origins' => $allowedOrigins,
 
-    'allowed_origins_patterns' => [],
+    'allowed_origins_patterns' => $allowedPatterns,
 
     'allowed_headers' => ['*'],
 
     'exposed_headers' => [],
 
-    'max_age' => 0,
+    'max_age' => 86400,
 
     'supports_credentials' => true,
 
