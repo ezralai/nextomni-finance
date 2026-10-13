@@ -17,13 +17,15 @@
 
 For hiring managers and senior engineering recruiters evaluating the platform: **zero registration is required**.
 
-| Surface | Direct Access URL | Credentials / Notes |
-| :--- | :--- | :--- |
-| **Web Application** | `http://localhost:3000` *(or Vercel deployment)* | Click **"Launch Live Demo Session"** on the hero banner |
-| **Demo Account** | Direct login via modal | `demo@nextomni.com` / `NextOmniDemo2026!` |
-| **Interactive API Docs** | `http://localhost:8000/docs` | Powered by modern **Scalar UI** (OpenAPI 3.1) |
-| **OpenAPI Specification** | `http://localhost:8000/api/v1/openapi.json` | Raw OpenAPI 3.1.0 JSON contract |
-| **System Observability** | `http://localhost:8000/api/v1/health` | Live DB ping latency (ms), cache responsiveness, memory |
+| Surface | Live Production URL | Local URL | Credentials / Notes |
+| :--- | :--- | :--- | :--- |
+| **Web Application** | `https://nextomni-finance.vercel.app` *(Vercel)* | `http://localhost:3000` | Click **"Launch Live Demo Session"** on the hero banner |
+| **Demo Account** | Preloaded portfolio | Preloaded portfolio | `demo@nextomni.com` / `NextOmniDemo2026!` |
+| **Interactive API Docs** | [Scalar UI Live](https://nextomni-finance.onrender.com/docs) | `http://localhost:8000/docs` | Powered by modern **Scalar UI** (OpenAPI 3.1) |
+| **OpenAPI Specification** | [OpenAPI 3.1 JSON](https://nextomni-finance.onrender.com/api/v1/openapi.json) | `http://localhost:8000/api/v1/openapi.json` | Raw OpenAPI 3.1.0 JSON contract |
+| **System Observability** | [Live Health Probe](https://nextomni-finance.onrender.com/api/v1/health) | `http://localhost:8000/api/v1/health` | Live DB ping latency (ms), cache responsiveness, memory |
+
+> 📖 **Complete Operations Runbook**: For full credentials reference, cloud dashboard links, and environment variable templates, see [docs/DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md).
 
 ### Preloaded Malaysian Portfolio
 The demo account is automatically initialized with high-fidelity ASEAN and international financial data:
@@ -139,8 +141,8 @@ php artisan test
 ---
 
 ## 🚀 100% Free Cloud Deployment Blueprint
-
-Deploy this entire stack to production in under 10 minutes for $0/month:
+ 
+Deploy this entire stack to production in under 10 minutes for $0/month. For step-by-step instructions, credentials matrices, and operational runbooks, see [docs/DEPLOYMENT_GUIDE.md](docs/DEPLOYMENT_GUIDE.md).
 
 ### Step 1: Provision Free Database (Supabase or Neon)
 1. Create a free PostgreSQL 16 project on [Supabase](https://supabase.com) or [Neon](https://neon.tech).
