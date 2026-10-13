@@ -31,6 +31,7 @@ fi
 # Production performance caching
 if [ "${APP_ENV:-production}" = "production" ]; then
     echo "==> Warming production artisan caches..."
+    php artisan config:clear || true
     php artisan config:cache || true
     php artisan route:cache || true
     php artisan view:cache || true
