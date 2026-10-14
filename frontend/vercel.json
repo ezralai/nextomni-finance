@@ -3,7 +3,7 @@
   "framework": "nuxtjs",
   "buildCommand": "pnpm run build",
   "devCommand": "pnpm run dev",
-  "installCommand": "pnpm install",
+  "installCommand": "pnpm install --no-frozen-lockfile",
   "headers": [
     {
       "source": "/(.*)",
