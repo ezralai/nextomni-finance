@@ -368,26 +368,13 @@ const handleGoogleLogin = () => {
 const handleDemoLogin = async () => {
   isAuthSubmitting.value = true
   authError.value = null
-  const demoEmail = 'demo@nextomni.com'
-  const demoPass = 'NextOmniDemo2026!'
 
   try {
-    await authStore.login({ email: demoEmail, password: demoPass })
+    await authStore.demoLogin()
     showAuthModal.value = false
     await refreshDashboard()
-  } catch {
-    try {
-      await authStore.register({
-        name: 'Demo Investor',
-        email: demoEmail,
-        password: demoPass,
-        base_currency: 'MYR',
-      })
-      showAuthModal.value = false
-      await refreshDashboard()
-    } catch (regErr: any) {
-      authError.value = regErr?.data?.message || 'Failed to create demo session.'
-    }
+  } catch (err: any) {
+    authError.value = err?.data?.message || 'Failed to authenticate demo session.'
   } finally {
     isAuthSubmitting.value = false
   }

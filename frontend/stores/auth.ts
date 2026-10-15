@@ -88,6 +88,22 @@ export const useAuthStore = defineStore('auth', () => {
     return await fetchMe()
   }
 
+  const demoLogin = async () => {
+    const demoEmail = 'demo@nextomni.com'
+    const demoPass = 'NextOmniDemo2026!'
+
+    try {
+      return await login({ email: demoEmail, password: demoPass })
+    } catch {
+      return await register({
+        name: 'Demo Investor',
+        email: demoEmail,
+        password: demoPass,
+        base_currency: 'MYR',
+      })
+    }
+  }
+
   const logout = async () => {
     try {
       if (token.value) {
@@ -109,6 +125,7 @@ export const useAuthStore = defineStore('auth', () => {
     fetchMe,
     register,
     login,
+    demoLogin,
     handleOAuthToken,
     updateProfile,
     logout,
