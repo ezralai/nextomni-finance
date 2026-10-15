@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\V1\Accounts\AccountController;
 use App\Http\Controllers\Api\V1\Analytics\AnalyticsController;
 use App\Http\Controllers\Api\V1\Auth\AuthController;
+use App\Http\Controllers\Api\V1\Auth\GoogleAuthController;
 use App\Http\Controllers\Api\V1\Budgets\BudgetController;
 use App\Http\Controllers\Api\V1\Categories\CategoryController;
 use App\Http\Controllers\Api\V1\DocsController;
@@ -38,6 +39,10 @@ Route::prefix('v1')->group(function () {
     Route::prefix('auth')->group(function () {
         Route::post('/register', [AuthController::class, 'register'])->name('api.v1.auth.register');
         Route::post('/login', [AuthController::class, 'login'])->name('api.v1.auth.login');
+
+        // Google OAuth 2.0
+        Route::get('/google/redirect', [GoogleAuthController::class, 'redirect'])->name('api.v1.auth.google.redirect');
+        Route::match(['get', 'post'], '/google/callback', [GoogleAuthController::class, 'callback'])->name('api.v1.auth.google.callback');
     });
 
     // Protected Routes (Sanctum Authenticated)

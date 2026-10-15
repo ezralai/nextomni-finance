@@ -30,7 +30,7 @@ WORKDIR /var/www/html
 
 # Cache Composer dependencies layer
 COPY composer.json composer.lock ./
-RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist --no-interaction
+RUN composer require laravel/socialite:^5.15 --no-dev --no-scripts --no-autoloader --prefer-dist --no-interaction || composer install --no-dev --no-scripts --no-autoloader --prefer-dist --no-interaction
 
 # Copy full application codebase
 COPY . .

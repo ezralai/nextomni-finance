@@ -1,6 +1,7 @@
 import type { Config } from 'tailwindcss'
 
 export default <Config>{
+  darkMode: 'class',
   content: [
     './app.vue',
     './app/**/*.{vue,js,ts,jsx,tsx}',

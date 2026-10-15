@@ -2,10 +2,12 @@ import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
 
 export interface User {
-  id: number
+  id: string | number
   name: string
   email: string
+  avatar?: string | null
   base_currency: string
+  has_password?: boolean
   created_at?: string
   updated_at?: string
 }
@@ -81,6 +83,11 @@ export const useAuthStore = defineStore('auth', () => {
     return response
   }
 
+  const handleOAuthToken = async (newToken: string) => {
+    token.value = newToken
+    return await fetchMe()
+  }
+
   const logout = async () => {
     try {
       if (token.value) {
@@ -102,6 +109,7 @@ export const useAuthStore = defineStore('auth', () => {
     fetchMe,
     register,
     login,
+    handleOAuthToken,
     updateProfile,
     logout,
   }
