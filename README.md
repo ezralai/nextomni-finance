@@ -1,4 +1,4 @@
-# NextOmni Finance — Enterprise Multi-Currency Financial Architecture
+# NextOmni Finance — Multi-Currency Financial Architecture
 
 [![Laravel 11](https://img.shields.io/badge/Laravel-11.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
 [![PHP 8.3](https://img.shields.io/badge/PHP-8.3-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://php.net)
