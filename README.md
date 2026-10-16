@@ -3,13 +3,16 @@
 [![Laravel 11](https://img.shields.io/badge/Laravel-11.x-FF2D20?style=for-the-badge&logo=laravel&logoColor=white)](https://laravel.com)
 [![PHP 8.3](https://img.shields.io/badge/PHP-8.3-777BB4?style=for-the-badge&logo=php&logoColor=white)](https://php.net)
 [![Nuxt 3](https://img.shields.io/badge/Nuxt-3.x-00DC82?style=for-the-badge&logo=nuxt.js&logoColor=white)](https://nuxt.com)
+[![Python 3.14](https://img.shields.io/badge/Python-3.14-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![Scikit-Learn](https://img.shields.io/badge/Scikit--Learn-1.9.1-F7931E?style=for-the-badge&logo=scikit-learn&logoColor=white)](https://scikit-learn.org)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.66.0-FF4B4B?style=for-the-badge&logo=streamlit&logoColor=white)](https://streamlit.io)
 [![PostgreSQL 16](https://img.shields.io/badge/PostgreSQL-16_UUIDv7-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)](https://www.postgresql.org)
 [![Vercel Edge](https://img.shields.io/badge/Frontend-Vercel_Edge-000000?style=for-the-badge&logo=vercel&logoColor=white)](https://vercel.com)
 [![Render / Koyeb](https://img.shields.io/badge/Backend-Render_Docker-46E3B7?style=for-the-badge&logo=render&logoColor=white)](https://render.com)
-[![Tests Passing](https://img.shields.io/badge/Tests-66_Passing_%2F_550_Assertions-success?style=for-the-badge&logo=pest&logoColor=white)](https://github.com/ezralai/nextomni-finance)
+[![Tests Passing](https://img.shields.io/badge/Tests-93_Passing_(66_Pest_+_27_Pytest)-success?style=for-the-badge&logo=pytest&logoColor=white)](https://github.com/ezralai/nextomni-finance)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
-> **NextOmni Finance** is an enterprise-grade personal finance, budget analytics, and non-custodial wealth aggregation platform. Engineered for senior engineering review, it showcases a **100% free, production-grade cloud deployment architecture** (Vercel Edge + Render/Koyeb Container + Supabase/Neon PostgreSQL 16) with zero paid third-party infrastructure dependencies.
+> **NextOmni Finance** is an enterprise-grade personal finance, budget analytics, and non-custodial wealth aggregation platform. Engineered for senior engineering review, it showcases a **100% free, production-grade cloud deployment architecture** (Vercel Edge + Render/Koyeb Container + Supabase/Neon PostgreSQL 16) with zero paid third-party infrastructure dependencies, complemented by a dedicated **Python Data Science & Machine Learning core** for predictive expense forecasting and anomaly detection.
 
 ---
 
@@ -20,6 +23,7 @@ For hiring managers and senior engineering recruiters evaluating the platform: *
 | Surface | Live Production URL | Local URL | Credentials / Notes |
 | :--- | :--- | :--- | :--- |
 | **Web Application** | `https://nextomni-finance.vercel.app` *(Vercel)* | `http://localhost:3000` | Click **"Launch Live Demo Session"** on the hero banner |
+| **ML Intelligence & Forecaster** | Preloaded 18M Ledger | `http://localhost:8501` | Run `cd ml && streamlit run app.py` (Forecasting, Baselines, Anomalies) |
 | **Demo Account** | Preloaded portfolio | Preloaded portfolio | `demo@nextomni.com` / `NextOmniDemo2026!` |
 | **Interactive API Docs** | [Scalar UI Live](https://nextomni-finance.onrender.com/docs) | `http://localhost:8000/docs` | Powered by modern **Scalar UI** (OpenAPI 3.1) |
 | **OpenAPI Specification** | [OpenAPI 3.1 JSON](https://nextomni-finance.onrender.com/api/v1/openapi.json) | `http://localhost:8000/api/v1/openapi.json` | Raw OpenAPI 3.1.0 JSON contract |
@@ -136,6 +140,50 @@ php artisan test
 
   Tests:    66 passed (550 assertions)
   Duration: 5.42s
+```
+
+---
+
+## 🧠 Data Science & Machine Learning Engine
+
+NextOmni features a fully reproducible Python Data Science core (`ml/`) dedicated to time-series spending forecasting, behavioral analytics, and dual-engine anomaly detection.
+
+```mermaid
+graph LR
+    Raw[Raw CSV / Bank Export] --> Ingestion[Data Ingestion & Hygiene]
+    Ingestion --> Validation{Schema Gate & Deduplication}
+    Validation --> Clean[Canonical Clean Ledger]
+    Clean --> Analytics[Deterministic Cash Flow & Pareto Concentration]
+    Clean --> Features[Leak-Free Lag & Rolling Feature Engineering]
+    Features --> Arena[Forecasting Arena: Baselines vs Ridge/OLS]
+    Clean --> Anomaly[Dual Anomaly Detection: IQR + Isolation Forest]
+    Analytics & Arena & Anomaly --> UI[Streamlit Interactive App]
+```
+
+### Key Engineering & Scientific Highlights:
+1. **Zero-Leakage Time-Series Feature Engineering**:
+   Strictly enforces temporal boundaries where features available at period $t$ originate strictly from periods $t-1, t-2, \dots$. Rolling moments are shifted prior to calculation.
+2. **Standardized Model Evaluation Arena**:
+   Evaluates 3 heuristic baselines (Naive Prior Month, 3-Month Moving Average, Expanding Mean) alongside Scikit-Learn Linear and L2 Regularized Ridge Regression across out-of-sample chronological holdout periods and walk-forward expanding window validation.
+   - **Empirical Finding**: 3-Month Moving Average outperforms OLS on small personal finance series ($\text{MAE } \text{MYR } 1,063.61$ vs $\text{MYR } 4,090.72$), demonstrating why baseline persistence rules prevent severe overfitting. Full analysis documented in [ml/docs/model_evaluation.md](ml/docs/model_evaluation.md).
+3. **Dual-Engine Anomaly Detection**:
+   - **Category-Level Non-Parametric IQR**: Flags purchases exceeding $Q_3 + (k \times \text{IQR})$ with deviation multiples relative to category medians.
+   - **Multidimensional Isolation Forest**: Evaluates decision-tree path isolation across log-scaled amounts, calendar day of week, and categorical frequencies.
+4. **Interactive Streamlit Interface ([ml/app.py](ml/app.py))**:
+   Features 4 comprehensive tabs for data ingestion audit, financial intelligence, forecasting comparison, and unusual transactions review.
+
+### Running the ML Module & Tests:
+
+```bash
+# 1. Activate Python virtual environment
+cd ml
+source .venv/bin/activate
+
+# 2. Run automated test suite (27 unit tests)
+pytest -v tests/
+
+# 3. Launch interactive Streamlit dashboard
+streamlit run app.py
 ```
 
 ---
