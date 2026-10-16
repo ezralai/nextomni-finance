@@ -1,0 +1,1193 @@
+transaction_id,transaction_date,description,merchant,amount,currency,type,category,account,reference_number,is_synthetic
+TXN-1001,2025-01-01,Monthly Residential Rent,Sunway Geo Residences,1850.0,MYR,expense,rent,Maybank Premier,RENT-202501,True
+TXN-1002,2025-01-01,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,23.37,MYR,expense,transportation,Maybank Premier,TX-207473,True
+TXN-1003,2025-01-02,Shopping Expense - Shopee Online,Shopee Online,103.33,MYR,expense,shopping,Maybank Premier,CHG-127824,True
+TXN-1004,2025-01-03,Food & Beverage - GrabFood,GrabFood,29.98,MYR,expense,dining,Maybank Premier,POS-331148,True
+TXN-1005,2025-01-04,Food & Beverage - GrabFood,GrabFood,70.92,MYR,expense,dining,Maybank Premier,POS-391369,True
+TXN-1006,2025-01-04,Transit & Mobility - Petronas Gas,Petronas Gas,21.13,MYR,expense,transportation,Maybank Premier,TX-498382,True
+TXN-1007,2025-01-04,Entertainment Expense - GSC Cinemas,GSC Cinemas,150.1,MYR,expense,entertainment,Maybank Premier,CHG-865179,True
+TXN-1008,2025-01-05,Electricity Utility Bill,Tenaga Nasional Berhad,172.16,MYR,expense,utilities,Maybank Premier,UTIL-202501,True
+TXN-1009,2025-01-05,Supermarket Purchase at AEON Supermarket,AEON Supermarket,88.0,MYR,expense,groceries,Maybank Premier,POS-407419,True
+TXN-1010,2025-01-05,Food & Beverage - Kopitiam,Kopitiam,110.26,MYR,expense,dining,Maybank Premier,POS-479201,True
+TXN-1011,2025-01-05,Food & Beverage - Kopitiam,Kopitiam,51.34,MYR,expense,dining,Maybank Premier,POS-172933,True
+TXN-1012,2025-01-05,Food & Beverage - Starbucks Coffee,Starbucks Coffee,91.21,MYR,expense,dining,Maybank Premier,POS-910620,True
+TXN-1013,2025-01-05,Transit & Mobility - Grab Ride,Grab Ride,66.32,MYR,expense,transportation,Maybank Premier,TX-205907,True
+TXN-1014,2025-01-06,Food & Beverage - Zus Coffee,Zus Coffee,24.22,MYR,expense,dining,Maybank Premier,POS-319684,True
+TXN-1015,2025-01-06,Food & Beverage - GrabFood,GrabFood,20.81,MYR,expense,dining,Maybank Premier,POS-816751,True
+TXN-1016,2025-01-07,Food & Beverage - Zus Coffee,Zus Coffee,27.25,MYR,expense,dining,Maybank Premier,POS-383060,True
+TXN-1016-DUP,2025-01-07,Food & Beverage - Zus Coffee,Zus Coffee,27.25,MYR,expense,dining,Maybank Premier,POS-383060,True
+TXN-1017,2025-01-08,Food & Beverage - Starbucks Coffee,Starbucks Coffee,19.56,MYR,expense,dining,Maybank Premier,POS-133659,True
+TXN-1018,2025-01-09,Supermarket Purchase at Lotus's,Lotus's,110.08,MYR,expense,groceries,Maybank Premier,POS-623481,True
+TXN-1019,2025-01-09,Food & Beverage - GrabFood,GrabFood,27.14,MYR,expense,dining,Maybank Premier,POS-377746,True
+TXN-1020,2025-01-09,Transit & Mobility - Petronas Gas,Petronas Gas,59.82,MYR,expense,transportation,Maybank Premier,TX-549245,True
+TXN-1021,2025-01-11,Supermarket Purchase at Jaya Grocer,Jaya Grocer,217.08,MYR,expense,groceries,Maybank Premier,POS-260265,True
+TXN-1022,2025-01-11,Food & Beverage - Zus Coffee,Zus Coffee,102.33,MYR,expense,dining,Maybank Premier,POS-542666,True
+TXN-1023,2025-01-11,Food & Beverage - Kopitiam,Kopitiam,40.4,MYR,expense,dining,Maybank Premier,POS-500156,True
+TXN-1024,2025-01-11,Food & Beverage - Kopitiam,Kopitiam,119.67,MYR,expense,dining,Maybank Premier,POS-654816,True
+TXN-1025,2025-01-11,Transit & Mobility - Grab Ride,Grab Ride,55.82,MYR,expense,transportation,Maybank Premier,TX-220116,True
+TXN-1026,2025-01-12,Supermarket Purchase at Lotus's,Lotus's,201.82,MYR,expense,groceries,Maybank Premier,POS-456699,True
+TXN-1027,2025-01-12,Food & Beverage - Nando's,Nando's,71.96,MYR,expense,dining,Maybank Premier,POS-575763,True
+TXN-1028,2025-01-12,Transit & Mobility - Petronas Gas,Petronas Gas,73.31,MYR,expense,transportation,Maybank Premier,TX-898975,True
+TXN-1029,2025-01-13,Food & Beverage - Nando's,Nando's,39.78,MYR,expense,dining,Maybank Premier,POS-632323,True
+TXN-1030,2025-01-13,Food & Beverage - Kopitiam,Kopitiam,18.56,MYR,expense,dining,Maybank Premier,POS-492077,True
+TXN-1031,2025-01-14,Food & Beverage - Starbucks Coffee,Starbucks Coffee,31.77,MYR,expense,dining,Maybank Premier,POS-612340,True
+TXN-1032,2025-01-14,Transit & Mobility - Petronas Gas,Petronas Gas,67.72,MYR,expense,transportation,Maybank Premier,TX-972064,True
+TXN-1033,2025-01-15,Home High-Speed Fibre Internet,Maxis Fibre Home Internet,139.0,MYR,expense,utilities,Maybank Premier,NET-202501,True
+TXN-1034,2025-01-15,Healthcare Expense - Watsons Drugstore,Watsons Drugstore,151.48,MYR,expense,healthcare,Maybank Premier,CHG-897549,True
+TXN-1035,2025-01-17,Food & Beverage - Kopitiam,Kopitiam,25.96,MYR,expense,dining,Maybank Premier,POS-322086,True
+TXN-1036,2025-01-18,Food & Beverage - Nando's,Nando's,68.91,MYR,expense,dining,Maybank Premier,POS-804314,True
+TXN-1037,2025-01-18,Food & Beverage - GrabFood,GrabFood,66.74,MYR,expense,dining,Maybank Premier,POS-642717,True
+TXN-1038,2025-01-18,Food & Beverage - Din Tai Fung,Din Tai Fung,45.29,MYR,expense,dining,Maybank Premier,POS-335612,True
+TXN-1039,2025-01-18,Transit & Mobility - Grab Ride,Grab Ride,50.3,MYR,expense,transportation,Maybank Premier,TX-341292,True
+TXN-1040,2025-01-19,Supermarket Purchase at Jaya Grocer,Jaya Grocer,112.78,MYR,expense,groceries,Maybank Premier,POS-132938,True
+TXN-1041,2025-01-19,Food & Beverage - Starbucks Coffee,Starbucks Coffee,78.7,MYR,expense,dining,Maybank Premier,POS-392004,True
+TXN-1042,2025-01-19,Food & Beverage - GrabFood,GrabFood,76.26,MYR,expense,dining,Maybank Premier,POS-665427,True
+TXN-1043,2025-01-19,Transit & Mobility - Shell Fuel,Shell Fuel,29.58,MYR,expense,transportation,Maybank Premier,TX-595948,True
+TXN-1044,2025-01-21,Food & Beverage - GrabFood,GrabFood,33.56,MYR,expense,dining,Maybank Premier,POS-777568,True
+TXN-1045,2025-01-21,Transit & Mobility - Shell Fuel,Shell Fuel,58.69,MYR,expense,transportation,Maybank Premier,TX-939482,True
+TXN-1046,2025-01-24,Food & Beverage - Starbucks Coffee,Starbucks Coffee,33.52,MYR,expense,dining,Maybank Premier,POS-666847,True
+TXN-1047,2025-01-25,Monthly Corporate Salary Transfer,NextOmni Tech Sdn Bhd,6800.0,MYR,income,salary,Maybank Premier,SAL-202501,True
+TXN-1048,2025-01-25,Food & Beverage - Zus Coffee,Zus Coffee,69.55,MYR,expense,dining,Maybank Premier,POS-604740,True
+TXN-1049,2025-01-25,Transit & Mobility - Shell Fuel,Shell Fuel,69.15,MYR,expense,transportation,Maybank Premier,TX-272634,True
+TXN-1050,2025-01-26,Food & Beverage - Din Tai Fung,Din Tai Fung,59.25,MYR,expense,dining,Maybank Premier,POS-830429,True
+TXN-1051,2025-01-26,Food & Beverage - GrabFood,GrabFood,119.61,MYR,expense,dining,Maybank Premier,POS-682765,True
+TXN-1052,2025-01-27,Transit & Mobility - Grab Ride,Grab Ride,59.88,MYR,expense,transportation,Maybank Premier,TX-159942,True
+TXN-1053,2025-01-27,Entertainment Expense - Spotify Family,Spotify Family,33.82,MYR,expense,entertainment,Maybank Premier,CHG-632496,True
+TXN-1054,2025-01-28,Supermarket Purchase at Village Grocer,Village Grocer,86.31,MYR,expense,groceries,Maybank Premier,POS-171262,True
+TXN-1055,2025-01-28,Food & Beverage - Zus Coffee,Zus Coffee,25.32,MYR,expense,dining,Maybank Premier,POS-697347,True
+TXN-1056,2025-01-28,Transit & Mobility - Grab Ride,Grab Ride,52.16,MYR,expense,transportation,Maybank Premier,TX-539589,True
+TXN-1057,2025-01-29,Food & Beverage - Nando's,Nando's,18.74,MYR,expense,dining,Maybank Premier,POS-850981,True
+TXN-1058,2025-01-29,Transit & Mobility - Petronas Gas,Petronas Gas,38.75,MYR,expense,transportation,Maybank Premier,TX-804318,True
+TXN-1059,2025-01-30,Food & Beverage - Starbucks Coffee,Starbucks Coffee,12.31,MYR,expense,dining,Maybank Premier,POS-751332,True
+TXN-1060,2025-01-30,Food & Beverage - Kopitiam,Kopitiam,44.87,MYR,expense,dining,Maybank Premier,POS-176819,True
+TXN-1061,2025-01-31,Supermarket Purchase at Lotus's,Lotus's,220.34,MYR,expense,groceries,Maybank Premier,POS-356150,True
+TXN-1062,2025-01-31,Food & Beverage - Zus Coffee,Zus Coffee,26.46,MYR,expense,dining,Maybank Premier,POS-669605,True
+TXN-1063,2025-02-01,Monthly Residential Rent,Sunway Geo Residences,1850.0,MYR,expense,rent,Maybank Premier,RENT-202502,True
+TXN-1064,2025-02-01,Food & Beverage - Kopitiam,Kopitiam,35.66,MYR,expense,dining,Maybank Premier,POS-956795,True
+TXN-1065,2025-02-01,Food & Beverage - Kopitiam,Kopitiam,60.45,MYR,expense,dining,Maybank Premier,POS-795613,True
+TXN-1066,2025-02-01,Food & Beverage - Starbucks Coffee,Starbucks Coffee,114.81,MYR,expense,dining,Maybank Premier,POS-240814,True
+TXN-1067,2025-02-01,Transit & Mobility - Grab Ride,Grab Ride,59.55,MYR,expense,transportation,Maybank Premier,TX-262998,True
+TXN-1068,2025-02-02,Supermarket Purchase at Lotus's,Lotus's,108.59,MYR,expense,groceries,Maybank Premier,POS-765046,True
+TXN-1069,2025-02-02,Food & Beverage - Kopitiam,Kopitiam,76.53,MYR,expense,dining,Maybank Premier,POS-987204,True
+TXN-1070,2025-02-02,Food & Beverage - Starbucks Coffee,Starbucks Coffee,42.85,MYR,expense,dining,Maybank Premier,POS-544151,True
+TXN-1071,2025-02-02,Entertainment Expense - Spotify Family,Spotify Family,123.75,MYR,expense,entertainment,Maybank Premier,CHG-374680,True
+TXN-1072,2025-02-03,Food & Beverage - GrabFood,GrabFood,26.11,MYR,expense,dining,Maybank Premier,POS-110139,True
+TXN-1073,2025-02-03,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,47.74,MYR,expense,transportation,Maybank Premier,TX-975136,True
+TXN-1074,2025-02-04,Food & Beverage - Starbucks Coffee,Starbucks Coffee,22.17,MYR,expense,dining,Maybank Premier,POS-934794,True
+TXN-1075,2025-02-04,Entertainment Expense - Spotify Family,Spotify Family,130.72,MYR,expense,entertainment,Maybank Premier,CHG-799330,True
+TXN-1076,2025-02-05,Electricity Utility Bill,Tenaga Nasional Berhad,147.2,MYR,expense,utilities,Maybank Premier,UTIL-202502,True
+TXN-1077,2025-02-05,Food & Beverage - Din Tai Fung,Din Tai Fung,44.14,MYR,expense,dining,Maybank Premier,POS-885884,True
+TXN-1078,2025-02-05,Food & Beverage - Zus Coffee,Zus Coffee,42.55,MYR,expense,dining,Maybank Premier,POS-348237,True
+TXN-1079,2025-02-06,Food & Beverage - Starbucks Coffee,Starbucks Coffee,17.92,MYR,expense,dining,Maybank Premier,POS-448321,True
+TXN-1080,2025-02-06,Food & Beverage - Din Tai Fung,Din Tai Fung,38.47,MYR,expense,dining,Maybank Premier,POS-870763,True
+TXN-1081,2025-02-08,Supermarket Purchase at AEON Supermarket,AEON Supermarket,132.69,MYR,expense,groceries,Maybank Premier,POS-960394,True
+TXN-1082,2025-02-08,Food & Beverage - Zus Coffee,Zus Coffee,37.01,MYR,expense,dining,Maybank Premier,POS-302511,True
+TXN-1083,2025-02-09,Supermarket Purchase at Lotus's,Lotus's,132.94,MYR,expense,groceries,Maybank Premier,POS-634150,True
+TXN-1084,2025-02-09,Food & Beverage - GrabFood,GrabFood,118.4,MYR,expense,dining,Maybank Premier,POS-662262,True
+TXN-1085,2025-02-09,Food & Beverage - Nando's,Nando's,114.84,MYR,expense,dining,Maybank Premier,POS-220944,True
+TXN-1086,2025-02-10,Food & Beverage - Starbucks Coffee,Starbucks Coffee,15.58,MYR,expense,dining,Maybank Premier,POS-555673,True
+TXN-1087,2025-02-10,Food & Beverage - Nando's,Nando's,36.04,MYR,expense,dining,Maybank Premier,POS-428914,True
+TXN-1088,2025-02-11,Supermarket Purchase at Village Grocer,Village Grocer,117.03,MYR,expense,groceries,Maybank Premier,POS-843215,True
+TXN-1089,2025-02-11,Food & Beverage - Kopitiam,Kopitiam,42.54,MYR,expense,dining,Maybank Premier,POS-664607,True
+TXN-1090,2025-02-13,Food & Beverage - GrabFood,GrabFood,39.98,MYR,expense,dining,Maybank Premier,POS-854717,True
+TXN-1091,2025-02-14,Food & Beverage - GrabFood,GrabFood,21.76,MYR,expense,dining,Maybank Premier,POS-233470,True
+TXN-1092,2025-02-14,Transit & Mobility - Shell Fuel,Shell Fuel,55.64,MYR,expense,transportation,Maybank Premier,TX-282480,True
+TXN-1093,2025-02-15,Home High-Speed Fibre Internet,Maxis Fibre Home Internet,139.0,MYR,expense,utilities,Maybank Premier,NET-202502,True
+TXN-1094,2025-02-15,Supermarket Purchase at Jaya Grocer,Jaya Grocer,125.14,MYR,expense,groceries,Maybank Premier,POS-320392,True
+TXN-1095,2025-02-15,Food & Beverage - Kopitiam,Kopitiam,86.57,MYR,expense,dining,Maybank Premier,POS-437902,True
+TXN-1096,2025-02-15,Food & Beverage - Din Tai Fung,Din Tai Fung,72.55,MYR,expense,dining,Maybank Premier,POS-808446,True
+TXN-1097,2025-02-15,Transit & Mobility - Shell Fuel,Shell Fuel,62.62,MYR,expense,transportation,Maybank Premier,TX-934692,True
+TXN-1098,2025-02-16,Food & Beverage - Kopitiam,Kopitiam,91.43,MYR,expense,dining,Maybank Premier,POS-749342,True
+TXN-1099,2025-02-16,Food & Beverage - Nando's,Nando's,42.94,MYR,expense,dining,Maybank Premier,POS-887625,True
+TXN-1100,2025-02-16,Transit & Mobility - Petronas Gas,Petronas Gas,28.48,MYR,expense,transportation,Maybank Premier,TX-308802,True
+TXN-1101,2025-02-17,Supermarket Purchase at AEON Supermarket,AEON Supermarket,175.86,MYR,expense,groceries,Maybank Premier,POS-905819,True
+TXN-1102,2025-02-18,Food & Beverage - Din Tai Fung,Din Tai Fung,25.19,MYR,expense,dining,Maybank Premier,POS-254739,True
+TXN-1103,2025-02-18,Shopping Expense - IKEA Damansara,IKEA Damansara,58.92,MYR,expense,shopping,Maybank Premier,CHG-943170,True
+TXN-1104,2025-02-19,Food & Beverage - Starbucks Coffee,Starbucks Coffee,30.39,MYR,expense,dining,Maybank Premier,POS-989545,True
+TXN-1105,2025-02-19,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,63.08,MYR,expense,transportation,Maybank Premier,TX-800005,True
+TXN-1106,2025-02-20,Food & Beverage - Din Tai Fung,Din Tai Fung,32.22,MYR,expense,dining,Maybank Premier,POS-854213,True
+TXN-1107,2025-02-21,Food & Beverage - Zus Coffee,Zus Coffee,36.54,MYR,expense,dining,Maybank Premier,POS-597732,True
+TXN-1108,2025-02-22,Food & Beverage - Kopitiam,Kopitiam,76.19,MYR,expense,dining,Maybank Premier,POS-350867,True
+TXN-1109,2025-02-22,Food & Beverage - Nando's,Nando's,72.39,MYR,expense,dining,Maybank Premier,POS-848206,True
+TXN-1110,2025-02-22,Transit & Mobility - Petronas Gas,Petronas Gas,35.15,MYR,expense,transportation,Maybank Premier,TX-666390,True
+TXN-1111,2025-02-22,Shopping Expense - Shopee Online,Shopee Online,84.37,MYR,expense,shopping,Maybank Premier,CHG-260227,True
+TXN-1112,2025-02-23,Food & Beverage - Din Tai Fung,Din Tai Fung,69.65,MYR,expense,dining,Maybank Premier,POS-668969,True
+TXN-1113,2025-02-23,Entertainment Expense - Steam Games,Steam Games,165.25,MYR,expense,entertainment,Maybank Premier,CHG-712451,True
+TXN-1114,2025-02-25,Monthly Corporate Salary Transfer,NextOmni Tech Sdn Bhd,6800.0,MYR,income,salary,Maybank Premier,SAL-202502,True
+TXN-1115,2025-02-25,Food & Beverage - Nando's,Nando's,36.86,MYR,expense,dining,Maybank Premier,POS-994905,True
+TXN-1116,2025-02-25,Food & Beverage - Din Tai Fung,Din Tai Fung,29.76,MYR,expense,dining,Maybank Premier,POS-870319,True
+TXN-1117,2025-02-26,Entertainment Expense - Steam Games,Steam Games,137.25,MYR,expense,entertainment,Maybank Premier,CHG-981334,True
+TXN-1118,2025-02-27,Entertainment Expense - Netflix Subscription,Netflix Subscription,38.01,MYR,expense,entertainment,Maybank Premier,CHG-549433,True
+TXN-1119,2025-02-28,Supermarket Purchase at AEON Supermarket,AEON Supermarket,104.99,MYR,expense,groceries,Maybank Premier,POS-372793,True
+TXN-1120,2025-02-28,Food & Beverage - Zus Coffee,Zus Coffee,27.01,MYR,expense,dining,Maybank Premier,POS-453894,True
+TXN-1121,2025-03-01,Monthly Residential Rent,Sunway Geo Residences,1850.0,MYR,expense,rent,Maybank Premier,RENT-202503,True
+TXN-1122,2025-03-01,Food & Beverage - Nando's,Nando's,105.97,MYR,expense,dining,Maybank Premier,POS-593152,True
+TXN-1123,2025-03-01,Food & Beverage - Starbucks Coffee,Starbucks Coffee,98.67,MYR,expense,dining,Maybank Premier,POS-154615,True
+TXN-1124,2025-03-02,Food & Beverage - Starbucks Coffee,Starbucks Coffee,99.11,MYR,expense,dining,Maybank Premier,POS-359295,True
+TXN-1125,2025-03-02,Food & Beverage - Zus Coffee,Zus Coffee,106.33,MYR,expense,dining,Maybank Premier,POS-751517,True
+TXN-1126,2025-03-02,Food & Beverage - Zus Coffee,Zus Coffee,55.28,MYR,expense,dining,Maybank Premier,POS-596564,True
+TXN-1127,2025-03-03,Food & Beverage - Nando's,Nando's,17.54,MYR,expense,dining,Maybank Premier,POS-736745,True
+TXN-1128,2025-03-04,Transit & Mobility - Grab Ride,Grab Ride,70.73,MYR,expense,transportation,Maybank Premier,TX-703766,True
+TXN-1129,2025-03-05,Electricity Utility Bill,Tenaga Nasional Berhad,207.07,MYR,expense,utilities,Maybank Premier,UTIL-202503,True
+TXN-1130,2025-03-05,Food & Beverage - Starbucks Coffee,Starbucks Coffee,31.54,MYR,expense,dining,Maybank Premier,POS-970917,True
+TXN-1131,2025-03-05,Entertainment Expense - Netflix Subscription,Netflix Subscription,148.42,MYR,expense,entertainment,Maybank Premier,CHG-693423,True
+TXN-1132,2025-03-06,Food & Beverage - Din Tai Fung,Din Tai Fung,33.83,MYR,expense,dining,Maybank Premier,POS-172306,True
+TXN-1133,2025-03-07,Food & Beverage - Starbucks Coffee,Starbucks Coffee,26.31,MYR,expense,dining,Maybank Premier,POS-479781,True
+TXN-1134,2025-03-07,Food & Beverage - GrabFood,GrabFood,41.42,MYR,expense,dining,Maybank Premier,POS-582071,True
+TXN-1135,2025-03-08,Food & Beverage - Nando's,Nando's,87.35,MYR,expense,dining,Maybank Premier,POS-664315,True
+TXN-1136,2025-03-08,Food & Beverage - Din Tai Fung,Din Tai Fung,74.51,MYR,expense,dining,Maybank Premier,POS-965845,True
+TXN-1137,2025-03-08,Food & Beverage - GrabFood,GrabFood,85.36,MYR,expense,dining,Maybank Premier,POS-437960,True
+TXN-1138,2025-03-09,Supermarket Purchase at AEON Supermarket,AEON Supermarket,115.24,MYR,expense,groceries,Maybank Premier,POS-587282,True
+TXN-1139,2025-03-09,Food & Beverage - Kopitiam,Kopitiam,91.8,MYR,expense,dining,Maybank Premier,POS-452737,True
+TXN-1140,2025-03-09,Food & Beverage - Starbucks Coffee,Starbucks Coffee,77.02,MYR,expense,dining,Maybank Premier,POS-440802,True
+TXN-1141,2025-03-09,Food & Beverage - Zus Coffee,Zus Coffee,76.44,MYR,expense,dining,Maybank Premier,POS-472060,True
+TXN-1142,2025-03-10,Food & Beverage - Nando's,Nando's,30.34,MYR,expense,dining,Maybank Premier,POS-641722,True
+TXN-1143,2025-03-10,Healthcare Expense - Watsons Drugstore,Watsons Drugstore,100.73,MYR,expense,healthcare,Maybank Premier,CHG-894993,True
+TXN-1144,2025-03-11,Food & Beverage - GrabFood,GrabFood,28.2,MYR,expense,dining,Maybank Premier,POS-931450,True
+TXN-1145,2025-03-11,Transit & Mobility - Petronas Gas,Petronas Gas,28.3,MYR,expense,transportation,Maybank Premier,TX-825391,True
+TXN-1146,2025-03-12,Food & Beverage - Kopitiam,Kopitiam,29.52,MYR,expense,dining,Maybank Premier,POS-546173,True
+TXN-1147,2025-03-13,Food & Beverage - Nando's,Nando's,20.3,MYR,expense,dining,Maybank Premier,POS-226516,True
+TXN-1148,2025-03-14,Food & Beverage - GrabFood,GrabFood,18.11,MYR,expense,dining,Maybank Premier,POS-326895,True
+TXN-1149,2025-03-14,Food & Beverage - GrabFood,GrabFood,27.98,MYR,expense,dining,Maybank Premier,POS-859782,True
+TXN-1150,2025-03-15,Home High-Speed Fibre Internet,Maxis Fibre Home Internet,139.0,MYR,expense,utilities,Maybank Premier,NET-202503,True
+TXN-1151,2025-03-15,Supermarket Purchase at Jaya Grocer,Jaya Grocer,212.38,MYR,expense,groceries,Maybank Premier,POS-410636,True
+TXN-1152,2025-03-15,Food & Beverage - Nando's,Nando's,50.25,MYR,expense,dining,Maybank Premier,POS-114835,True
+TXN-1153,2025-03-16,Supermarket Purchase at Jaya Grocer,Jaya Grocer,166.3,MYR,expense,groceries,Maybank Premier,POS-831295,True
+TXN-1154,2025-03-16,Food & Beverage - GrabFood,GrabFood,108.82,MYR,expense,dining,Maybank Premier,POS-614723,True
+TXN-1155,2025-03-16,Transit & Mobility - Grab Ride,Grab Ride,49.44,MYR,expense,transportation,Maybank Premier,TX-592198,True
+TXN-1156,2025-03-17,Food & Beverage - Nando's,Nando's,43.06,MYR,expense,dining,Maybank Premier,POS-600935,True
+TXN-1157,2025-03-17,Food & Beverage - Starbucks Coffee,Starbucks Coffee,39.13,MYR,expense,dining,Maybank Premier,POS-520172,True
+TXN-1158,2025-03-19,Supermarket Purchase at Village Grocer,Village Grocer,94.54,MYR,expense,groceries,Maybank Premier,POS-901577,True
+TXN-1159,2025-03-19,Food & Beverage - Kopitiam,Kopitiam,38.09,MYR,expense,dining,Maybank Premier,POS-336650,True
+TXN-1160,2025-03-20,Food & Beverage - Kopitiam,Kopitiam,44.67,MYR,expense,dining,Maybank Premier,POS-420214,True
+TXN-1161,2025-03-20,Healthcare Expense - Guardian Pharmacy,Guardian Pharmacy,171.88,MYR,expense,healthcare,Maybank Premier,CHG-317881,True
+TXN-1162,2025-03-21,Food & Beverage - Starbucks Coffee,Starbucks Coffee,17.18,MYR,expense,dining,Maybank Premier,POS-282256,True
+TXN-1163,2025-03-22,Supermarket Purchase at AEON Supermarket,AEON Supermarket,123.06,MYR,expense,groceries,Maybank Premier,POS-342720,True
+TXN-1164,2025-03-22,Food & Beverage - GrabFood,GrabFood,59.03,MYR,expense,dining,Maybank Premier,POS-576086,True
+TXN-1165,2025-03-22,Food & Beverage - Starbucks Coffee,Starbucks Coffee,93.43,MYR,expense,dining,Maybank Premier,POS-377405,True
+TXN-1166,2025-03-23,Food & Beverage - Din Tai Fung,Din Tai Fung,44.76,MYR,expense,dining,Maybank Premier,POS-335729,True
+TXN-1167,2025-03-24,Transit & Mobility - Petronas Gas,Petronas Gas,50.7,MYR,expense,transportation,Maybank Premier,TX-964278,True
+TXN-1168,2025-03-25,Monthly Corporate Salary Transfer,NextOmni Tech Sdn Bhd,6800.0,MYR,income,salary,Maybank Premier,SAL-202503,True
+TXN-1169,2025-03-26,Food & Beverage - Din Tai Fung,Din Tai Fung,26.45,MYR,expense,dining,Maybank Premier,POS-727086,True
+TXN-1170,2025-03-26,Transit & Mobility - Shell Fuel,Shell Fuel,59.07,MYR,expense,transportation,Maybank Premier,TX-733039,True
+TXN-1171,2025-03-27,Supermarket Purchase at Jaya Grocer,Jaya Grocer,239.93,MYR,expense,groceries,Maybank Premier,POS-804938,True
+TXN-1172,2025-03-27,Food & Beverage - Kopitiam,Kopitiam,13.33,MYR,expense,dining,Maybank Premier,POS-893005,True
+TXN-1173,2025-03-27,Food & Beverage - Zus Coffee,Zus Coffee,27.53,MYR,expense,dining,Maybank Premier,POS-783157,True
+TXN-1174,2025-03-28,Food & Beverage - Din Tai Fung,Din Tai Fung,43.98,MYR,expense,dining,Maybank Premier,POS-592841,True
+TXN-1175,2025-03-28,Transit & Mobility - Petronas Gas,Petronas Gas,34.26,MYR,expense,transportation,Maybank Premier,TX-209680,True
+TXN-1176,2025-03-29,Supermarket Purchase at AEON Supermarket,AEON Supermarket,122.56,MYR,expense,groceries,Maybank Premier,POS-519904,True
+TXN-1177,2025-03-29,Food & Beverage - Starbucks Coffee,Starbucks Coffee,73.66,MYR,expense,dining,Maybank Premier,POS-429795,True
+TXN-1178,2025-03-29,Food & Beverage - Nando's,Nando's,62.48,MYR,expense,dining,Maybank Premier,POS-910075,True
+TXN-1179,2025-03-29,Food & Beverage - Din Tai Fung,Din Tai Fung,108.52,MYR,expense,dining,Maybank Premier,POS-964998,True
+TXN-1180,2025-03-30,Supermarket Purchase at AEON Supermarket,AEON Supermarket,83.94,MYR,expense,groceries,Maybank Premier,POS-643623,True
+TXN-1181,2025-03-30,Food & Beverage - Kopitiam,Kopitiam,99.3,MYR,expense,dining,Maybank Premier,POS-755788,True
+TXN-1182,2025-03-30,Food & Beverage - Din Tai Fung,Din Tai Fung,99.6,MYR,expense,dining,Maybank Premier,POS-313446,True
+TXN-1183,2025-03-30,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,70.66,MYR,expense,transportation,Maybank Premier,TX-559398,True
+TXN-1184,2025-04-01,Monthly Residential Rent,Sunway Geo Residences,1850.0,MYR,expense,rent,Maybank Premier,RENT-202504,True
+TXN-1185,2025-04-01,Food & Beverage - Starbucks Coffee,Starbucks Coffee,30.22,MYR,expense,dining,Maybank Premier,POS-197736,True
+TXN-1186,2025-04-01,Transit & Mobility - Grab Ride,Grab Ride,42.69,MYR,expense,transportation,Maybank Premier,TX-223172,True
+TXN-1187,2025-04-02,Food & Beverage - Nando's,Nando's,28.79,MYR,expense,dining,Maybank Premier,POS-386706,True
+TXN-1188,2025-04-02,Food & Beverage - Din Tai Fung,Din Tai Fung,39.55,MYR,expense,dining,Maybank Premier,POS-595158,True
+TXN-1189,2025-04-02,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,38.02,MYR,expense,transportation,Maybank Premier,TX-728492,True
+TXN-1190,2025-04-03,Food & Beverage - Nando's,Nando's,37.5,MYR,expense,dining,Maybank Premier,POS-995916,True
+TXN-1191,2025-04-03,Food & Beverage - Din Tai Fung,Din Tai Fung,23.22,MYR,expense,dining,Maybank Premier,POS-925981,True
+TXN-1192,2025-04-04,Food & Beverage - Kopitiam,Kopitiam,31.14,MYR,expense,dining,Maybank Premier,POS-791998,True
+TXN-1193,2025-04-05,Electricity Utility Bill,Tenaga Nasional Berhad,177.7,MYR,expense,utilities,Maybank Premier,UTIL-202504,True
+TXN-1194,2025-04-05,Supermarket Purchase at AEON Supermarket,AEON Supermarket,150.13,MYR,expense,groceries,Maybank Premier,POS-437408,True
+TXN-1195,2025-04-05,Food & Beverage - GrabFood,GrabFood,55.3,MYR,expense,dining,Maybank Premier,POS-501574,True
+TXN-1196,2025-04-05,Transit & Mobility - Shell Fuel,Shell Fuel,17.62,MYR,expense,transportation,Maybank Premier,TX-880879,True
+TXN-1197,2025-04-06,Food & Beverage - Din Tai Fung,Din Tai Fung,119.02,MYR,expense,dining,Maybank Premier,POS-930884,True
+TXN-1198,2025-04-06,Food & Beverage - GrabFood,GrabFood,118.37,MYR,expense,dining,Maybank Premier,POS-619389,True
+TXN-1199,2025-04-07,Food & Beverage - Starbucks Coffee,Starbucks Coffee,40.85,MYR,expense,dining,Maybank Premier,POS-561694,True
+TXN-1200,2025-04-07,Transit & Mobility - Shell Fuel,Shell Fuel,15.92,MYR,expense,transportation,Maybank Premier,TX-251157,True
+TXN-1201,2025-04-09,Food & Beverage - GrabFood,GrabFood,14.65,MYR,expense,dining,Maybank Premier,POS-444525,True
+TXN-1202,2025-04-10,Food & Beverage - GrabFood,GrabFood,41.29,MYR,expense,dining,Maybank Premier,POS-611650,True
+TXN-1203,2025-04-10,Shopping Expense - Shopee Online,Shopee Online,122.83,MYR,expense,shopping,Maybank Premier,CHG-401338,True
+TXN-1204,2025-04-11,Food & Beverage - Din Tai Fung,Din Tai Fung,44.29,MYR,expense,dining,Maybank Premier,POS-897305,True
+TXN-1205,2025-04-12,Supermarket Purchase at Lotus's,Lotus's,224.06,MYR,expense,groceries,Maybank Premier,POS-148225,True
+TXN-1206,2025-04-12,Food & Beverage - Starbucks Coffee,Starbucks Coffee,59.94,MYR,expense,dining,Maybank Premier,POS-493049,True
+TXN-1207,2025-04-12,Food & Beverage - Din Tai Fung,Din Tai Fung,47.37,MYR,expense,dining,Maybank Premier,POS-656968,True
+TXN-1208,2025-04-13,Supermarket Purchase at Village Grocer,Village Grocer,88.03,MYR,expense,groceries,Maybank Premier,POS-501126,True
+TXN-1209,2025-04-13,Food & Beverage - GrabFood,GrabFood,55.47,MYR,expense,dining,Maybank Premier,POS-711484,True
+TXN-1210,2025-04-13,Food & Beverage - Zus Coffee,Zus Coffee,54.74,MYR,expense,dining,Maybank Premier,POS-768891,True
+TXN-1211,2025-04-13,Food & Beverage - Nando's,Nando's,74.06,MYR,expense,dining,Maybank Premier,POS-799233,True
+TXN-1212,2025-04-13,Transit & Mobility - Shell Fuel,Shell Fuel,69.07,MYR,expense,transportation,Maybank Premier,TX-810526,True
+TXN-1213,2025-04-14,Supermarket Purchase at Lotus's,Lotus's,237.96,MYR,expense,groceries,Maybank Premier,POS-413685,True
+TXN-1214,2025-04-14,Food & Beverage - Din Tai Fung,Din Tai Fung,34.78,MYR,expense,dining,Maybank Premier,POS-579027,True
+TXN-1215,2025-04-15,Home High-Speed Fibre Internet,Maxis Fibre Home Internet,139.0,MYR,expense,utilities,Maybank Premier,NET-202504,True
+TXN-1216,2025-04-15,Food & Beverage - Zus Coffee,Zus Coffee,24.59,MYR,expense,dining,Maybank Premier,POS-476395,True
+TXN-1217,2025-04-16,Food & Beverage - GrabFood,GrabFood,25.06,MYR,expense,dining,Maybank Premier,POS-108491,True
+TXN-1218,2025-04-16,Food & Beverage - Kopitiam,Kopitiam,40.55,MYR,expense,dining,Maybank Premier,POS-916118,True
+TXN-1219,2025-04-16,Healthcare Expense - Klinik Mediviron,Klinik Mediviron,101.99,MYR,expense,healthcare,Maybank Premier,CHG-400096,True
+TXN-1220,2025-04-18,Food & Beverage - GrabFood,GrabFood,37.33,MYR,expense,dining,Maybank Premier,POS-813928,True
+TXN-1221,2025-04-19,Food & Beverage - Starbucks Coffee,Starbucks Coffee,61.26,MYR,expense,dining,Maybank Premier,POS-562236,True
+TXN-1222,2025-04-19,Food & Beverage - Starbucks Coffee,Starbucks Coffee,84.26,MYR,expense,dining,Maybank Premier,POS-867934,True
+TXN-1223,2025-04-19,Food & Beverage - Zus Coffee,Zus Coffee,42.66,MYR,expense,dining,Maybank Premier,POS-409445,True
+TXN-1224,2025-04-19,Transit & Mobility - Shell Fuel,Shell Fuel,25.54,MYR,expense,transportation,Maybank Premier,TX-238579,True
+TXN-1225,2025-04-20,Food & Beverage - Kopitiam,Kopitiam,77.65,MYR,expense,dining,Maybank Premier,POS-385765,True
+TXN-1226,2025-04-20,Food & Beverage - Zus Coffee,Zus Coffee,56.84,MYR,expense,dining,Maybank Premier,POS-964749,True
+TXN-1227,2025-04-21,Food & Beverage - Starbucks Coffee,Starbucks Coffee,27.45,MYR,expense,dining,Maybank Premier,POS-178957,True
+TXN-1228,2025-04-21,Food & Beverage - Zus Coffee,Zus Coffee,36.89,MYR,expense,dining,Maybank Premier,POS-336574,True
+TXN-ANOMALY-01,2025-04-21,MacBook Pro M3 Hardware Upgrade,Apple Store The Exchange TRX,7999.0,MYR,expense,shopping,Maybank Premier,APL-TRX-9901,True
+TXN-1229,2025-04-22,Food & Beverage - Kopitiam,Kopitiam,24.07,MYR,expense,dining,Maybank Premier,POS-929090,True
+TXN-1230,2025-04-22,Food & Beverage - Din Tai Fung,Din Tai Fung,12.46,MYR,expense,dining,Maybank Premier,POS-662636,True
+TXN-1231,2025-04-22,Transit & Mobility - Petronas Gas,Petronas Gas,55.37,MYR,expense,transportation,Maybank Premier,TX-805000,True
+TXN-1232,2025-04-23,Food & Beverage - Nando's,Nando's,15.58,MYR,expense,dining,Maybank Premier,POS-345180,True
+TXN-1233,2025-04-24,Food & Beverage - Kopitiam,Kopitiam,19.31,MYR,expense,dining,Maybank Premier,POS-166287,True
+TXN-1234,2025-04-25,Monthly Corporate Salary Transfer,NextOmni Tech Sdn Bhd,6800.0,MYR,income,salary,Maybank Premier,SAL-202504,True
+TXN-1235,2025-04-25,Food & Beverage - Starbucks Coffee,Starbucks Coffee,16.61,MYR,expense,dining,Maybank Premier,POS-139019,True
+TXN-1236,2025-04-25,Transit & Mobility - Shell Fuel,Shell Fuel,21.97,MYR,expense,transportation,Maybank Premier,TX-346205,True
+TXN-1237,2025-04-26,Supermarket Purchase at AEON Supermarket,AEON Supermarket,136.22,MYR,expense,groceries,Maybank Premier,POS-879238,True
+TXN-1238,2025-04-26,Food & Beverage - Kopitiam,Kopitiam,70.63,MYR,expense,dining,Maybank Premier,POS-878325,True
+TXN-1239,2025-04-26,Food & Beverage - GrabFood,GrabFood,48.13,MYR,expense,dining,Maybank Premier,POS-535037,True
+TXN-1240,2025-04-26,Food & Beverage - GrabFood,GrabFood,43.42,MYR,expense,dining,Maybank Premier,POS-613117,True
+TXN-1241,2025-04-27,Supermarket Purchase at Lotus's,Lotus's,110.85,MYR,expense,groceries,Maybank Premier,POS-566297,True
+TXN-1242,2025-04-27,Food & Beverage - Nando's,Nando's,43.45,MYR,expense,dining,Maybank Premier,POS-818987,True
+TXN-1243,2025-04-28,Transit & Mobility - Grab Ride,Grab Ride,71.94,MYR,expense,transportation,Maybank Premier,TX-964226,True
+TXN-1244,2025-04-29,Food & Beverage - Kopitiam,Kopitiam,44.05,MYR,expense,dining,Maybank Premier,POS-153035,True
+TXN-1245,2025-04-30,Supermarket Purchase at Village Grocer,Village Grocer,86.32,MYR,expense,groceries,Maybank Premier,POS-902325,True
+TXN-1246,2025-04-30,Food & Beverage - Kopitiam,Kopitiam,19.13,MYR,expense,dining,Maybank Premier,POS-344316,True
+TXN-1247,2025-04-30,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,62.32,MYR,expense,transportation,Maybank Premier,TX-724932,True
+TXN-1248,2025-04-30,Shopping Expense - Shopee Online,Shopee Online,108.73,MYR,expense,shopping,Maybank Premier,CHG-937302,True
+TXN-1249,2025-05-01,Monthly Residential Rent,Sunway Geo Residences,1850.0,MYR,expense,rent,Maybank Premier,RENT-202505,True
+TXN-1250,2025-05-01,Food & Beverage - Starbucks Coffee,Starbucks Coffee,16.35,MYR,expense,dining,Maybank Premier,POS-475644,True
+TXN-1251,2025-05-02,Transit & Mobility - Shell Fuel,Shell Fuel,46.57,MYR,expense,transportation,Maybank Premier,TX-881886,True
+TXN-1252,2025-05-02,Entertainment Expense - GSC Cinemas,GSC Cinemas,104.55,MYR,expense,entertainment,Maybank Premier,CHG-214351,True
+TXN-1253,2025-05-03,Supermarket Purchase at Village Grocer,Village Grocer,230.99,MYR,expense,groceries,Maybank Premier,POS-145471,True
+TXN-1254,2025-05-03,Food & Beverage - GrabFood,GrabFood,79.32,MYR,expense,dining,Maybank Premier,POS-580292,True
+TXN-1255,2025-05-03,Food & Beverage - GrabFood,GrabFood,116.94,MYR,expense,dining,Maybank Premier,POS-163780,True
+TXN-1256,2025-05-03,Food & Beverage - Din Tai Fung,Din Tai Fung,107.02,MYR,expense,dining,Maybank Premier,POS-546980,True
+TXN-1257,2025-05-04,Food & Beverage - Starbucks Coffee,Starbucks Coffee,62.38,MYR,expense,dining,Maybank Premier,POS-255539,True
+TXN-1258,2025-05-04,Transit & Mobility - Petronas Gas,Petronas Gas,52.46,MYR,expense,transportation,Maybank Premier,TX-713799,True
+TXN-1259,2025-05-05,Electricity Utility Bill,Tenaga Nasional Berhad,162.76,MYR,expense,utilities,Maybank Premier,UTIL-202505,True
+TXN-1260,2025-05-05,Food & Beverage - Din Tai Fung,Din Tai Fung,28.68,MYR,expense,dining,Maybank Premier,POS-551096,True
+TXN-1261,2025-05-05,Transit & Mobility - Grab Ride,Grab Ride,66.17,MYR,expense,transportation,Maybank Premier,TX-782535,True
+TXN-1262,2025-05-06,Food & Beverage - Din Tai Fung,Din Tai Fung,26.9,MYR,expense,dining,Maybank Premier,POS-339592,True
+TXN-1263,2025-05-06,Food & Beverage - Din Tai Fung,Din Tai Fung,23.18,MYR,expense,dining,Maybank Premier,POS-575528,True
+TXN-1264,2025-05-07,Food & Beverage - Nando's,Nando's,24.35,MYR,expense,dining,Maybank Premier,POS-260053,True
+TXN-1265,2025-05-08,Supermarket Purchase at Jaya Grocer,Jaya Grocer,90.38,MYR,expense,groceries,Maybank Premier,POS-201255,True
+TXN-1266,2025-05-08,Food & Beverage - Nando's,Nando's,38.79,MYR,expense,dining,Maybank Premier,POS-683397,True
+TXN-1267,2025-05-08,Transit & Mobility - Petronas Gas,Petronas Gas,55.2,MYR,expense,transportation,Maybank Premier,TX-530764,True
+TXN-1268,2025-05-09,Food & Beverage - GrabFood,GrabFood,13.7,MYR,expense,dining,Maybank Premier,POS-401601,True
+TXN-1269,2025-05-10,Supermarket Purchase at Village Grocer,Village Grocer,100.53,MYR,expense,groceries,Maybank Premier,POS-605612,True
+TXN-1270,2025-05-10,Food & Beverage - Starbucks Coffee,Starbucks Coffee,64.76,MYR,expense,dining,Maybank Premier,POS-683286,True
+TXN-1271,2025-05-11,Supermarket Purchase at AEON Supermarket,AEON Supermarket,214.45,MYR,expense,groceries,Maybank Premier,POS-904711,True
+TXN-1272,2025-05-11,Food & Beverage - Kopitiam,Kopitiam,92.37,MYR,expense,dining,Maybank Premier,POS-683783,True
+TXN-1273,2025-05-11,Food & Beverage - Starbucks Coffee,Starbucks Coffee,86.76,MYR,expense,dining,Maybank Premier,POS-789786,True
+TXN-1274,2025-05-11,Food & Beverage - GrabFood,GrabFood,57.73,MYR,expense,dining,Maybank Premier,POS-289179,True
+TXN-1275,2025-05-11,Transit & Mobility - Petronas Gas,Petronas Gas,70.29,MYR,expense,transportation,Maybank Premier,TX-468074,True
+TXN-1276,2025-05-11,Shopping Expense - IKEA Damansara,IKEA Damansara,35.79,MYR,expense,shopping,Maybank Premier,CHG-876962,True
+TXN-1277,2025-05-13,Food & Beverage - Nando's,Nando's,22.28,MYR,expense,dining,Maybank Premier,POS-440140,True
+TXN-1278,2025-05-14,Supermarket Purchase at Jaya Grocer,Jaya Grocer,100.67,MYR,expense,groceries,Maybank Premier,POS-891083,True
+TXN-1279,2025-05-14,Food & Beverage - GrabFood,GrabFood,14.69,MYR,expense,dining,Maybank Premier,POS-564637,True
+TXN-1280,2025-05-15,Home High-Speed Fibre Internet,Maxis Fibre Home Internet,139.0,MYR,expense,utilities,Maybank Premier,NET-202505,True
+TXN-1281,2025-05-15,Food & Beverage - Kopitiam,Kopitiam,15.76,MYR,expense,dining,Maybank Premier,POS-550797,True
+TXN-1282,2025-05-15,Transit & Mobility - Shell Fuel,Shell Fuel,46.62,MYR,expense,transportation,Maybank Premier,TX-423401,True
+TXN-1283,2025-05-15,Entertainment Expense - Netflix Subscription,Netflix Subscription,26.19,MYR,expense,entertainment,Maybank Premier,CHG-416061,True
+TXN-1284,2025-05-16,Food & Beverage - Nando's,Nando's,21.55,MYR,expense,dining,Maybank Premier,POS-225812,True
+TXN-1285,2025-05-16,Transit & Mobility - Shell Fuel,Shell Fuel,25.54,MYR,expense,transportation,Maybank Premier,TX-498676,True
+TXN-1286,2025-05-17,Supermarket Purchase at Lotus's,Lotus's,86.89,MYR,expense,groceries,Maybank Premier,POS-878086,True
+TXN-1287,2025-05-17,Food & Beverage - Din Tai Fung,Din Tai Fung,36.59,MYR,expense,dining,Maybank Premier,POS-181644,True
+TXN-1288,2025-05-18,Supermarket Purchase at AEON Supermarket,AEON Supermarket,122.77,MYR,expense,groceries,Maybank Premier,POS-524707,True
+TXN-1289,2025-05-18,Food & Beverage - Nando's,Nando's,49.61,MYR,expense,dining,Maybank Premier,POS-748151,True
+TXN-1290,2025-05-19,Food & Beverage - Starbucks Coffee,Starbucks Coffee,20.03,MYR,expense,dining,Maybank Premier,POS-717476,True
+TXN-1291,2025-05-19,Entertainment Expense - GSC Cinemas,GSC Cinemas,59.34,MYR,expense,entertainment,Maybank Premier,CHG-916964,True
+TXN-1292,2025-05-20,Food & Beverage - Starbucks Coffee,Starbucks Coffee,29.51,MYR,expense,dining,Maybank Premier,POS-303322,True
+TXN-1293,2025-05-21,Food & Beverage - Zus Coffee,Zus Coffee,19.8,MYR,expense,dining,Maybank Premier,POS-253557,True
+TXN-1294,2025-05-21,Food & Beverage - Nando's,Nando's,18.51,MYR,expense,dining,Maybank Premier,POS-731661,True
+TXN-1295,2025-05-21,Transit & Mobility - Grab Ride,Grab Ride,25.63,MYR,expense,transportation,Maybank Premier,TX-910389,True
+TXN-1296,2025-05-22,Food & Beverage - Kopitiam,Kopitiam,26.81,MYR,expense,dining,Maybank Premier,POS-691912,True
+TXN-1297,2025-05-23,Food & Beverage - Nando's,Nando's,16.98,MYR,expense,dining,Maybank Premier,POS-171603,True
+TXN-1298,2025-05-23,Food & Beverage - Din Tai Fung,Din Tai Fung,26.59,MYR,expense,dining,Maybank Premier,POS-417530,True
+TXN-1299,2025-05-24,Supermarket Purchase at Jaya Grocer,Jaya Grocer,126.22,MYR,expense,groceries,Maybank Premier,POS-573866,True
+TXN-1300,2025-05-24,Food & Beverage - Starbucks Coffee,Starbucks Coffee,66.34,MYR,expense,dining,Maybank Premier,POS-401022,True
+TXN-1301,2025-05-24,Transit & Mobility - Grab Ride,Grab Ride,51.9,MYR,expense,transportation,Maybank Premier,TX-631699,True
+TXN-1302,2025-05-25,Monthly Corporate Salary Transfer,NextOmni Tech Sdn Bhd,6800.0,MYR,income,salary,Maybank Premier,SAL-202505,True
+TXN-1303,2025-05-25,Supermarket Purchase at Jaya Grocer,Jaya Grocer,149.21,MYR,expense,groceries,Maybank Premier,POS-949153,True
+TXN-1304,2025-05-25,Food & Beverage - GrabFood,GrabFood,51.0,MYR,expense,dining,Maybank Premier,POS-734394,True
+TXN-1305,2025-05-25,Food & Beverage - Din Tai Fung,Din Tai Fung,77.62,MYR,expense,dining,Maybank Premier,POS-164879,True
+TXN-1306,2025-05-25,Food & Beverage - Din Tai Fung,Din Tai Fung,43.8,MYR,expense,dining,Maybank Premier,POS-978053,True
+TXN-1307,2025-05-25,Transit & Mobility - Grab Ride,Grab Ride,45.27,MYR,expense,transportation,Maybank Premier,TX-280941,True
+TXN-1308,2025-05-25,Healthcare Expense - Watsons Drugstore,Watsons Drugstore,178.6,MYR,expense,healthcare,Maybank Premier,CHG-649525,True
+TXN-1309,2025-05-27,Food & Beverage - Kopitiam,Kopitiam,13.73,MYR,expense,dining,Maybank Premier,POS-761532,True
+TXN-1310,2025-05-27,Shopping Expense - IKEA Damansara,IKEA Damansara,69.04,MYR,expense,shopping,Maybank Premier,CHG-858889,True
+TXN-1311,2025-05-28,Food & Beverage - Kopitiam,Kopitiam,40.82,MYR,expense,dining,Maybank Premier,POS-449555,True
+TXN-1312,2025-05-28,Food & Beverage - Starbucks Coffee,Starbucks Coffee,31.23,MYR,expense,dining,Maybank Premier,POS-248298,True
+TXN-1313,2025-05-29,Food & Beverage - Zus Coffee,Zus Coffee,31.64,MYR,expense,dining,Maybank Premier,POS-188834,True
+TXN-1314,2025-05-29,Transit & Mobility - Shell Fuel,Shell Fuel,53.61,MYR,expense,transportation,Maybank Premier,TX-444432,True
+TXN-1315,2025-05-30,Food & Beverage - GrabFood,GrabFood,44.91,MYR,expense,dining,Maybank Premier,POS-651963,True
+TXN-1316,2025-05-30,Food & Beverage - Starbucks Coffee,Starbucks Coffee,33.32,MYR,expense,dining,Maybank Premier,POS-543973,True
+TXN-1317,2025-05-30,Entertainment Expense - Spotify Family,Spotify Family,172.43,MYR,expense,entertainment,Maybank Premier,CHG-458332,True
+TXN-1318,2025-05-31,Food & Beverage - Zus Coffee,Zus Coffee,54.26,MYR,expense,dining,Maybank Premier,POS-244247,True
+TXN-1319,2025-05-31,Food & Beverage - Zus Coffee,Zus Coffee,41.56,MYR,expense,dining,Maybank Premier,POS-985447,True
+TXN-1320,2025-06-01,Monthly Residential Rent,Sunway Geo Residences,1850.0,MYR,expense,rent,Maybank Premier,RENT-202506,True
+TXN-1321,2025-06-01,Supermarket Purchase at Jaya Grocer,Jaya Grocer,184.22,MYR,expense,groceries,Maybank Premier,POS-903531,True
+TXN-1322,2025-06-01,Food & Beverage - Zus Coffee,Zus Coffee,85.77,MYR,expense,dining,Maybank Premier,POS-261745,True
+TXN-1323,2025-06-01,Food & Beverage - Zus Coffee,Zus Coffee,50.37,MYR,expense,dining,Maybank Premier,POS-826501,True
+TXN-1324,2025-06-01,Food & Beverage - Kopitiam,Kopitiam,103.77,MYR,expense,dining,Maybank Premier,POS-273580,True
+TXN-1325,2025-06-01,Entertainment Expense - Spotify Family,Spotify Family,175.29,MYR,expense,entertainment,Maybank Premier,CHG-740255,True
+TXN-1326,2025-06-02,Food & Beverage - Din Tai Fung,Din Tai Fung,19.72,MYR,expense,dining,Maybank Premier,POS-350786,True
+TXN-1327,2025-06-02,Transit & Mobility - Shell Fuel,Shell Fuel,69.24,MYR,expense,transportation,Maybank Premier,TX-303440,True
+TXN-1328,2025-06-03,Food & Beverage - Din Tai Fung,Din Tai Fung,37.39,MYR,expense,dining,Maybank Premier,POS-915922,True
+TXN-1329,2025-06-03,Food & Beverage - Din Tai Fung,Din Tai Fung,28.6,MYR,expense,dining,Maybank Premier,POS-538997,True
+TXN-1330,2025-06-04,Transit & Mobility - Shell Fuel,Shell Fuel,67.45,MYR,expense,transportation,Maybank Premier,TX-681478,True
+TXN-1331,2025-06-05,Electricity Utility Bill,Tenaga Nasional Berhad,189.8,MYR,expense,utilities,Maybank Premier,UTIL-202506,True
+TXN-1332,2025-06-05,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,31.37,MYR,expense,transportation,Maybank Premier,TX-638289,True
+TXN-1333,2025-06-06,Food & Beverage - Zus Coffee,Zus Coffee,38.95,MYR,expense,dining,Maybank Premier,POS-466566,True
+TXN-1334,2025-06-06,Food & Beverage - Starbucks Coffee,Starbucks Coffee,25.69,MYR,expense,dining,Maybank Premier,POS-515712,True
+TXN-1335,2025-06-07,Food & Beverage - Zus Coffee,Zus Coffee,37.4,MYR,expense,dining,Maybank Premier,POS-203896,True
+TXN-1336,2025-06-07,Food & Beverage - GrabFood,GrabFood,90.25,MYR,expense,dining,Maybank Premier,POS-929822,True
+TXN-1337,2025-06-07,Transit & Mobility - Grab Ride,Grab Ride,32.21,MYR,expense,transportation,Maybank Premier,TX-970068,True
+TXN-1338,2025-06-08,Food & Beverage - Din Tai Fung,Din Tai Fung,73.13,MYR,expense,dining,Maybank Premier,POS-105506,True
+TXN-1339,2025-06-08,Food & Beverage - Starbucks Coffee,Starbucks Coffee,36.62,MYR,expense,dining,Maybank Premier,POS-326130,True
+TXN-1340,2025-06-08,Food & Beverage - Zus Coffee,Zus Coffee,81.65,MYR,expense,dining,Maybank Premier,POS-862560,True
+TXN-1341,2025-06-09,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,40.19,MYR,expense,transportation,Maybank Premier,TX-932463,True
+TXN-1342,2025-06-10,Supermarket Purchase at AEON Supermarket,AEON Supermarket,173.46,MYR,expense,groceries,Maybank Premier,POS-117233,True
+TXN-1343,2025-06-10,Food & Beverage - Kopitiam,Kopitiam,19.98,MYR,expense,dining,Maybank Premier,POS-250551,True
+TXN-1344,2025-06-10,Transit & Mobility - Grab Ride,Grab Ride,51.89,MYR,expense,transportation,Maybank Premier,TX-352249,True
+TXN-1345,2025-06-11,Food & Beverage - Kopitiam,Kopitiam,44.16,MYR,expense,dining,Maybank Premier,POS-170966,True
+TXN-1346,2025-06-12,Food & Beverage - Starbucks Coffee,Starbucks Coffee,24.88,MYR,expense,dining,Maybank Premier,POS-592972,True
+TXN-1347,2025-06-12,Transit & Mobility - Shell Fuel,Shell Fuel,73.86,MYR,expense,transportation,Maybank Premier,TX-365971,True
+TXN-1348,2025-06-13,Transit & Mobility - Grab Ride,Grab Ride,61.29,MYR,expense,transportation,Maybank Premier,TX-870899,True
+TXN-1349,2025-06-14,Supermarket Purchase at Lotus's,Lotus's,165.09,MYR,expense,groceries,Maybank Premier,POS-953025,True
+TXN-1350,2025-06-14,Food & Beverage - Zus Coffee,Zus Coffee,105.58,MYR,expense,dining,Maybank Premier,POS-817941,True
+TXN-1351,2025-06-14,Food & Beverage - Din Tai Fung,Din Tai Fung,118.37,MYR,expense,dining,Maybank Premier,POS-601776,True
+TXN-1352,2025-06-14,Food & Beverage - GrabFood,GrabFood,50.49,MYR,expense,dining,Maybank Premier,POS-241403,True
+TXN-1353,2025-06-14,Transit & Mobility - Shell Fuel,Shell Fuel,17.22,MYR,expense,transportation,Maybank Premier,TX-311383,True
+TXN-1354,2025-06-14,Shopping Expense - Uniqlo Mid Valley,Uniqlo Mid Valley,73.92,MYR,expense,shopping,Maybank Premier,CHG-425138,True
+TXN-1355,2025-06-15,Home High-Speed Fibre Internet,Maxis Fibre Home Internet,139.0,MYR,expense,utilities,Maybank Premier,NET-202506,True
+TXN-1356,2025-06-15,Supermarket Purchase at AEON Supermarket,AEON Supermarket,116.8,MYR,expense,groceries,Maybank Premier,POS-889882,True
+TXN-1357,2025-06-15,Food & Beverage - Zus Coffee,Zus Coffee,59.32,MYR,expense,dining,Maybank Premier,POS-918771,True
+TXN-1358,2025-06-15,Food & Beverage - Starbucks Coffee,Starbucks Coffee,108.59,MYR,expense,dining,Maybank Premier,POS-448048,True
+TXN-1359,2025-06-15,Food & Beverage - Nando's,Nando's,45.58,MYR,expense,dining,Maybank Premier,POS-485896,True
+TXN-1360,2025-06-16,Food & Beverage - Nando's,Nando's,44.13,MYR,expense,dining,Maybank Premier,POS-620306,True
+TXN-1361,2025-06-16,Food & Beverage - GrabFood,GrabFood,28.42,MYR,expense,dining,Maybank Premier,POS-936020,True
+TXN-1362,2025-06-18,Food & Beverage - Starbucks Coffee,Starbucks Coffee,22.82,MYR,expense,dining,Maybank Premier,POS-410000,True
+TXN-1363,2025-06-18,Transit & Mobility - Shell Fuel,Shell Fuel,25.0,MYR,expense,transportation,Maybank Premier,TX-565471,True
+TXN-1364,2025-06-19,Supermarket Purchase at Lotus's,Lotus's,176.45,MYR,expense,groceries,Maybank Premier,POS-556068,True
+TXN-1365,2025-06-19,Food & Beverage - Starbucks Coffee,Starbucks Coffee,14.48,MYR,expense,dining,Maybank Premier,POS-768480,True
+TXN-1366,2025-06-20,Transit & Mobility - Shell Fuel,Shell Fuel,17.09,MYR,expense,transportation,Maybank Premier,TX-170499,True
+TXN-1367,2025-06-21,Supermarket Purchase at Lotus's,Lotus's,138.17,MYR,expense,groceries,Maybank Premier,POS-694799,True
+TXN-1368,2025-06-21,Food & Beverage - Kopitiam,Kopitiam,48.04,MYR,expense,dining,Maybank Premier,POS-571778,True
+TXN-1369,2025-06-22,Food & Beverage - Zus Coffee,Zus Coffee,80.0,MYR,expense,dining,Maybank Premier,POS-517368,True
+TXN-1370,2025-06-22,Food & Beverage - Nando's,Nando's,90.21,MYR,expense,dining,Maybank Premier,POS-361736,True
+TXN-1371,2025-06-22,Food & Beverage - Starbucks Coffee,Starbucks Coffee,37.2,MYR,expense,dining,Maybank Premier,POS-295085,True
+TXN-1372,2025-06-23,Food & Beverage - Nando's,Nando's,35.23,MYR,expense,dining,Maybank Premier,POS-324993,True
+TXN-1373,2025-06-24,Food & Beverage - Starbucks Coffee,Starbucks Coffee,16.48,MYR,expense,dining,Maybank Premier,POS-177649,True
+TXN-1374,2025-06-25,Monthly Corporate Salary Transfer,NextOmni Tech Sdn Bhd,6800.0,MYR,income,salary,Maybank Premier,SAL-202506,True
+TXN-1375,2025-06-26,Food & Beverage - Starbucks Coffee,Starbucks Coffee,30.15,MYR,expense,dining,Maybank Premier,POS-404466,True
+TXN-1376,2025-06-27,Food & Beverage - GrabFood,GrabFood,17.75,MYR,expense,dining,Maybank Premier,POS-479052,True
+TXN-1377,2025-06-27,Food & Beverage - Kopitiam,Kopitiam,19.4,MYR,expense,dining,Maybank Premier,POS-310743,True
+TXN-1378,2025-06-28,Supermarket Purchase at Lotus's,Lotus's,166.41,MYR,expense,groceries,Maybank Premier,POS-486831,True
+TXN-1379,2025-06-28,Food & Beverage - Kopitiam,Kopitiam,46.03,MYR,expense,dining,Maybank Premier,POS-190403,True
+TXN-1380,2025-06-28,Food & Beverage - Starbucks Coffee,Starbucks Coffee,61.29,MYR,expense,dining,Maybank Premier,POS-851759,True
+TXN-1381,2025-06-29,Food & Beverage - Starbucks Coffee,Starbucks Coffee,45.65,MYR,expense,dining,Maybank Premier,POS-432427,True
+TXN-1382,2025-06-29,Food & Beverage - GrabFood,GrabFood,41.3,MYR,expense,dining,Maybank Premier,POS-588461,True
+TXN-1383,2025-06-29,Food & Beverage - GrabFood,GrabFood,78.98,MYR,expense,dining,Maybank Premier,POS-234568,True
+TXN-1384,2025-07-01,Monthly Residential Rent,Sunway Geo Residences,1850.0,MYR,expense,rent,Maybank Premier,RENT-202507,True
+TXN-1385,2025-07-01,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,33.25,MYR,expense,transportation,Maybank Premier,TX-269834,True
+TXN-1386,2025-07-02,Food & Beverage - Kopitiam,Kopitiam,41.53,MYR,expense,dining,Maybank Premier,POS-987025,True
+TXN-1387,2025-07-02,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,53.1,MYR,expense,transportation,Maybank Premier,TX-677599,True
+TXN-1388,2025-07-03,Food & Beverage - Starbucks Coffee,Starbucks Coffee,28.58,MYR,expense,dining,Maybank Premier,POS-276827,True
+TXN-1389,2025-07-04,Food & Beverage - Kopitiam,Kopitiam,23.14,MYR,expense,dining,Maybank Premier,POS-690996,True
+TXN-1390,2025-07-04,Transit & Mobility - Grab Ride,Grab Ride,19.87,MYR,expense,transportation,Maybank Premier,TX-772612,True
+TXN-1391,2025-07-05,Electricity Utility Bill,Tenaga Nasional Berhad,158.53,MYR,expense,utilities,Maybank Premier,UTIL-202507,True
+TXN-1392,2025-07-05,Supermarket Purchase at AEON Supermarket,AEON Supermarket,176.99,MYR,expense,groceries,Maybank Premier,POS-131757,True
+TXN-1393,2025-07-05,Food & Beverage - GrabFood,GrabFood,81.37,MYR,expense,dining,Maybank Premier,POS-773088,True
+TXN-1394,2025-07-05,Food & Beverage - Nando's,Nando's,76.05,MYR,expense,dining,Maybank Premier,POS-943776,True
+TXN-1395,2025-07-06,Supermarket Purchase at Jaya Grocer,Jaya Grocer,101.08,MYR,expense,groceries,Maybank Premier,POS-535810,True
+TXN-1396,2025-07-06,Food & Beverage - Din Tai Fung,Din Tai Fung,52.34,MYR,expense,dining,Maybank Premier,POS-736129,True
+TXN-1397,2025-07-06,Food & Beverage - Zus Coffee,Zus Coffee,61.57,MYR,expense,dining,Maybank Premier,POS-853258,True
+TXN-1398,2025-07-06,Transit & Mobility - Petronas Gas,Petronas Gas,73.52,MYR,expense,transportation,Maybank Premier,TX-237118,True
+TXN-1399,2025-07-07,Transit & Mobility - Grab Ride,Grab Ride,31.05,MYR,expense,transportation,Maybank Premier,TX-359961,True
+TXN-1400,2025-07-08,Supermarket Purchase at AEON Supermarket,AEON Supermarket,217.59,MYR,expense,groceries,Maybank Premier,POS-538446,True
+TXN-1401,2025-07-09,Food & Beverage - Nando's,Nando's,18.26,MYR,expense,dining,Maybank Premier,POS-267082,True
+TXN-1402,2025-07-10,Food & Beverage - Starbucks Coffee,Starbucks Coffee,14.97,MYR,expense,dining,Maybank Premier,POS-512344,True
+TXN-1403,2025-07-11,Food & Beverage - Starbucks Coffee,Starbucks Coffee,21.28,MYR,expense,dining,Maybank Premier,POS-726543,True
+TXN-1404,2025-07-12,Supermarket Purchase at Jaya Grocer,Jaya Grocer,214.78,MYR,expense,groceries,Maybank Premier,POS-551860,True
+TXN-1405,2025-07-12,Food & Beverage - Nando's,Nando's,96.84,MYR,expense,dining,Maybank Premier,POS-900961,True
+TXN-1406,2025-07-12,Shopping Expense - Shopee Online,Shopee Online,81.19,MYR,expense,shopping,Maybank Premier,CHG-402620,True
+TXN-1407,2025-07-13,Supermarket Purchase at AEON Supermarket,AEON Supermarket,201.13,MYR,expense,groceries,Maybank Premier,POS-393308,True
+TXN-1408,2025-07-13,Food & Beverage - GrabFood,GrabFood,86.94,MYR,expense,dining,Maybank Premier,POS-234913,True
+TXN-1409,2025-07-13,Food & Beverage - Starbucks Coffee,Starbucks Coffee,68.48,MYR,expense,dining,Maybank Premier,POS-933510,True
+TXN-1410,2025-07-13,Food & Beverage - Nando's,Nando's,82.42,MYR,expense,dining,Maybank Premier,POS-483366,True
+TXN-1411,2025-07-14,Food & Beverage - Starbucks Coffee,Starbucks Coffee,13.28,MYR,expense,dining,Maybank Premier,POS-848255,True
+TXN-1412,2025-07-14,Transit & Mobility - Shell Fuel,Shell Fuel,46.16,MYR,expense,transportation,Maybank Premier,TX-256175,True
+TXN-1413,2025-07-15,Home High-Speed Fibre Internet,Maxis Fibre Home Internet,139.0,MYR,expense,utilities,Maybank Premier,NET-202507,True
+TXN-1414,2025-07-15,Food & Beverage - Kopitiam,Kopitiam,22.51,MYR,expense,dining,Maybank Premier,POS-512042,True
+TXN-1415,2025-07-16,Food & Beverage - Kopitiam,Kopitiam,29.57,MYR,expense,dining,Maybank Premier,POS-843167,True
+TXN-1416,2025-07-17,Supermarket Purchase at Lotus's,Lotus's,186.18,MYR,expense,groceries,Maybank Premier,POS-536774,True
+TXN-1417,2025-07-17,Food & Beverage - GrabFood,GrabFood,40.78,MYR,expense,dining,Maybank Premier,POS-759827,True
+TXN-1418,2025-07-17,Transit & Mobility - Shell Fuel,Shell Fuel,30.93,MYR,expense,transportation,Maybank Premier,TX-787436,True
+TXN-1419,2025-07-18,Food & Beverage - GrabFood,GrabFood,13.69,MYR,expense,dining,Maybank Premier,POS-603787,True
+TXN-1420,2025-07-18,Transit & Mobility - Shell Fuel,Shell Fuel,23.87,MYR,expense,transportation,Maybank Premier,TX-813793,True
+TXN-1421,2025-07-19,Supermarket Purchase at Jaya Grocer,Jaya Grocer,106.48,MYR,expense,groceries,Maybank Premier,POS-562462,True
+TXN-1422,2025-07-19,Food & Beverage - Din Tai Fung,Din Tai Fung,47.87,MYR,expense,dining,Maybank Premier,POS-824042,True
+TXN-1423,2025-07-19,Food & Beverage - Zus Coffee,Zus Coffee,69.88,MYR,expense,dining,Maybank Premier,POS-912617,True
+TXN-1424,2025-07-20,Food & Beverage - Starbucks Coffee,Starbucks Coffee,94.99,MYR,expense,dining,Maybank Premier,POS-643878,True
+TXN-1425,2025-07-20,Food & Beverage - Zus Coffee,Zus Coffee,82.68,MYR,expense,dining,Maybank Premier,POS-794395,True
+TXN-1426,2025-07-20,Food & Beverage - Din Tai Fung,Din Tai Fung,79.67,MYR,expense,dining,Maybank Premier,POS-428993,True
+TXN-1427,2025-07-21,Food & Beverage - GrabFood,GrabFood,37.48,MYR,expense,dining,Maybank Premier,POS-855944,True
+TXN-1428,2025-07-22,Food & Beverage - Zus Coffee,Zus Coffee,21.21,MYR,expense,dining,Maybank Premier,POS-412999,True
+TXN-1429,2025-07-22,Transit & Mobility - Petronas Gas,Petronas Gas,61.27,MYR,expense,transportation,Maybank Premier,TX-839142,True
+TXN-1430,2025-07-23,Food & Beverage - Nando's,Nando's,30.5,MYR,expense,dining,Maybank Premier,POS-934042,True
+TXN-1431,2025-07-24,Food & Beverage - Din Tai Fung,Din Tai Fung,39.01,MYR,expense,dining,Maybank Premier,POS-910616,True
+TXN-1432,2025-07-25,Monthly Corporate Salary Transfer,NextOmni Tech Sdn Bhd,6800.0,MYR,income,salary,Maybank Premier,SAL-202507,True
+TXN-1433,2025-07-25,Food & Beverage - Nando's,Nando's,42.49,MYR,expense,dining,Maybank Premier,POS-787836,True
+TXN-1434,2025-07-25,Transit & Mobility - Shell Fuel,Shell Fuel,27.84,MYR,expense,transportation,Maybank Premier,TX-968170,True
+TXN-1435,2025-07-26,Food & Beverage - Nando's,Nando's,46.67,MYR,expense,dining,Maybank Premier,POS-745584,True
+TXN-1436,2025-07-26,Food & Beverage - GrabFood,GrabFood,84.88,MYR,expense,dining,Maybank Premier,POS-354235,True
+TXN-1437,2025-07-26,Food & Beverage - Starbucks Coffee,Starbucks Coffee,91.94,MYR,expense,dining,Maybank Premier,POS-656837,True
+TXN-1438,2025-07-26,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,18.15,MYR,expense,transportation,Maybank Premier,TX-533377,True
+TXN-1439,2025-07-27,Supermarket Purchase at Village Grocer,Village Grocer,75.85,MYR,expense,groceries,Maybank Premier,POS-677086,True
+TXN-1440,2025-07-27,Food & Beverage - Din Tai Fung,Din Tai Fung,90.5,MYR,expense,dining,Maybank Premier,POS-598807,True
+TXN-1441,2025-07-28,Food & Beverage - GrabFood,GrabFood,13.95,MYR,expense,dining,Maybank Premier,POS-906066,True
+TXN-1442,2025-07-28,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,47.11,MYR,expense,transportation,Maybank Premier,TX-858243,True
+TXN-1443,2025-07-29,Supermarket Purchase at Village Grocer,Village Grocer,143.95,MYR,expense,groceries,Maybank Premier,POS-978292,True
+TXN-1444,2025-07-30,Food & Beverage - GrabFood,GrabFood,43.75,MYR,expense,dining,Maybank Premier,POS-403528,True
+TXN-1445,2025-07-30,Healthcare Expense - Klinik Mediviron,Klinik Mediviron,41.63,MYR,expense,healthcare,Maybank Premier,CHG-451317,True
+TXN-1446,2025-07-31,Food & Beverage - Kopitiam,Kopitiam,29.3,MYR,expense,dining,Maybank Premier,POS-240718,True
+TXN-1447,2025-07-31,Food & Beverage - Kopitiam,Kopitiam,27.44,MYR,expense,dining,Maybank Premier,POS-302177,True
+TXN-1448,2025-08-01,Monthly Residential Rent,Sunway Geo Residences,1850.0,MYR,expense,rent,Maybank Premier,RENT-202508,True
+TXN-1449,2025-08-01,Food & Beverage - GrabFood,GrabFood,18.14,MYR,expense,dining,Maybank Premier,POS-872399,True
+TXN-1450,2025-08-01,Transit & Mobility - Petronas Gas,Petronas Gas,49.07,MYR,expense,transportation,Maybank Premier,TX-894068,True
+TXN-1451,2025-08-02,Supermarket Purchase at AEON Supermarket,AEON Supermarket,211.45,MYR,expense,groceries,Maybank Premier,POS-640310,True
+TXN-1452,2025-08-02,Food & Beverage - Starbucks Coffee,Starbucks Coffee,69.07,MYR,expense,dining,Maybank Premier,POS-200018,True
+TXN-1453,2025-08-02,Food & Beverage - Zus Coffee,Zus Coffee,118.44,MYR,expense,dining,Maybank Premier,POS-600646,True
+TXN-1454,2025-08-02,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,15.41,MYR,expense,transportation,Maybank Premier,TX-502206,True
+TXN-1455,2025-08-03,Food & Beverage - Nando's,Nando's,84.51,MYR,expense,dining,Maybank Premier,POS-700705,True
+TXN-1456,2025-08-03,Food & Beverage - Starbucks Coffee,Starbucks Coffee,57.23,MYR,expense,dining,Maybank Premier,POS-477017,True
+TXN-1457,2025-08-03,Shopping Expense - IKEA Damansara,IKEA Damansara,72.55,MYR,expense,shopping,Maybank Premier,CHG-525110,True
+TXN-1458,2025-08-04,Food & Beverage - GrabFood,GrabFood,37.4,MYR,expense,dining,Maybank Premier,POS-823821,True
+TXN-1459,2025-08-04,Food & Beverage - Starbucks Coffee,Starbucks Coffee,33.08,MYR,expense,dining,Maybank Premier,POS-409369,True
+TXN-1460,2025-08-05,Electricity Utility Bill,Tenaga Nasional Berhad,207.02,MYR,expense,utilities,Maybank Premier,UTIL-202508,True
+TXN-1461,2025-08-05,Food & Beverage - Kopitiam,Kopitiam,24.33,MYR,expense,dining,Maybank Premier,POS-836038,True
+TXN-1462,2025-08-06,Food & Beverage - Zus Coffee,Zus Coffee,37.14,MYR,expense,dining,Maybank Premier,POS-813390,True
+TXN-1463,2025-08-07,Supermarket Purchase at AEON Supermarket,AEON Supermarket,162.15,MYR,expense,groceries,Maybank Premier,POS-479358,True
+TXN-1464,2025-08-07,Healthcare Expense - Klinik Mediviron,Klinik Mediviron,56.33,MYR,expense,healthcare,Maybank Premier,CHG-662728,True
+TXN-1465,2025-08-08,Supermarket Purchase at Lotus's,Lotus's,215.99,MYR,expense,groceries,Maybank Premier,POS-563303,True
+TXN-1466,2025-08-08,Transit & Mobility - Shell Fuel,Shell Fuel,20.46,MYR,expense,transportation,Maybank Premier,TX-635167,True
+TXN-1467,2025-08-09,Supermarket Purchase at Village Grocer,Village Grocer,159.69,MYR,expense,groceries,Maybank Premier,POS-578987,True
+TXN-1468,2025-08-09,Food & Beverage - Starbucks Coffee,Starbucks Coffee,82.5,MYR,expense,dining,Maybank Premier,POS-805448,True
+TXN-1469,2025-08-09,Food & Beverage - Nando's,Nando's,96.48,MYR,expense,dining,Maybank Premier,POS-515182,True
+TXN-1470,2025-08-09,Food & Beverage - Nando's,Nando's,104.4,MYR,expense,dining,Maybank Premier,POS-882032,True
+TXN-1471,2025-08-09,Transit & Mobility - Grab Ride,Grab Ride,17.72,MYR,expense,transportation,Maybank Premier,TX-461264,True
+TXN-1472,2025-08-10,Supermarket Purchase at Jaya Grocer,Jaya Grocer,229.21,MYR,expense,groceries,Maybank Premier,POS-172371,True
+TXN-1473,2025-08-10,Food & Beverage - Starbucks Coffee,Starbucks Coffee,59.4,MYR,expense,dining,Maybank Premier,POS-288724,True
+TXN-1474,2025-08-10,Food & Beverage - Zus Coffee,Zus Coffee,100.1,MYR,expense,dining,Maybank Premier,POS-864715,True
+TXN-1475,2025-08-11,Food & Beverage - Din Tai Fung,Din Tai Fung,24.4,MYR,expense,dining,Maybank Premier,POS-815894,True
+TXN-1476,2025-08-12,Supermarket Purchase at Lotus's,Lotus's,94.57,MYR,expense,groceries,Maybank Premier,POS-663356,True
+TXN-1477,2025-08-12,Food & Beverage - Zus Coffee,Zus Coffee,36.02,MYR,expense,dining,Maybank Premier,POS-333507,True
+TXN-1478,2025-08-13,Food & Beverage - GrabFood,GrabFood,29.97,MYR,expense,dining,Maybank Premier,POS-657772,True
+TXN-1479,2025-08-14,Transit & Mobility - Grab Ride,Grab Ride,16.93,MYR,expense,transportation,Maybank Premier,TX-792267,True
+TXN-1480,2025-08-15,Home High-Speed Fibre Internet,Maxis Fibre Home Internet,139.0,MYR,expense,utilities,Maybank Premier,NET-202508,True
+TXN-1481,2025-08-15,Food & Beverage - Starbucks Coffee,Starbucks Coffee,19.94,MYR,expense,dining,Maybank Premier,POS-170559,True
+TXN-1482,2025-08-15,Food & Beverage - Starbucks Coffee,Starbucks Coffee,31.6,MYR,expense,dining,Maybank Premier,POS-568127,True
+TXN-1483,2025-08-16,Supermarket Purchase at Jaya Grocer,Jaya Grocer,141.37,MYR,expense,groceries,Maybank Premier,POS-345722,True
+TXN-1484,2025-08-16,Food & Beverage - Zus Coffee,Zus Coffee,99.12,MYR,expense,dining,Maybank Premier,POS-913761,True
+TXN-1485,2025-08-16,Food & Beverage - Starbucks Coffee,Starbucks Coffee,46.91,MYR,expense,dining,Maybank Premier,POS-403314,True
+TXN-1486,2025-08-16,Food & Beverage - Zus Coffee,Zus Coffee,104.34,MYR,expense,dining,Maybank Premier,POS-867051,True
+TXN-1487,2025-08-17,Food & Beverage - Zus Coffee,Zus Coffee,60.65,MYR,expense,dining,Maybank Premier,POS-250219,True
+TXN-1488,2025-08-17,Food & Beverage - GrabFood,GrabFood,79.31,MYR,expense,dining,Maybank Premier,POS-533649,True
+TXN-1489,2025-08-17,Transit & Mobility - Grab Ride,Grab Ride,48.4,MYR,expense,transportation,Maybank Premier,TX-720407,True
+TXN-1490,2025-08-18,Food & Beverage - Din Tai Fung,Din Tai Fung,30.34,MYR,expense,dining,Maybank Premier,POS-149161,True
+TXN-1491,2025-08-19,Food & Beverage - Nando's,Nando's,34.98,MYR,expense,dining,Maybank Premier,POS-528090,True
+TXN-1492,2025-08-19,Transit & Mobility - Shell Fuel,Shell Fuel,26.03,MYR,expense,transportation,Maybank Premier,TX-664058,True
+TXN-1493,2025-08-20,Food & Beverage - GrabFood,GrabFood,16.76,MYR,expense,dining,Maybank Premier,POS-585517,True
+TXN-1494,2025-08-21,Food & Beverage - Zus Coffee,Zus Coffee,24.82,MYR,expense,dining,Maybank Premier,POS-367382,True
+TXN-1495,2025-08-21,Transit & Mobility - Grab Ride,Grab Ride,70.33,MYR,expense,transportation,Maybank Premier,TX-988283,True
+TXN-1496,2025-08-22,Food & Beverage - Starbucks Coffee,Starbucks Coffee,20.86,MYR,expense,dining,Maybank Premier,POS-806396,True
+TXN-1497,2025-08-22,Food & Beverage - Kopitiam,Kopitiam,31.9,MYR,expense,dining,Maybank Premier,POS-176319,True
+TXN-1498,2025-08-22,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,43.76,MYR,expense,transportation,Maybank Premier,TX-449138,True
+TXN-1499,2025-08-23,Food & Beverage - Zus Coffee,Zus Coffee,116.78,MYR,expense,dining,Maybank Premier,POS-223014,True
+TXN-1500,2025-08-24,Food & Beverage - Kopitiam,Kopitiam,94.82,MYR,expense,dining,Maybank Premier,POS-515898,True
+TXN-1501,2025-08-24,Food & Beverage - Zus Coffee,Zus Coffee,81.93,MYR,expense,dining,Maybank Premier,POS-913185,True
+TXN-1502,2025-08-24,Food & Beverage - Nando's,Nando's,67.36,MYR,expense,dining,Maybank Premier,POS-659572,True
+TXN-1503,2025-08-25,Monthly Corporate Salary Transfer,NextOmni Tech Sdn Bhd,6800.0,MYR,income,salary,Maybank Premier,SAL-202508,True
+TXN-1504,2025-08-25,Food & Beverage - Din Tai Fung,Din Tai Fung,15.25,MYR,expense,dining,Maybank Premier,POS-857505,True
+TXN-1505,2025-08-25,Food & Beverage - Din Tai Fung,Din Tai Fung,37.13,MYR,expense,dining,Maybank Premier,POS-435788,True
+TXN-1506,2025-08-26,Food & Beverage - Zus Coffee,Zus Coffee,36.46,MYR,expense,dining,Maybank Premier,POS-117007,True
+TXN-1507,2025-08-26,Transit & Mobility - Shell Fuel,Shell Fuel,32.71,MYR,expense,transportation,Maybank Premier,TX-305721,True
+TXN-1508,2025-08-27,Food & Beverage - Din Tai Fung,Din Tai Fung,30.17,MYR,expense,dining,Maybank Premier,POS-818113,True
+TXN-1509,2025-08-27,Food & Beverage - Nando's,Nando's,20.49,MYR,expense,dining,Maybank Premier,POS-961501,True
+TXN-1510,2025-08-28,Food & Beverage - GrabFood,GrabFood,38.23,MYR,expense,dining,Maybank Premier,POS-277487,True
+TXN-1511,2025-08-28,Transit & Mobility - Shell Fuel,Shell Fuel,26.04,MYR,expense,transportation,Maybank Premier,TX-668471,True
+TXN-1512,2025-08-29,Food & Beverage - Starbucks Coffee,Starbucks Coffee,43.19,MYR,expense,dining,Maybank Premier,POS-800674,True
+TXN-1513,2025-08-29,Transit & Mobility - Grab Ride,Grab Ride,39.74,MYR,expense,transportation,Maybank Premier,TX-983472,True
+TXN-1514,2025-08-30,Supermarket Purchase at Village Grocer,Village Grocer,76.51,MYR,expense,groceries,Maybank Premier,POS-630299,True
+TXN-1515,2025-08-30,Food & Beverage - Nando's,Nando's,40.14,MYR,expense,dining,Maybank Premier,POS-768706,True
+TXN-1516,2025-08-30,Food & Beverage - GrabFood,GrabFood,114.38,MYR,expense,dining,Maybank Premier,POS-606676,True
+TXN-1517,2025-08-30,Healthcare Expense - Klinik Mediviron,Klinik Mediviron,88.76,MYR,expense,healthcare,Maybank Premier,CHG-117538,True
+TXN-1518,2025-08-31,Supermarket Purchase at Lotus's,Lotus's,163.4,MYR,expense,groceries,Maybank Premier,POS-400614,True
+TXN-1519,2025-08-31,Food & Beverage - Kopitiam,Kopitiam,104.12,MYR,expense,dining,Maybank Premier,POS-806774,True
+TXN-1520,2025-09-01,Monthly Residential Rent,Sunway Geo Residences,1850.0,MYR,expense,rent,Maybank Premier,RENT-202509,True
+TXN-1521,2025-09-01,Food & Beverage - Kopitiam,Kopitiam,16.91,MYR,expense,dining,Maybank Premier,POS-301255,True
+TXN-1522,2025-09-01,Food & Beverage - Kopitiam,Kopitiam,29.37,MYR,expense,dining,Maybank Premier,POS-954814,True
+TXN-1523,2025-09-02,Supermarket Purchase at AEON Supermarket,AEON Supermarket,150.73,MYR,expense,groceries,Maybank Premier,POS-355021,True
+TXN-1524,2025-09-02,Food & Beverage - Zus Coffee,Zus Coffee,21.9,MYR,expense,dining,Maybank Premier,POS-968286,True
+TXN-1525,2025-09-02,Food & Beverage - Starbucks Coffee,Starbucks Coffee,33.57,MYR,expense,dining,Maybank Premier,POS-999908,True
+TXN-1526,2025-09-02,Entertainment Expense - Steam Games,Steam Games,83.46,MYR,expense,entertainment,Maybank Premier,CHG-599127,True
+TXN-1527,2025-09-03,Supermarket Purchase at Jaya Grocer,Jaya Grocer,190.97,MYR,expense,groceries,Maybank Premier,POS-186702,True
+TXN-1528,2025-09-03,Food & Beverage - Din Tai Fung,Din Tai Fung,33.28,MYR,expense,dining,Maybank Premier,POS-447362,True
+TXN-1529,2025-09-04,Supermarket Purchase at Jaya Grocer,Jaya Grocer,112.91,MYR,expense,groceries,Maybank Premier,POS-825916,True
+TXN-1530,2025-09-04,Food & Beverage - Din Tai Fung,Din Tai Fung,20.95,MYR,expense,dining,Maybank Premier,POS-177959,True
+TXN-1531,2025-09-04,Food & Beverage - GrabFood,GrabFood,42.54,MYR,expense,dining,Maybank Premier,POS-669408,True
+TXN-1532,2025-09-04,Entertainment Expense - Netflix Subscription,Netflix Subscription,174.03,MYR,expense,entertainment,Maybank Premier,CHG-715551,True
+TXN-1533,2025-09-05,Electricity Utility Bill,Tenaga Nasional Berhad,150.09,MYR,expense,utilities,Maybank Premier,UTIL-202509,True
+TXN-1534,2025-09-05,Food & Beverage - Starbucks Coffee,Starbucks Coffee,21.88,MYR,expense,dining,Maybank Premier,POS-691353,True
+TXN-1535,2025-09-05,Food & Beverage - Zus Coffee,Zus Coffee,30.7,MYR,expense,dining,Maybank Premier,POS-990704,True
+TXN-1536,2025-09-06,Supermarket Purchase at Village Grocer,Village Grocer,205.43,MYR,expense,groceries,Maybank Premier,POS-822794,True
+TXN-1537,2025-09-06,Food & Beverage - Starbucks Coffee,Starbucks Coffee,77.57,MYR,expense,dining,Maybank Premier,POS-462659,True
+TXN-1538,2025-09-06,Food & Beverage - Starbucks Coffee,Starbucks Coffee,43.3,MYR,expense,dining,Maybank Premier,POS-343420,True
+TXN-1539,2025-09-06,Food & Beverage - Starbucks Coffee,Starbucks Coffee,63.95,MYR,expense,dining,Maybank Premier,POS-906360,True
+TXN-1540,2025-09-07,Food & Beverage - Starbucks Coffee,Starbucks Coffee,88.9,MYR,expense,dining,Maybank Premier,POS-921609,True
+TXN-1541,2025-09-07,Food & Beverage - Din Tai Fung,Din Tai Fung,76.7,MYR,expense,dining,Maybank Premier,POS-473095,True
+TXN-1542,2025-09-08,Food & Beverage - Din Tai Fung,Din Tai Fung,14.83,MYR,expense,dining,Maybank Premier,POS-748665,True
+TXN-1543,2025-09-08,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,57.79,MYR,expense,transportation,Maybank Premier,TX-186023,True
+TXN-1544,2025-09-09,Food & Beverage - Zus Coffee,Zus Coffee,36.41,MYR,expense,dining,Maybank Premier,POS-432061,True
+TXN-1545,2025-09-09,Entertainment Expense - Steam Games,Steam Games,80.79,MYR,expense,entertainment,Maybank Premier,CHG-382870,True
+TXN-1546,2025-09-10,Supermarket Purchase at Jaya Grocer,Jaya Grocer,105.92,MYR,expense,groceries,Maybank Premier,POS-570646,True
+TXN-1547,2025-09-10,Food & Beverage - Kopitiam,Kopitiam,25.47,MYR,expense,dining,Maybank Premier,POS-127537,True
+TXN-1548,2025-09-10,Transit & Mobility - Grab Ride,Grab Ride,50.82,MYR,expense,transportation,Maybank Premier,TX-922543,True
+TXN-1549,2025-09-11,Food & Beverage - Din Tai Fung,Din Tai Fung,37.71,MYR,expense,dining,Maybank Premier,POS-860053,True
+TXN-1550,2025-09-12,Food & Beverage - Zus Coffee,Zus Coffee,34.62,MYR,expense,dining,Maybank Premier,POS-277735,True
+TXN-1551,2025-09-12,Transit & Mobility - Petronas Gas,Petronas Gas,31.1,MYR,expense,transportation,Maybank Premier,TX-253023,True
+TXN-1552,2025-09-12,Entertainment Expense - GSC Cinemas,GSC Cinemas,90.27,MYR,expense,entertainment,Maybank Premier,CHG-607753,True
+TXN-1553,2025-09-13,Food & Beverage - Nando's,Nando's,115.26,MYR,expense,dining,Maybank Premier,POS-855917,True
+TXN-1554,2025-09-13,Food & Beverage - GrabFood,GrabFood,77.14,MYR,expense,dining,Maybank Premier,POS-746624,True
+TXN-1555,2025-09-13,Transit & Mobility - Grab Ride,Grab Ride,23.13,MYR,expense,transportation,Maybank Premier,TX-107096,True
+TXN-1556,2025-09-14,Supermarket Purchase at AEON Supermarket,AEON Supermarket,207.67,MYR,expense,groceries,Maybank Premier,POS-445549,True
+TXN-1557,2025-09-14,Food & Beverage - Nando's,Nando's,71.6,MYR,expense,dining,Maybank Premier,POS-963539,True
+TXN-1558,2025-09-14,Food & Beverage - GrabFood,GrabFood,117.81,MYR,expense,dining,Maybank Premier,POS-242736,True
+TXN-1559,2025-09-14,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,43.74,MYR,expense,transportation,Maybank Premier,TX-286266,True
+TXN-1560,2025-09-15,Home High-Speed Fibre Internet,Maxis Fibre Home Internet,139.0,MYR,expense,utilities,Maybank Premier,NET-202509,True
+TXN-1561,2025-09-15,Food & Beverage - GrabFood,GrabFood,32.89,MYR,expense,dining,Maybank Premier,POS-703853,True
+TXN-1562,2025-09-16,Food & Beverage - Nando's,Nando's,15.76,MYR,expense,dining,Maybank Premier,POS-691240,True
+TXN-1563,2025-09-16,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,55.9,MYR,expense,transportation,Maybank Premier,TX-676820,True
+TXN-1564,2025-09-16,Healthcare Expense - Watsons Drugstore,Watsons Drugstore,171.16,MYR,expense,healthcare,Maybank Premier,CHG-319832,True
+TXN-1565,2025-09-17,Food & Beverage - GrabFood,GrabFood,14.28,MYR,expense,dining,Maybank Premier,POS-988970,True
+TXN-1566,2025-09-18,Food & Beverage - Zus Coffee,Zus Coffee,20.34,MYR,expense,dining,Maybank Premier,POS-261630,True
+TXN-1567,2025-09-19,Supermarket Purchase at AEON Supermarket,AEON Supermarket,171.07,MYR,expense,groceries,Maybank Premier,POS-660324,True
+TXN-1568,2025-09-19,Food & Beverage - GrabFood,GrabFood,25.8,MYR,expense,dining,Maybank Premier,POS-138551,True
+TXN-1569,2025-09-20,Food & Beverage - Kopitiam,Kopitiam,89.25,MYR,expense,dining,Maybank Premier,POS-189110,True
+TXN-1570,2025-09-20,Food & Beverage - Starbucks Coffee,Starbucks Coffee,100.36,MYR,expense,dining,Maybank Premier,POS-789545,True
+TXN-1571,2025-09-20,Food & Beverage - GrabFood,GrabFood,65.18,MYR,expense,dining,Maybank Premier,POS-778428,True
+TXN-1572,2025-09-21,Supermarket Purchase at AEON Supermarket,AEON Supermarket,234.52,MYR,expense,groceries,Maybank Premier,POS-447704,True
+TXN-1573,2025-09-21,Food & Beverage - Starbucks Coffee,Starbucks Coffee,35.9,MYR,expense,dining,Maybank Premier,POS-371306,True
+TXN-1574,2025-09-21,Food & Beverage - Zus Coffee,Zus Coffee,78.41,MYR,expense,dining,Maybank Premier,POS-643998,True
+TXN-1575,2025-09-22,Food & Beverage - Din Tai Fung,Din Tai Fung,37.49,MYR,expense,dining,Maybank Premier,POS-717181,True
+TXN-1576,2025-09-23,Food & Beverage - Nando's,Nando's,25.73,MYR,expense,dining,Maybank Premier,POS-190025,True
+TXN-1577,2025-09-23,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,35.9,MYR,expense,transportation,Maybank Premier,TX-459731,True
+TXN-ANOMALY-02,2025-09-23,Emergency Dental Surgery,Sunway Medical Specialist Clinic,1650.0,MYR,expense,healthcare,Maybank Premier,MED-SMC-4412,True
+TXN-1578,2025-09-24,Food & Beverage - Din Tai Fung,Din Tai Fung,15.22,MYR,expense,dining,Maybank Premier,POS-857065,True
+TXN-1579,2025-09-25,Monthly Corporate Salary Transfer,NextOmni Tech Sdn Bhd,6800.0,MYR,income,salary,Maybank Premier,SAL-202509,True
+TXN-1580,2025-09-25,Food & Beverage - Starbucks Coffee,Starbucks Coffee,12.75,MYR,expense,dining,Maybank Premier,POS-459743,True
+TXN-1581,2025-09-25,Food & Beverage - GrabFood,GrabFood,15.61,MYR,expense,dining,Maybank Premier,POS-938913,True
+TXN-1582,2025-09-25,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,45.96,MYR,expense,transportation,Maybank Premier,TX-678719,True
+TXN-1583,2025-09-26,Food & Beverage - Zus Coffee,Zus Coffee,38.33,MYR,expense,dining,Maybank Premier,POS-760351,True
+TXN-1584,2025-09-26,Food & Beverage - Zus Coffee,Zus Coffee,18.15,MYR,expense,dining,Maybank Premier,POS-789237,True
+TXN-1585,2025-09-26,Healthcare Expense - Guardian Pharmacy,Guardian Pharmacy,94.68,MYR,expense,healthcare,Maybank Premier,CHG-550418,True
+TXN-1586,2025-09-27,Supermarket Purchase at Village Grocer,Village Grocer,108.95,MYR,expense,groceries,Maybank Premier,POS-888870,True
+TXN-1587,2025-09-27,Food & Beverage - Starbucks Coffee,Starbucks Coffee,84.07,MYR,expense,dining,Maybank Premier,POS-938338,True
+TXN-1588,2025-09-27,Food & Beverage - Kopitiam,Kopitiam,50.89,MYR,expense,dining,Maybank Premier,POS-441819,True
+TXN-1589,2025-09-27,Food & Beverage - Zus Coffee,Zus Coffee,73.89,MYR,expense,dining,Maybank Premier,POS-375097,True
+TXN-1590,2025-09-28,Food & Beverage - Kopitiam,Kopitiam,68.03,MYR,expense,dining,Maybank Premier,POS-511612,True
+TXN-1591,2025-09-28,Food & Beverage - Kopitiam,Kopitiam,44.71,MYR,expense,dining,Maybank Premier,POS-469082,True
+TXN-1592,2025-09-29,Food & Beverage - Nando's,Nando's,42.32,MYR,expense,dining,Maybank Premier,POS-718836,True
+TXN-1593,2025-09-29,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,33.79,MYR,expense,transportation,Maybank Premier,TX-350161,True
+TXN-1594,2025-09-30,Food & Beverage - Kopitiam,Kopitiam,24.82,MYR,expense,dining,Maybank Premier,POS-725397,True
+TXN-1595,2025-09-30,Transit & Mobility - Shell Fuel,Shell Fuel,40.38,MYR,expense,transportation,Maybank Premier,TX-610310,True
+TXN-1596,2025-10-01,Monthly Residential Rent,Sunway Geo Residences,1850.0,MYR,expense,rent,Maybank Premier,RENT-202510,True
+TXN-1597,2025-10-01,Food & Beverage - Zus Coffee,Zus Coffee,30.31,MYR,expense,dining,Maybank Premier,POS-613426,True
+TXN-1598,2025-10-01,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,33.87,MYR,expense,transportation,Maybank Premier,TX-572908,True
+TXN-1599,2025-10-02,Food & Beverage - Din Tai Fung,Din Tai Fung,16.51,MYR,expense,dining,Maybank Premier,POS-954815,True
+TXN-1600,2025-10-02,Food & Beverage - Din Tai Fung,Din Tai Fung,43.81,MYR,expense,dining,Maybank Premier,POS-629990,True
+TXN-1601,2025-10-03,Food & Beverage - Din Tai Fung,Din Tai Fung,28.13,MYR,expense,dining,Maybank Premier,POS-186686,True
+TXN-1602,2025-10-04,Supermarket Purchase at Jaya Grocer,Jaya Grocer,120.35,MYR,expense,groceries,Maybank Premier,POS-663723,True
+TXN-1603,2025-10-04,Food & Beverage - Zus Coffee,Zus Coffee,101.36,MYR,expense,dining,Maybank Premier,POS-693127,True
+TXN-1604,2025-10-04,Food & Beverage - GrabFood,GrabFood,100.67,MYR,expense,dining,Maybank Premier,POS-619373,True
+TXN-1605,2025-10-04,Shopping Expense - Lazada Direct,Lazada Direct,145.14,MYR,expense,shopping,Maybank Premier,CHG-963274,True
+TXN-1606,2025-10-05,Electricity Utility Bill,Tenaga Nasional Berhad,209.36,MYR,expense,utilities,Maybank Premier,UTIL-202510,True
+TXN-1607,2025-10-05,Supermarket Purchase at Jaya Grocer,Jaya Grocer,200.4,MYR,expense,groceries,Maybank Premier,POS-562806,True
+TXN-1608,2025-10-05,Food & Beverage - Zus Coffee,Zus Coffee,119.13,MYR,expense,dining,Maybank Premier,POS-207391,True
+TXN-1609,2025-10-05,Food & Beverage - GrabFood,GrabFood,105.56,MYR,expense,dining,Maybank Premier,POS-887842,True
+TXN-1610,2025-10-05,Food & Beverage - Zus Coffee,Zus Coffee,60.31,MYR,expense,dining,Maybank Premier,POS-133796,True
+TXN-1611,2025-10-06,Food & Beverage - Starbucks Coffee,Starbucks Coffee,37.6,MYR,expense,dining,Maybank Premier,POS-348455,True
+TXN-1612,2025-10-06,Transit & Mobility - Petronas Gas,Petronas Gas,66.66,MYR,expense,transportation,Maybank Premier,TX-739905,True
+TXN-1613,2025-10-07,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,63.33,MYR,expense,transportation,Maybank Premier,TX-697766,True
+TXN-1614,2025-10-08,Food & Beverage - Nando's,Nando's,44.31,MYR,expense,dining,Maybank Premier,POS-406849,True
+TXN-1615,2025-10-08,Transit & Mobility - Petronas Gas,Petronas Gas,72.14,MYR,expense,transportation,Maybank Premier,TX-639403,True
+TXN-1616,2025-10-10,Food & Beverage - GrabFood,GrabFood,16.19,MYR,expense,dining,Maybank Premier,POS-239136,True
+TXN-1617,2025-10-10,Food & Beverage - Zus Coffee,Zus Coffee,16.83,MYR,expense,dining,Maybank Premier,POS-437742,True
+TXN-1618,2025-10-11,Food & Beverage - Zus Coffee,Zus Coffee,84.08,MYR,expense,dining,Maybank Premier,POS-381770,True
+TXN-1619,2025-10-11,Food & Beverage - GrabFood,GrabFood,70.21,MYR,expense,dining,Maybank Premier,POS-573947,True
+TXN-1620,2025-10-11,Transit & Mobility - Grab Ride,Grab Ride,39.17,MYR,expense,transportation,Maybank Premier,TX-886224,True
+TXN-1621,2025-10-12,Food & Beverage - Din Tai Fung,Din Tai Fung,115.77,MYR,expense,dining,Maybank Premier,POS-443187,True
+TXN-1622,2025-10-12,Food & Beverage - Kopitiam,Kopitiam,35.21,MYR,expense,dining,Maybank Premier,POS-911739,True
+TXN-1623,2025-10-12,Entertainment Expense - GSC Cinemas,GSC Cinemas,156.77,MYR,expense,entertainment,Maybank Premier,CHG-934328,True
+TXN-1624,2025-10-14,Food & Beverage - Nando's,Nando's,30.06,MYR,expense,dining,Maybank Premier,POS-236937,True
+TXN-1625,2025-10-14,Food & Beverage - Kopitiam,Kopitiam,40.13,MYR,expense,dining,Maybank Premier,POS-926596,True
+TXN-1626,2025-10-14,Transit & Mobility - Grab Ride,Grab Ride,17.76,MYR,expense,transportation,Maybank Premier,TX-756596,True
+TXN-1627,2025-10-15,Home High-Speed Fibre Internet,Maxis Fibre Home Internet,139.0,MYR,expense,utilities,Maybank Premier,NET-202510,True
+TXN-1628,2025-10-16,Supermarket Purchase at AEON Supermarket,AEON Supermarket,108.38,MYR,expense,groceries,Maybank Premier,POS-822040,True
+TXN-1629,2025-10-16,Food & Beverage - GrabFood,GrabFood,21.96,MYR,expense,dining,Maybank Premier,POS-387330,True
+TXN-1630,2025-10-16,Food & Beverage - Starbucks Coffee,Starbucks Coffee,33.6,MYR,expense,dining,Maybank Premier,POS-362552,True
+TXN-1631,2025-10-16,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,18.11,MYR,expense,transportation,Maybank Premier,TX-755993,True
+TXN-1632,2025-10-18,Supermarket Purchase at AEON Supermarket,AEON Supermarket,87.86,MYR,expense,groceries,Maybank Premier,POS-722518,True
+TXN-1633,2025-10-18,Food & Beverage - Kopitiam,Kopitiam,92.8,MYR,expense,dining,Maybank Premier,POS-109738,True
+TXN-1634,2025-10-18,Transit & Mobility - Petronas Gas,Petronas Gas,64.03,MYR,expense,transportation,Maybank Premier,TX-542828,True
+TXN-1635,2025-10-19,Supermarket Purchase at Village Grocer,Village Grocer,138.21,MYR,expense,groceries,Maybank Premier,POS-866260,True
+TXN-1636,2025-10-19,Food & Beverage - Starbucks Coffee,Starbucks Coffee,61.63,MYR,expense,dining,Maybank Premier,POS-413791,True
+TXN-1637,2025-10-19,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,53.49,MYR,expense,transportation,Maybank Premier,TX-810029,True
+TXN-1638,2025-10-21,Food & Beverage - Zus Coffee,Zus Coffee,42.36,MYR,expense,dining,Maybank Premier,POS-746002,True
+TXN-1639,2025-10-22,Supermarket Purchase at Jaya Grocer,Jaya Grocer,98.1,MYR,expense,groceries,Maybank Premier,POS-229139,True
+TXN-1640,2025-10-22,Food & Beverage - Din Tai Fung,Din Tai Fung,23.6,MYR,expense,dining,Maybank Premier,POS-550246,True
+TXN-1641,2025-10-22,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,29.87,MYR,expense,transportation,Maybank Premier,TX-775933,True
+TXN-1642,2025-10-22,Healthcare Expense - Klinik Mediviron,Klinik Mediviron,118.0,MYR,expense,healthcare,Maybank Premier,CHG-737107,True
+TXN-1643,2025-10-23,Food & Beverage - Starbucks Coffee,Starbucks Coffee,39.98,MYR,expense,dining,Maybank Premier,POS-790388,True
+TXN-1644,2025-10-23,Food & Beverage - Nando's,Nando's,18.78,MYR,expense,dining,Maybank Premier,POS-736408,True
+TXN-1645,2025-10-25,Monthly Corporate Salary Transfer,NextOmni Tech Sdn Bhd,6800.0,MYR,income,salary,Maybank Premier,SAL-202510,True
+TXN-1646,2025-10-25,Supermarket Purchase at Jaya Grocer,Jaya Grocer,114.78,MYR,expense,groceries,Maybank Premier,POS-769077,True
+TXN-1647,2025-10-25,Food & Beverage - Starbucks Coffee,Starbucks Coffee,79.9,MYR,expense,dining,Maybank Premier,POS-112653,True
+TXN-1648,2025-10-25,Food & Beverage - Nando's,Nando's,114.38,MYR,expense,dining,Maybank Premier,POS-238394,True
+TXN-1649,2025-10-25,Food & Beverage - Din Tai Fung,Din Tai Fung,108.17,MYR,expense,dining,Maybank Premier,POS-695990,True
+TXN-1650,2025-10-26,Supermarket Purchase at AEON Supermarket,AEON Supermarket,232.48,MYR,expense,groceries,Maybank Premier,POS-907788,True
+TXN-1651,2025-10-26,Food & Beverage - Starbucks Coffee,Starbucks Coffee,84.93,MYR,expense,dining,Maybank Premier,POS-114463,True
+TXN-1652,2025-10-26,Transit & Mobility - Grab Ride,Grab Ride,70.35,MYR,expense,transportation,Maybank Premier,TX-927630,True
+TXN-1653,2025-10-27,Food & Beverage - Din Tai Fung,Din Tai Fung,25.98,MYR,expense,dining,Maybank Premier,POS-521818,True
+TXN-1654,2025-10-27,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,31.65,MYR,expense,transportation,Maybank Premier,TX-424960,True
+TXN-1655,2025-10-27,Shopping Expense - Shopee Online,Shopee Online,108.14,MYR,expense,shopping,Maybank Premier,CHG-509711,True
+TXN-1656,2025-10-28,Food & Beverage - GrabFood,GrabFood,34.47,MYR,expense,dining,Maybank Premier,POS-169326,True
+TXN-1657,2025-10-28,Transit & Mobility - Shell Fuel,Shell Fuel,58.8,MYR,expense,transportation,Maybank Premier,TX-987586,True
+TXN-1658,2025-10-29,Food & Beverage - Starbucks Coffee,Starbucks Coffee,26.96,MYR,expense,dining,Maybank Premier,POS-738407,True
+TXN-1659,2025-10-29,Food & Beverage - Starbucks Coffee,Starbucks Coffee,22.21,MYR,expense,dining,Maybank Premier,POS-877722,True
+TXN-1660,2025-10-30,Supermarket Purchase at Village Grocer,Village Grocer,190.75,MYR,expense,groceries,Maybank Premier,POS-271790,True
+TXN-1661,2025-10-30,Food & Beverage - Nando's,Nando's,29.26,MYR,expense,dining,Maybank Premier,POS-921021,True
+TXN-1662,2025-10-31,Food & Beverage - Nando's,Nando's,36.19,MYR,expense,dining,Maybank Premier,POS-223791,True
+TXN-1663,2025-10-31,Entertainment Expense - GSC Cinemas,GSC Cinemas,106.2,MYR,expense,entertainment,Maybank Premier,CHG-375722,True
+TXN-1664,2025-11-01,Monthly Residential Rent,Sunway Geo Residences,1850.0,MYR,expense,rent,Maybank Premier,RENT-202511,True
+TXN-1665,2025-11-01,Food & Beverage - GrabFood,GrabFood,41.55,MYR,expense,dining,Maybank Premier,POS-577309,True
+TXN-1666,2025-11-01,Food & Beverage - Kopitiam,Kopitiam,65.61,MYR,expense,dining,Maybank Premier,POS-623879,True
+TXN-1667,2025-11-01,Food & Beverage - Kopitiam,Kopitiam,49.18,MYR,expense,dining,Maybank Premier,POS-264951,True
+TXN-1668,2025-11-01,Transit & Mobility - Grab Ride,Grab Ride,68.66,MYR,expense,transportation,Maybank Premier,TX-806866,True
+TXN-1669,2025-11-02,Supermarket Purchase at Jaya Grocer,Jaya Grocer,82.27,MYR,expense,groceries,Maybank Premier,POS-112884,True
+TXN-1670,2025-11-02,Food & Beverage - Starbucks Coffee,Starbucks Coffee,75.1,MYR,expense,dining,Maybank Premier,POS-501583,True
+TXN-1671,2025-11-04,Transit & Mobility - Petronas Gas,Petronas Gas,31.28,MYR,expense,transportation,Maybank Premier,TX-181670,True
+TXN-1672,2025-11-05,Electricity Utility Bill,Tenaga Nasional Berhad,148.36,MYR,expense,utilities,Maybank Premier,UTIL-202511,True
+TXN-1673,2025-11-05,Transit & Mobility - Grab Ride,Grab Ride,72.24,MYR,expense,transportation,Maybank Premier,TX-172274,True
+TXN-1674,2025-11-06,Food & Beverage - Nando's,Nando's,22.8,MYR,expense,dining,Maybank Premier,POS-679958,True
+TXN-1675,2025-11-07,Food & Beverage - GrabFood,GrabFood,32.55,MYR,expense,dining,Maybank Premier,POS-586462,True
+TXN-1676,2025-11-08,Food & Beverage - GrabFood,GrabFood,111.54,MYR,expense,dining,Maybank Premier,POS-897423,True
+TXN-1677,2025-11-09,Food & Beverage - Zus Coffee,Zus Coffee,81.03,MYR,expense,dining,Maybank Premier,POS-766833,True
+TXN-1678,2025-11-13,Supermarket Purchase at Village Grocer,Village Grocer,223.05,MYR,expense,groceries,Maybank Premier,POS-645007,True
+TXN-1679,2025-11-13,Food & Beverage - Nando's,Nando's,27.13,MYR,expense,dining,Maybank Premier,POS-884229,True
+TXN-1680,2025-11-13,Transit & Mobility - Grab Ride,Grab Ride,45.33,MYR,expense,transportation,Maybank Premier,TX-768169,True
+TXN-1681,2025-11-14,Supermarket Purchase at Jaya Grocer,Jaya Grocer,146.77,MYR,expense,groceries,Maybank Premier,POS-237057,True
+TXN-1682,2025-11-14,Transit & Mobility - Petronas Gas,Petronas Gas,70.56,MYR,expense,transportation,Maybank Premier,TX-512040,True
+TXN-1683,2025-11-15,Home High-Speed Fibre Internet,Maxis Fibre Home Internet,139.0,MYR,expense,utilities,Maybank Premier,NET-202511,True
+TXN-1684,2025-11-15,Food & Beverage - Din Tai Fung,Din Tai Fung,58.12,MYR,expense,dining,Maybank Premier,POS-178315,True
+TXN-1685,2025-11-15,Food & Beverage - Zus Coffee,Zus Coffee,46.57,MYR,expense,dining,Maybank Premier,POS-907557,True
+TXN-1686,2025-11-16,Supermarket Purchase at AEON Supermarket,AEON Supermarket,126.82,MYR,expense,groceries,Maybank Premier,POS-226601,True
+TXN-1687,2025-11-16,Food & Beverage - Nando's,Nando's,116.99,MYR,expense,dining,Maybank Premier,POS-317722,True
+TXN-1688,2025-11-16,Food & Beverage - Din Tai Fung,Din Tai Fung,61.21,MYR,expense,dining,Maybank Premier,POS-377880,True
+TXN-1689,2025-11-16,Food & Beverage - Starbucks Coffee,Starbucks Coffee,42.69,MYR,expense,dining,Maybank Premier,POS-946826,True
+TXN-1690,2025-11-18,Supermarket Purchase at Village Grocer,Village Grocer,234.79,MYR,expense,groceries,Maybank Premier,POS-515492,True
+TXN-1691,2025-11-18,Food & Beverage - GrabFood,GrabFood,21.86,MYR,expense,dining,Maybank Premier,POS-959926,True
+TXN-1692,2025-11-18,Entertainment Expense - Steam Games,Steam Games,111.17,MYR,expense,entertainment,Maybank Premier,CHG-676843,True
+TXN-1693,2025-11-19,Food & Beverage - Zus Coffee,Zus Coffee,16.01,MYR,expense,dining,Maybank Premier,POS-164664,True
+TXN-1694,2025-11-20,Supermarket Purchase at AEON Supermarket,AEON Supermarket,136.42,MYR,expense,groceries,Maybank Premier,POS-760914,True
+TXN-1695,2025-11-20,Food & Beverage - Starbucks Coffee,Starbucks Coffee,31.22,MYR,expense,dining,Maybank Premier,POS-371393,True
+TXN-1696,2025-11-20,Food & Beverage - Starbucks Coffee,Starbucks Coffee,12.72,MYR,expense,dining,Maybank Premier,POS-167603,True
+TXN-1697,2025-11-20,Transit & Mobility - Shell Fuel,Shell Fuel,63.56,MYR,expense,transportation,Maybank Premier,TX-196446,True
+TXN-1698,2025-11-21,Food & Beverage - Starbucks Coffee,Starbucks Coffee,43.1,MYR,expense,dining,Maybank Premier,POS-153097,True
+TXN-1699,2025-11-21,Transit & Mobility - Shell Fuel,Shell Fuel,64.3,MYR,expense,transportation,Maybank Premier,TX-514186,True
+TXN-1700,2025-11-22,Supermarket Purchase at AEON Supermarket,AEON Supermarket,103.51,MYR,expense,groceries,Maybank Premier,POS-325146,True
+TXN-1701,2025-11-22,Food & Beverage - Nando's,Nando's,58.79,MYR,expense,dining,Maybank Premier,POS-255851,True
+TXN-1702,2025-11-22,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,53.84,MYR,expense,transportation,Maybank Premier,TX-623125,True
+TXN-1703,2025-11-23,Supermarket Purchase at Jaya Grocer,Jaya Grocer,89.47,MYR,expense,groceries,Maybank Premier,POS-501620,True
+TXN-1704,2025-11-23,Food & Beverage - Din Tai Fung,Din Tai Fung,51.95,MYR,expense,dining,Maybank Premier,POS-935922,True
+TXN-1705,2025-11-24,Food & Beverage - Din Tai Fung,Din Tai Fung,37.8,MYR,expense,dining,Maybank Premier,POS-476556,True
+TXN-1706,2025-11-25,Monthly Corporate Salary Transfer,NextOmni Tech Sdn Bhd,6800.0,MYR,income,salary,Maybank Premier,SAL-202511,True
+TXN-1707,2025-11-25,Food & Beverage - Nando's,Nando's,24.82,MYR,expense,dining,Maybank Premier,POS-288550,True
+TXN-1708,2025-11-25,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,16.76,MYR,expense,transportation,Maybank Premier,TX-950069,True
+TXN-1709,2025-11-26,Supermarket Purchase at AEON Supermarket,AEON Supermarket,162.36,MYR,expense,groceries,Maybank Premier,POS-904092,True
+TXN-1710,2025-11-26,Food & Beverage - Zus Coffee,Zus Coffee,44.14,MYR,expense,dining,Maybank Premier,POS-204998,True
+TXN-1711,2025-11-26,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,30.99,MYR,expense,transportation,Maybank Premier,TX-955937,True
+TXN-1712,2025-11-27,Food & Beverage - Zus Coffee,Zus Coffee,31.0,MYR,expense,dining,Maybank Premier,POS-936124,True
+TXN-1713,2025-11-28,Transit & Mobility - Petronas Gas,Petronas Gas,63.37,MYR,expense,transportation,Maybank Premier,TX-831514,True
+TXN-1714,2025-11-29,Supermarket Purchase at Lotus's,Lotus's,231.35,MYR,expense,groceries,Maybank Premier,POS-690984,True
+TXN-1715,2025-11-29,Food & Beverage - Kopitiam,Kopitiam,115.61,MYR,expense,dining,Maybank Premier,POS-977340,True
+TXN-1716,2025-11-30,Supermarket Purchase at Lotus's,Lotus's,103.97,MYR,expense,groceries,Maybank Premier,POS-139807,True
+TXN-1717,2025-11-30,Food & Beverage - Starbucks Coffee,Starbucks Coffee,54.77,MYR,expense,dining,Maybank Premier,POS-329437,True
+TXN-1718,2025-11-30,Transit & Mobility - Shell Fuel,Shell Fuel,15.04,MYR,expense,transportation,Maybank Premier,TX-743966,True
+TXN-1719,2025-12-01,Monthly Residential Rent,Sunway Geo Residences,1850.0,MYR,expense,rent,Maybank Premier,RENT-202512,True
+TXN-1720,2025-12-01,Supermarket Purchase at Village Grocer,Village Grocer,226.6,MYR,expense,groceries,Maybank Premier,POS-985296,True
+TXN-1721,2025-12-01,Food & Beverage - Starbucks Coffee,Starbucks Coffee,12.72,MYR,expense,dining,Maybank Premier,POS-715104,True
+TXN-1722,2025-12-01,Food & Beverage - GrabFood,GrabFood,42.27,MYR,expense,dining,Maybank Premier,POS-911982,True
+TXN-1723,2025-12-01,Transit & Mobility - Petronas Gas,Petronas Gas,72.63,MYR,expense,transportation,Maybank Premier,TX-491738,True
+TXN-1724,2025-12-02,Food & Beverage - Nando's,Nando's,21.96,MYR,expense,dining,Maybank Premier,POS-243079,True
+TXN-1725,2025-12-03,Food & Beverage - Din Tai Fung,Din Tai Fung,33.42,MYR,expense,dining,Maybank Premier,POS-282664,True
+TXN-1726,2025-12-04,Food & Beverage - Nando's,Nando's,19.37,MYR,expense,dining,Maybank Premier,POS-717558,True
+TXN-1727,2025-12-05,Electricity Utility Bill,Tenaga Nasional Berhad,191.38,MYR,expense,utilities,Maybank Premier,UTIL-202512,True
+TXN-1728,2025-12-05,Transit & Mobility - Shell Fuel,Shell Fuel,66.05,MYR,expense,transportation,Maybank Premier,TX-908274,True
+TXN-1729,2025-12-06,Supermarket Purchase at Lotus's,Lotus's,226.97,MYR,expense,groceries,Maybank Premier,POS-741079,True
+TXN-1730,2025-12-06,Food & Beverage - GrabFood,GrabFood,83.07,MYR,expense,dining,Maybank Premier,POS-620287,True
+TXN-1731,2025-12-06,Transit & Mobility - Grab Ride,Grab Ride,29.28,MYR,expense,transportation,Maybank Premier,TX-435039,True
+TXN-1732,2025-12-07,Food & Beverage - GrabFood,GrabFood,91.95,MYR,expense,dining,Maybank Premier,POS-864711,True
+TXN-1733,2025-12-08,Transit & Mobility - Petronas Gas,Petronas Gas,62.22,MYR,expense,transportation,Maybank Premier,TX-855408,True
+TXN-1734,2025-12-08,Entertainment Expense - Steam Games,Steam Games,138.55,MYR,expense,entertainment,Maybank Premier,CHG-274418,True
+TXN-1735,2025-12-09,Food & Beverage - Din Tai Fung,Din Tai Fung,23.59,MYR,expense,dining,Maybank Premier,POS-493580,True
+TXN-1736,2025-12-09,Transit & Mobility - Shell Fuel,Shell Fuel,62.32,MYR,expense,transportation,Maybank Premier,TX-706135,True
+TXN-1737,2025-12-10,Transit & Mobility - Grab Ride,Grab Ride,32.69,MYR,expense,transportation,Maybank Premier,TX-434198,True
+TXN-1738,2025-12-11,Supermarket Purchase at Lotus's,Lotus's,103.07,MYR,expense,groceries,Maybank Premier,POS-493696,True
+TXN-1739,2025-12-11,Transit & Mobility - Grab Ride,Grab Ride,35.28,MYR,expense,transportation,Maybank Premier,TX-743453,True
+TXN-1740,2025-12-12,Food & Beverage - GrabFood,GrabFood,17.44,MYR,expense,dining,Maybank Premier,POS-555292,True
+TXN-1741,2025-12-12,Transit & Mobility - Grab Ride,Grab Ride,34.87,MYR,expense,transportation,Maybank Premier,TX-299212,True
+TXN-1742,2025-12-13,Supermarket Purchase at Lotus's,Lotus's,184.0,MYR,expense,groceries,Maybank Premier,POS-411847,True
+TXN-1743,2025-12-13,Food & Beverage - Starbucks Coffee,Starbucks Coffee,39.22,MYR,expense,dining,Maybank Premier,POS-699544,True
+TXN-1744,2025-12-14,Supermarket Purchase at Jaya Grocer,Jaya Grocer,145.55,MYR,expense,groceries,Maybank Premier,POS-408857,True
+TXN-1745,2025-12-14,Food & Beverage - GrabFood,GrabFood,86.02,MYR,expense,dining,Maybank Premier,POS-309374,True
+TXN-1746,2025-12-14,Food & Beverage - Starbucks Coffee,Starbucks Coffee,37.19,MYR,expense,dining,Maybank Premier,POS-279130,True
+TXN-1747,2025-12-14,Food & Beverage - GrabFood,GrabFood,59.8,MYR,expense,dining,Maybank Premier,POS-185916,True
+TXN-1748,2025-12-14,Entertainment Expense - Steam Games,Steam Games,100.81,MYR,expense,entertainment,Maybank Premier,CHG-793150,True
+TXN-1749,2025-12-15,Home High-Speed Fibre Internet,Maxis Fibre Home Internet,139.0,MYR,expense,utilities,Maybank Premier,NET-202512,True
+TXN-1750,2025-12-15,Food & Beverage - Din Tai Fung,Din Tai Fung,18.1,MYR,expense,dining,Maybank Premier,POS-499974,True
+TXN-1751,2025-12-16,Food & Beverage - Zus Coffee,Zus Coffee,39.62,MYR,expense,dining,Maybank Premier,POS-691655,True
+TXN-1752,2025-12-16,Transit & Mobility - Grab Ride,Grab Ride,20.14,MYR,expense,transportation,Maybank Premier,TX-460491,True
+TXN-1753,2025-12-17,Food & Beverage - Zus Coffee,Zus Coffee,30.27,MYR,expense,dining,Maybank Premier,POS-981639,True
+TXN-1754,2025-12-18,Food & Beverage - Din Tai Fung,Din Tai Fung,30.9,MYR,expense,dining,Maybank Premier,POS-347088,True
+TXN-1755,2025-12-18,Healthcare Expense - Guardian Pharmacy,Guardian Pharmacy,102.83,MYR,expense,healthcare,Maybank Premier,CHG-641922,True
+TXN-1756,2025-12-19,Food & Beverage - Kopitiam,Kopitiam,16.87,MYR,expense,dining,Maybank Premier,POS-893969,True
+TXN-1757,2025-12-20,Supermarket Purchase at Village Grocer,Village Grocer,208.4,MYR,expense,groceries,Maybank Premier,POS-232315,True
+TXN-1758,2025-12-20,Food & Beverage - Din Tai Fung,Din Tai Fung,41.66,MYR,expense,dining,Maybank Premier,POS-816308,True
+TXN-1759,2025-12-21,Supermarket Purchase at Lotus's,Lotus's,127.76,MYR,expense,groceries,Maybank Premier,POS-862422,True
+TXN-1760,2025-12-21,Food & Beverage - Starbucks Coffee,Starbucks Coffee,67.99,MYR,expense,dining,Maybank Premier,POS-516656,True
+TXN-1761,2025-12-22,Food & Beverage - Starbucks Coffee,Starbucks Coffee,37.96,MYR,expense,dining,Maybank Premier,POS-753323,True
+TXN-1762,2025-12-22,Food & Beverage - Kopitiam,Kopitiam,29.24,MYR,expense,dining,Maybank Premier,POS-539976,True
+TXN-1763,2025-12-22,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,23.89,MYR,expense,transportation,Maybank Premier,TX-716493,True
+TXN-1764,2025-12-23,Transit & Mobility - Grab Ride,Grab Ride,62.14,MYR,expense,transportation,Maybank Premier,TX-661652,True
+TXN-1765,2025-12-24,Food & Beverage - GrabFood,GrabFood,28.02,MYR,expense,dining,Maybank Premier,POS-738543,True
+TXN-1766,2025-12-25,Monthly Corporate Salary Transfer,NextOmni Tech Sdn Bhd,6800.0,MYR,income,salary,Maybank Premier,SAL-202512,True
+TXN-1767,2025-12-25,Food & Beverage - GrabFood,GrabFood,34.89,MYR,expense,dining,Maybank Premier,POS-140666,True
+TXN-1768,2025-12-27,Supermarket Purchase at Lotus's,Lotus's,209.87,MYR,expense,groceries,Maybank Premier,POS-417776,True
+TXN-1769,2025-12-27,Food & Beverage - Nando's,Nando's,106.64,MYR,expense,dining,Maybank Premier,POS-999924,True
+TXN-1770,2025-12-27,Food & Beverage - GrabFood,GrabFood,93.21,MYR,expense,dining,Maybank Premier,POS-339030,True
+TXN-1771,2025-12-27,Transit & Mobility - Shell Fuel,Shell Fuel,61.44,MYR,expense,transportation,Maybank Premier,TX-436454,True
+TXN-1772,2025-12-28,Supermarket Purchase at Jaya Grocer,Jaya Grocer,106.01,MYR,expense,groceries,Maybank Premier,POS-321659,True
+TXN-1773,2025-12-28,Food & Beverage - GrabFood,GrabFood,76.18,MYR,expense,dining,Maybank Premier,POS-641590,True
+TXN-1774,2025-12-28,Food & Beverage - Nando's,Nando's,104.79,MYR,expense,dining,Maybank Premier,POS-640299,True
+TXN-1775,2025-12-28,Healthcare Expense - Klinik Mediviron,Klinik Mediviron,87.52,MYR,expense,healthcare,Maybank Premier,CHG-918430,True
+TXN-1776,2025-12-29,Food & Beverage - Starbucks Coffee,Starbucks Coffee,17.73,MYR,expense,dining,Maybank Premier,POS-973390,True
+TXN-1777,2025-12-29,Food & Beverage - Zus Coffee,Zus Coffee,39.62,MYR,expense,dining,Maybank Premier,POS-361609,True
+TXN-1778,2025-12-29,Transit & Mobility - Grab Ride,Grab Ride,70.08,MYR,expense,transportation,Maybank Premier,TX-838862,True
+TXN-1779,2025-12-30,Food & Beverage - Din Tai Fung,Din Tai Fung,32.97,MYR,expense,dining,Maybank Premier,POS-229890,True
+TXN-1780,2025-12-31,Food & Beverage - Din Tai Fung,Din Tai Fung,31.37,MYR,expense,dining,Maybank Premier,POS-466749,True
+TXN-1781,2025-12-31,Transit & Mobility - Petronas Gas,Petronas Gas,59.94,MYR,expense,transportation,Maybank Premier,TX-822312,True
+TXN-1782,2025-12-31,Shopping Expense - IKEA Damansara,IKEA Damansara,32.7,MYR,expense,shopping,Maybank Premier,CHG-995296,True
+TXN-1783,2026-01-01,Monthly Residential Rent,Sunway Geo Residences,1850.0,MYR,expense,rent,Maybank Premier,RENT-202601,True
+TXN-1784,2026-01-01,Food & Beverage - Zus Coffee,Zus Coffee,33.36,MYR,expense,dining,Maybank Premier,POS-810614,True
+TXN-1785,2026-01-01,Food & Beverage - Zus Coffee,Zus Coffee,20.88,MYR,expense,dining,Maybank Premier,POS-529399,True
+TXN-1786,2026-01-02,Food & Beverage - Din Tai Fung,Din Tai Fung,42.08,MYR,expense,dining,Maybank Premier,POS-778818,True
+TXN-1787,2026-01-02,Transit & Mobility - Grab Ride,Grab Ride,28.43,MYR,expense,transportation,Maybank Premier,TX-737894,True
+TXN-1788,2026-01-03,Supermarket Purchase at Lotus's,Lotus's,144.93,MYR,expense,groceries,Maybank Premier,POS-494763,True
+TXN-1789,2026-01-03,Food & Beverage - Din Tai Fung,Din Tai Fung,56.42,MYR,expense,dining,Maybank Premier,POS-589368,True
+TXN-1790,2026-01-03,Food & Beverage - Nando's,Nando's,92.56,MYR,expense,dining,Maybank Premier,POS-964352,True
+TXN-1791,2026-01-04,Supermarket Purchase at Lotus's,Lotus's,167.64,MYR,expense,groceries,Maybank Premier,POS-722615,True
+TXN-1792,2026-01-04,Food & Beverage - Nando's,Nando's,60.37,MYR,expense,dining,Maybank Premier,POS-213355,True
+TXN-1793,2026-01-04,Food & Beverage - Din Tai Fung,Din Tai Fung,40.43,MYR,expense,dining,Maybank Premier,POS-389913,True
+TXN-1794,2026-01-04,Food & Beverage - GrabFood,GrabFood,62.64,MYR,expense,dining,Maybank Premier,POS-390334,True
+TXN-1795,2026-01-04,Transit & Mobility - Petronas Gas,Petronas Gas,26.3,MYR,expense,transportation,Maybank Premier,TX-642421,True
+TXN-1796,2026-01-05,Electricity Utility Bill,Tenaga Nasional Berhad,202.98,MYR,expense,utilities,Maybank Premier,UTIL-202601,True
+TXN-1797,2026-01-05,Food & Beverage - Kopitiam,Kopitiam,25.34,MYR,expense,dining,Maybank Premier,POS-435109,True
+TXN-1798,2026-01-05,Food & Beverage - GrabFood,GrabFood,16.62,MYR,expense,dining,Maybank Premier,POS-126691,True
+TXN-1799,2026-01-06,Food & Beverage - Din Tai Fung,Din Tai Fung,36.31,MYR,expense,dining,Maybank Premier,POS-711344,True
+TXN-1800,2026-01-07,Food & Beverage - Zus Coffee,Zus Coffee,34.65,MYR,expense,dining,Maybank Premier,POS-769320,True
+TXN-1801,2026-01-08,Food & Beverage - Zus Coffee,Zus Coffee,39.74,MYR,expense,dining,Maybank Premier,POS-685365,True
+TXN-1802,2026-01-08,Transit & Mobility - Grab Ride,Grab Ride,43.25,MYR,expense,transportation,Maybank Premier,TX-876909,True
+TXN-1803,2026-01-09,Food & Beverage - Zus Coffee,Zus Coffee,43.25,MYR,expense,dining,Maybank Premier,POS-451936,True
+TXN-1804,2026-01-10,Supermarket Purchase at Lotus's,Lotus's,144.38,MYR,expense,groceries,Maybank Premier,POS-447411,True
+TXN-1805,2026-01-10,Food & Beverage - Nando's,Nando's,84.77,MYR,expense,dining,Maybank Premier,POS-586288,True
+TXN-1806,2026-01-10,Food & Beverage - Starbucks Coffee,Starbucks Coffee,75.0,MYR,expense,dining,Maybank Premier,POS-765213,True
+TXN-1807,2026-01-11,Supermarket Purchase at Village Grocer,Village Grocer,157.58,MYR,expense,groceries,Maybank Premier,POS-813763,True
+TXN-1808,2026-01-11,Food & Beverage - Kopitiam,Kopitiam,60.36,MYR,expense,dining,Maybank Premier,POS-156688,True
+TXN-1809,2026-01-11,Food & Beverage - Zus Coffee,Zus Coffee,46.68,MYR,expense,dining,Maybank Premier,POS-310026,True
+TXN-1810,2026-01-11,Transit & Mobility - Shell Fuel,Shell Fuel,23.59,MYR,expense,transportation,Maybank Premier,TX-850432,True
+TXN-1811,2026-01-12,Supermarket Purchase at Lotus's,Lotus's,179.12,MYR,expense,groceries,Maybank Premier,POS-285413,True
+TXN-1812,2026-01-12,Food & Beverage - Starbucks Coffee,Starbucks Coffee,12.16,MYR,expense,dining,Maybank Premier,POS-386814,True
+TXN-1813,2026-01-12,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,49.58,MYR,expense,transportation,Maybank Premier,TX-266131,True
+TXN-1814,2026-01-14,Food & Beverage - Din Tai Fung,Din Tai Fung,12.15,MYR,expense,dining,Maybank Premier,POS-659711,True
+TXN-1815,2026-01-14,Food & Beverage - Zus Coffee,Zus Coffee,36.11,MYR,expense,dining,Maybank Premier,POS-114760,True
+TXN-1816,2026-01-15,Home High-Speed Fibre Internet,Maxis Fibre Home Internet,139.0,MYR,expense,utilities,Maybank Premier,NET-202601,True
+TXN-1817,2026-01-15,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,28.58,MYR,expense,transportation,Maybank Premier,TX-461076,True
+TXN-1818,2026-01-16,Supermarket Purchase at Lotus's,Lotus's,102.56,MYR,expense,groceries,Maybank Premier,POS-963862,True
+TXN-1819,2026-01-17,Supermarket Purchase at Lotus's,Lotus's,146.55,MYR,expense,groceries,Maybank Premier,POS-820141,True
+TXN-1820,2026-01-17,Food & Beverage - Nando's,Nando's,119.67,MYR,expense,dining,Maybank Premier,POS-613989,True
+TXN-1821,2026-01-18,Food & Beverage - Starbucks Coffee,Starbucks Coffee,54.42,MYR,expense,dining,Maybank Premier,POS-862491,True
+TXN-1822,2026-01-18,Food & Beverage - Zus Coffee,Zus Coffee,52.95,MYR,expense,dining,Maybank Premier,POS-122977,True
+TXN-1823,2026-01-19,Food & Beverage - Starbucks Coffee,Starbucks Coffee,24.38,MYR,expense,dining,Maybank Premier,POS-771425,True
+TXN-1824,2026-01-19,Transit & Mobility - Grab Ride,Grab Ride,50.64,MYR,expense,transportation,Maybank Premier,TX-150290,True
+TXN-1825,2026-01-21,Food & Beverage - Din Tai Fung,Din Tai Fung,35.16,MYR,expense,dining,Maybank Premier,POS-315477,True
+TXN-1826,2026-01-22,Food & Beverage - GrabFood,GrabFood,29.17,MYR,expense,dining,Maybank Premier,POS-753050,True
+TXN-1827,2026-01-23,Shopping Expense - Uniqlo Mid Valley,Uniqlo Mid Valley,102.15,MYR,expense,shopping,Maybank Premier,CHG-738584,True
+TXN-1828,2026-01-24,Supermarket Purchase at Lotus's,Lotus's,212.2,MYR,expense,groceries,Maybank Premier,POS-311469,True
+TXN-1829,2026-01-24,Food & Beverage - GrabFood,GrabFood,69.83,MYR,expense,dining,Maybank Premier,POS-268163,True
+TXN-1830,2026-01-24,Food & Beverage - Starbucks Coffee,Starbucks Coffee,81.59,MYR,expense,dining,Maybank Premier,POS-317782,True
+TXN-1831,2026-01-25,Monthly Corporate Salary Transfer,NextOmni Tech Sdn Bhd,6800.0,MYR,income,salary,Maybank Premier,SAL-202601,True
+TXN-1832,2026-01-25,Supermarket Purchase at Jaya Grocer,Jaya Grocer,185.82,MYR,expense,groceries,Maybank Premier,POS-215795,True
+TXN-1833,2026-01-25,Food & Beverage - GrabFood,GrabFood,77.0,MYR,expense,dining,Maybank Premier,POS-194458,True
+TXN-1834,2026-01-25,Food & Beverage - Kopitiam,Kopitiam,41.38,MYR,expense,dining,Maybank Premier,POS-858724,True
+TXN-1835,2026-01-25,Food & Beverage - Starbucks Coffee,Starbucks Coffee,111.91,MYR,expense,dining,Maybank Premier,POS-775636,True
+TXN-1836,2026-01-25,Transit & Mobility - Petronas Gas,Petronas Gas,30.85,MYR,expense,transportation,Maybank Premier,TX-152512,True
+TXN-1837,2026-01-25,Shopping Expense - Uniqlo Mid Valley,Uniqlo Mid Valley,157.1,MYR,expense,shopping,Maybank Premier,CHG-477712,True
+TXN-1838,2026-01-26,Food & Beverage - GrabFood,GrabFood,15.82,MYR,expense,dining,Maybank Premier,POS-992596,True
+TXN-1839,2026-01-26,Shopping Expense - Shopee Online,Shopee Online,75.94,MYR,expense,shopping,Maybank Premier,CHG-558976,True
+TXN-1840,2026-01-27,Food & Beverage - GrabFood,GrabFood,15.07,MYR,expense,dining,Maybank Premier,POS-954551,True
+TXN-1841,2026-01-27,Transit & Mobility - Grab Ride,Grab Ride,39.05,MYR,expense,transportation,Maybank Premier,TX-578715,True
+TXN-1842,2026-01-28,Food & Beverage - Din Tai Fung,Din Tai Fung,33.41,MYR,expense,dining,Maybank Premier,POS-935620,True
+TXN-1843,2026-01-28,Food & Beverage - Zus Coffee,Zus Coffee,15.73,MYR,expense,dining,Maybank Premier,POS-829987,True
+TXN-1844,2026-01-30,Food & Beverage - Kopitiam,Kopitiam,24.53,MYR,expense,dining,Maybank Premier,POS-476018,True
+TXN-1845,2026-01-31,Food & Beverage - Zus Coffee,Zus Coffee,76.06,MYR,expense,dining,Maybank Premier,POS-611833,True
+TXN-1846,2026-01-31,Food & Beverage - Starbucks Coffee,Starbucks Coffee,110.45,MYR,expense,dining,Maybank Premier,POS-562094,True
+TXN-1847,2026-01-31,Food & Beverage - Starbucks Coffee,Starbucks Coffee,40.38,MYR,expense,dining,Maybank Premier,POS-786789,True
+TXN-1848,2026-01-31,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,73.67,MYR,expense,transportation,Maybank Premier,TX-802382,True
+TXN-1849,2026-02-01,Monthly Residential Rent,Sunway Geo Residences,1850.0,MYR,expense,rent,Maybank Premier,RENT-202602,True
+TXN-1850,2026-02-01,Supermarket Purchase at Jaya Grocer,Jaya Grocer,146.42,MYR,expense,groceries,Maybank Premier,POS-861949,True
+TXN-1851,2026-02-01,Food & Beverage - Din Tai Fung,Din Tai Fung,64.39,MYR,expense,dining,Maybank Premier,POS-809147,True
+TXN-1852,2026-02-02,Food & Beverage - Kopitiam,Kopitiam,13.8,MYR,expense,dining,Maybank Premier,POS-774652,True
+TXN-1853,2026-02-02,Food & Beverage - Zus Coffee,Zus Coffee,28.68,MYR,expense,dining,Maybank Premier,POS-592085,True
+TXN-1854,2026-02-03,Supermarket Purchase at AEON Supermarket,AEON Supermarket,127.9,MYR,expense,groceries,Maybank Premier,POS-446968,True
+TXN-1855,2026-02-03,Food & Beverage - Starbucks Coffee,Starbucks Coffee,28.73,MYR,expense,dining,Maybank Premier,POS-677236,True
+TXN-1856,2026-02-03,Food & Beverage - GrabFood,GrabFood,24.5,MYR,expense,dining,Maybank Premier,POS-956794,True
+TXN-1857,2026-02-03,Transit & Mobility - Shell Fuel,Shell Fuel,41.65,MYR,expense,transportation,Maybank Premier,TX-700870,True
+TXN-1858,2026-02-04,Food & Beverage - Starbucks Coffee,Starbucks Coffee,44.36,MYR,expense,dining,Maybank Premier,POS-881439,True
+TXN-1859,2026-02-04,Entertainment Expense - Netflix Subscription,Netflix Subscription,111.36,MYR,expense,entertainment,Maybank Premier,CHG-100177,True
+TXN-1860,2026-02-05,Electricity Utility Bill,Tenaga Nasional Berhad,197.81,MYR,expense,utilities,Maybank Premier,UTIL-202602,True
+TXN-1861,2026-02-05,Food & Beverage - GrabFood,GrabFood,22.05,MYR,expense,dining,Maybank Premier,POS-633030,True
+TXN-1862,2026-02-05,Food & Beverage - Kopitiam,Kopitiam,18.83,MYR,expense,dining,Maybank Premier,POS-804091,True
+TXN-1863,2026-02-06,Food & Beverage - Din Tai Fung,Din Tai Fung,22.96,MYR,expense,dining,Maybank Premier,POS-904694,True
+TXN-1864,2026-02-06,Food & Beverage - Kopitiam,Kopitiam,31.8,MYR,expense,dining,Maybank Premier,POS-851470,True
+TXN-1865,2026-02-07,Supermarket Purchase at Village Grocer,Village Grocer,75.36,MYR,expense,groceries,Maybank Premier,POS-472390,True
+TXN-1866,2026-02-07,Food & Beverage - Nando's,Nando's,81.55,MYR,expense,dining,Maybank Premier,POS-492052,True
+TXN-1867,2026-02-07,Food & Beverage - GrabFood,GrabFood,44.04,MYR,expense,dining,Maybank Premier,POS-272129,True
+TXN-1868,2026-02-07,Food & Beverage - Din Tai Fung,Din Tai Fung,46.94,MYR,expense,dining,Maybank Premier,POS-851678,True
+TXN-1869,2026-02-08,Supermarket Purchase at Village Grocer,Village Grocer,105.94,MYR,expense,groceries,Maybank Premier,POS-993590,True
+TXN-1870,2026-02-08,Food & Beverage - Zus Coffee,Zus Coffee,73.85,MYR,expense,dining,Maybank Premier,POS-919378,True
+TXN-1871,2026-02-08,Food & Beverage - Zus Coffee,Zus Coffee,95.93,MYR,expense,dining,Maybank Premier,POS-213000,True
+TXN-1872,2026-02-08,Healthcare Expense - Klinik Mediviron,Klinik Mediviron,116.27,MYR,expense,healthcare,Maybank Premier,CHG-909652,True
+TXN-1873,2026-02-09,Food & Beverage - Kopitiam,Kopitiam,43.55,MYR,expense,dining,Maybank Premier,POS-241176,True
+TXN-1874,2026-02-09,Healthcare Expense - Guardian Pharmacy,Guardian Pharmacy,110.75,MYR,expense,healthcare,Maybank Premier,CHG-553834,True
+TXN-1875,2026-02-10,Food & Beverage - Kopitiam,Kopitiam,37.78,MYR,expense,dining,Maybank Premier,POS-285810,True
+TXN-1876,2026-02-12,Food & Beverage - Din Tai Fung,Din Tai Fung,44.32,MYR,expense,dining,Maybank Premier,POS-826155,True
+TXN-1877,2026-02-12,Food & Beverage - Zus Coffee,Zus Coffee,21.03,MYR,expense,dining,Maybank Premier,POS-459513,True
+TXN-1878,2026-02-13,Supermarket Purchase at AEON Supermarket,AEON Supermarket,174.42,MYR,expense,groceries,Maybank Premier,POS-884782,True
+TXN-1879,2026-02-13,Food & Beverage - GrabFood,GrabFood,30.08,MYR,expense,dining,Maybank Premier,POS-429159,True
+TXN-1880,2026-02-14,Supermarket Purchase at Village Grocer,Village Grocer,109.6,MYR,expense,groceries,Maybank Premier,POS-849086,True
+TXN-1881,2026-02-14,Food & Beverage - GrabFood,GrabFood,64.35,MYR,expense,dining,Maybank Premier,POS-805034,True
+TXN-1882,2026-02-14,Food & Beverage - Zus Coffee,Zus Coffee,118.41,MYR,expense,dining,Maybank Premier,POS-781664,True
+TXN-1883,2026-02-15,Home High-Speed Fibre Internet,Maxis Fibre Home Internet,139.0,MYR,expense,utilities,Maybank Premier,NET-202602,True
+TXN-1884,2026-02-15,Supermarket Purchase at Lotus's,Lotus's,192.21,MYR,expense,groceries,Maybank Premier,POS-897730,True
+TXN-1885,2026-02-15,Food & Beverage - Kopitiam,Kopitiam,75.83,MYR,expense,dining,Maybank Premier,POS-698357,True
+TXN-1886,2026-02-15,Food & Beverage - GrabFood,GrabFood,95.36,MYR,expense,dining,Maybank Premier,POS-806995,True
+TXN-1887,2026-02-16,Food & Beverage - Starbucks Coffee,Starbucks Coffee,29.25,MYR,expense,dining,Maybank Premier,POS-126499,True
+TXN-1888,2026-02-16,Food & Beverage - Din Tai Fung,Din Tai Fung,16.8,MYR,expense,dining,Maybank Premier,POS-802812,True
+TXN-1889,2026-02-16,Transit & Mobility - Petronas Gas,Petronas Gas,60.01,MYR,expense,transportation,Maybank Premier,TX-268752,True
+TXN-1890,2026-02-17,Transit & Mobility - Petronas Gas,Petronas Gas,27.24,MYR,expense,transportation,Maybank Premier,TX-667460,True
+TXN-1891,2026-02-17,Entertainment Expense - Netflix Subscription,Netflix Subscription,120.5,MYR,expense,entertainment,Maybank Premier,CHG-808340,True
+TXN-1892,2026-02-18,Food & Beverage - GrabFood,GrabFood,33.35,MYR,expense,dining,Maybank Premier,POS-507777,True
+TXN-1893,2026-02-18,Food & Beverage - Zus Coffee,Zus Coffee,28.86,MYR,expense,dining,Maybank Premier,POS-935540,True
+TXN-1894,2026-02-19,Food & Beverage - Din Tai Fung,Din Tai Fung,25.75,MYR,expense,dining,Maybank Premier,POS-926394,True
+TXN-1895,2026-02-19,Food & Beverage - GrabFood,GrabFood,22.32,MYR,expense,dining,Maybank Premier,POS-678944,True
+TXN-1896,2026-02-19,Transit & Mobility - Petronas Gas,Petronas Gas,27.19,MYR,expense,transportation,Maybank Premier,TX-918859,True
+TXN-1897,2026-02-21,Supermarket Purchase at Village Grocer,Village Grocer,203.06,MYR,expense,groceries,Maybank Premier,POS-302897,True
+TXN-1898,2026-02-21,Food & Beverage - Din Tai Fung,Din Tai Fung,50.08,MYR,expense,dining,Maybank Premier,POS-815819,True
+TXN-1899,2026-02-21,Food & Beverage - Starbucks Coffee,Starbucks Coffee,50.89,MYR,expense,dining,Maybank Premier,POS-282237,True
+TXN-1900,2026-02-21,Shopping Expense - IKEA Damansara,IKEA Damansara,68.26,MYR,expense,shopping,Maybank Premier,CHG-377075,True
+TXN-1901,2026-02-22,Supermarket Purchase at Lotus's,Lotus's,75.93,MYR,expense,groceries,Maybank Premier,POS-588983,True
+TXN-1902,2026-02-22,Food & Beverage - Zus Coffee,Zus Coffee,38.39,MYR,expense,dining,Maybank Premier,POS-438302,True
+TXN-1903,2026-02-22,Food & Beverage - Kopitiam,Kopitiam,39.32,MYR,expense,dining,Maybank Premier,POS-755744,True
+TXN-1904,2026-02-22,Food & Beverage - Kopitiam,Kopitiam,106.67,MYR,expense,dining,Maybank Premier,POS-415783,True
+TXN-1905,2026-02-23,Food & Beverage - Nando's,Nando's,29.34,MYR,expense,dining,Maybank Premier,POS-292800,True
+TXN-1906,2026-02-24,Food & Beverage - Din Tai Fung,Din Tai Fung,15.03,MYR,expense,dining,Maybank Premier,POS-331942,True
+TXN-1907,2026-02-25,Monthly Corporate Salary Transfer,NextOmni Tech Sdn Bhd,6800.0,MYR,income,salary,Maybank Premier,SAL-202602,True
+TXN-1908,2026-02-25,Food & Beverage - Kopitiam,Kopitiam,29.51,MYR,expense,dining,Maybank Premier,POS-688602,True
+TXN-1909,2026-02-26,Supermarket Purchase at Lotus's,Lotus's,148.54,MYR,expense,groceries,Maybank Premier,POS-773462,True
+TXN-1910,2026-02-26,Food & Beverage - Kopitiam,Kopitiam,20.05,MYR,expense,dining,Maybank Premier,POS-141814,True
+TXN-1911,2026-02-27,Food & Beverage - Din Tai Fung,Din Tai Fung,20.47,MYR,expense,dining,Maybank Premier,POS-859143,True
+TXN-1912,2026-02-27,Food & Beverage - Nando's,Nando's,12.82,MYR,expense,dining,Maybank Premier,POS-641975,True
+TXN-1913,2026-02-28,Food & Beverage - Din Tai Fung,Din Tai Fung,38.73,MYR,expense,dining,Maybank Premier,POS-783176,True
+TXN-1914,2026-02-28,Food & Beverage - Zus Coffee,Zus Coffee,62.23,MYR,expense,dining,Maybank Premier,POS-186345,True
+TXN-1915,2026-03-01,Monthly Residential Rent,Sunway Geo Residences,1850.0,MYR,expense,rent,Maybank Premier,RENT-202603,True
+TXN-1916,2026-03-01,Food & Beverage - Kopitiam,Kopitiam,35.62,MYR,expense,dining,Maybank Premier,POS-168652,True
+TXN-1917,2026-03-01,Food & Beverage - Zus Coffee,Zus Coffee,91.98,MYR,expense,dining,Maybank Premier,POS-911159,True
+TXN-1918,2026-03-01,Food & Beverage - Zus Coffee,Zus Coffee,108.52,MYR,expense,dining,Maybank Premier,POS-544815,True
+TXN-1919,2026-03-02,Food & Beverage - GrabFood,GrabFood,37.58,MYR,expense,dining,Maybank Premier,POS-777968,True
+TXN-1920,2026-03-02,Food & Beverage - Starbucks Coffee,Starbucks Coffee,36.65,MYR,expense,dining,Maybank Premier,POS-261223,True
+TXN-1921,2026-03-02,Transit & Mobility - Petronas Gas,Petronas Gas,17.27,MYR,expense,transportation,Maybank Premier,TX-176806,True
+TXN-1922,2026-03-02,Entertainment Expense - Netflix Subscription,Netflix Subscription,114.12,MYR,expense,entertainment,Maybank Premier,CHG-338703,True
+TXN-1923,2026-03-03,Food & Beverage - Din Tai Fung,Din Tai Fung,32.8,MYR,expense,dining,Maybank Premier,POS-554059,True
+TXN-1924,2026-03-03,Transit & Mobility - Shell Fuel,Shell Fuel,55.4,MYR,expense,transportation,Maybank Premier,TX-660814,True
+TXN-1925,2026-03-03,Healthcare Expense - Klinik Mediviron,Klinik Mediviron,34.8,MYR,expense,healthcare,Maybank Premier,CHG-882186,True
+TXN-1926,2026-03-04,Food & Beverage - Starbucks Coffee,Starbucks Coffee,23.8,MYR,expense,dining,Maybank Premier,POS-627262,True
+TXN-1927,2026-03-04,Transit & Mobility - Petronas Gas,Petronas Gas,51.39,MYR,expense,transportation,Maybank Premier,TX-395192,True
+TXN-1928,2026-03-05,Electricity Utility Bill,Tenaga Nasional Berhad,170.64,MYR,expense,utilities,Maybank Premier,UTIL-202603,True
+TXN-1929,2026-03-05,Food & Beverage - Din Tai Fung,Din Tai Fung,17.16,MYR,expense,dining,Maybank Premier,POS-330545,True
+TXN-1930,2026-03-05,Transit & Mobility - Shell Fuel,Shell Fuel,62.81,MYR,expense,transportation,Maybank Premier,TX-990731,True
+TXN-1931,2026-03-07,Food & Beverage - GrabFood,GrabFood,66.72,MYR,expense,dining,Maybank Premier,POS-111691,True
+TXN-1932,2026-03-07,Food & Beverage - Kopitiam,Kopitiam,109.36,MYR,expense,dining,Maybank Premier,POS-248241,True
+TXN-1933,2026-03-07,Food & Beverage - Starbucks Coffee,Starbucks Coffee,38.55,MYR,expense,dining,Maybank Premier,POS-700538,True
+TXN-1934,2026-03-08,Food & Beverage - Zus Coffee,Zus Coffee,98.61,MYR,expense,dining,Maybank Premier,POS-861200,True
+TXN-1935,2026-03-08,Food & Beverage - Nando's,Nando's,53.0,MYR,expense,dining,Maybank Premier,POS-777308,True
+TXN-1936,2026-03-09,Food & Beverage - Nando's,Nando's,18.41,MYR,expense,dining,Maybank Premier,POS-290167,True
+TXN-1937,2026-03-10,Supermarket Purchase at AEON Supermarket,AEON Supermarket,181.37,MYR,expense,groceries,Maybank Premier,POS-176697,True
+TXN-1938,2026-03-10,Food & Beverage - Starbucks Coffee,Starbucks Coffee,20.27,MYR,expense,dining,Maybank Premier,POS-307007,True
+TXN-1939,2026-03-11,Healthcare Expense - Guardian Pharmacy,Guardian Pharmacy,164.52,MYR,expense,healthcare,Maybank Premier,CHG-433222,True
+TXN-1940,2026-03-12,Food & Beverage - GrabFood,GrabFood,22.09,MYR,expense,dining,Maybank Premier,POS-712546,True
+TXN-1941,2026-03-12,Transit & Mobility - Petronas Gas,Petronas Gas,63.46,MYR,expense,transportation,Maybank Premier,TX-549112,True
+TXN-1942,2026-03-13,Food & Beverage - GrabFood,GrabFood,36.41,MYR,expense,dining,Maybank Premier,POS-557309,True
+TXN-1943,2026-03-13,Transit & Mobility - Petronas Gas,Petronas Gas,23.06,MYR,expense,transportation,Maybank Premier,TX-868577,True
+TXN-1944,2026-03-14,Supermarket Purchase at AEON Supermarket,AEON Supermarket,134.19,MYR,expense,groceries,Maybank Premier,POS-420310,True
+TXN-1945,2026-03-14,Food & Beverage - Kopitiam,Kopitiam,44.25,MYR,expense,dining,Maybank Premier,POS-776909,True
+TXN-1946,2026-03-14,Food & Beverage - Kopitiam,Kopitiam,41.97,MYR,expense,dining,Maybank Premier,POS-394247,True
+TXN-1947,2026-03-15,Home High-Speed Fibre Internet,Maxis Fibre Home Internet,139.0,MYR,expense,utilities,Maybank Premier,NET-202603,True
+TXN-1948,2026-03-15,Supermarket Purchase at Lotus's,Lotus's,196.03,MYR,expense,groceries,Maybank Premier,POS-757057,True
+TXN-1949,2026-03-15,Food & Beverage - GrabFood,GrabFood,41.41,MYR,expense,dining,Maybank Premier,POS-119535,True
+TXN-1950,2026-03-16,Food & Beverage - Kopitiam,Kopitiam,19.02,MYR,expense,dining,Maybank Premier,POS-138436,True
+TXN-1951,2026-03-17,Food & Beverage - Zus Coffee,Zus Coffee,24.07,MYR,expense,dining,Maybank Premier,POS-334153,True
+TXN-1952,2026-03-18,Entertainment Expense - Netflix Subscription,Netflix Subscription,127.72,MYR,expense,entertainment,Maybank Premier,CHG-989173,True
+TXN-1953,2026-03-19,Food & Beverage - GrabFood,GrabFood,17.47,MYR,expense,dining,Maybank Premier,POS-639111,True
+TXN-1954,2026-03-19,Food & Beverage - Zus Coffee,Zus Coffee,26.73,MYR,expense,dining,Maybank Premier,POS-287847,True
+TXN-1955,2026-03-21,Supermarket Purchase at AEON Supermarket,AEON Supermarket,113.24,MYR,expense,groceries,Maybank Premier,POS-377198,True
+TXN-1956,2026-03-21,Food & Beverage - Zus Coffee,Zus Coffee,38.64,MYR,expense,dining,Maybank Premier,POS-316818,True
+TXN-1957,2026-03-21,Food & Beverage - Kopitiam,Kopitiam,112.16,MYR,expense,dining,Maybank Premier,POS-478799,True
+TXN-1958,2026-03-22,Food & Beverage - GrabFood,GrabFood,62.55,MYR,expense,dining,Maybank Premier,POS-837920,True
+TXN-1959,2026-03-23,Food & Beverage - Kopitiam,Kopitiam,29.96,MYR,expense,dining,Maybank Premier,POS-282294,True
+TXN-1960,2026-03-24,Food & Beverage - Starbucks Coffee,Starbucks Coffee,29.05,MYR,expense,dining,Maybank Premier,POS-494609,True
+TXN-1961,2026-03-24,Food & Beverage - Zus Coffee,Zus Coffee,29.04,MYR,expense,dining,Maybank Premier,POS-470040,True
+TXN-1962,2026-03-25,Monthly Corporate Salary Transfer,NextOmni Tech Sdn Bhd,6800.0,MYR,income,salary,Maybank Premier,SAL-202603,True
+TXN-1963,2026-03-25,Food & Beverage - Starbucks Coffee,Starbucks Coffee,28.56,MYR,expense,dining,Maybank Premier,POS-245718,True
+TXN-1964,2026-03-25,Food & Beverage - Din Tai Fung,Din Tai Fung,17.46,MYR,expense,dining,Maybank Premier,POS-180832,True
+TXN-1965,2026-03-27,Food & Beverage - Nando's,Nando's,35.77,MYR,expense,dining,Maybank Premier,POS-604906,True
+TXN-1966,2026-03-28,Supermarket Purchase at AEON Supermarket,AEON Supermarket,78.7,MYR,expense,groceries,Maybank Premier,POS-145240,True
+TXN-1967,2026-03-28,Food & Beverage - Kopitiam,Kopitiam,85.35,MYR,expense,dining,Maybank Premier,POS-241268,True
+TXN-1968,2026-03-28,Healthcare Expense - Guardian Pharmacy,Guardian Pharmacy,33.67,MYR,expense,healthcare,Maybank Premier,CHG-370804,True
+TXN-1969,2026-03-29,Food & Beverage - Din Tai Fung,Din Tai Fung,85.95,MYR,expense,dining,Maybank Premier,POS-690982,True
+TXN-1970,2026-03-29,Food & Beverage - GrabFood,GrabFood,36.58,MYR,expense,dining,Maybank Premier,POS-854500,True
+TXN-1971,2026-03-29,Food & Beverage - GrabFood,GrabFood,91.25,MYR,expense,dining,Maybank Premier,POS-397223,True
+TXN-1972,2026-03-30,Food & Beverage - Din Tai Fung,Din Tai Fung,17.63,MYR,expense,dining,Maybank Premier,POS-970699,True
+TXN-1973,2026-03-31,Food & Beverage - Kopitiam,Kopitiam,33.77,MYR,expense,dining,Maybank Premier,POS-377370,True
+TXN-1974,2026-03-31,Transit & Mobility - Petronas Gas,Petronas Gas,70.34,MYR,expense,transportation,Maybank Premier,TX-725510,True
+TXN-1975,2026-04-01,Monthly Residential Rent,Sunway Geo Residences,1850.0,MYR,expense,rent,Maybank Premier,RENT-202604,True
+TXN-1976,2026-04-01,Food & Beverage - Starbucks Coffee,Starbucks Coffee,12.55,MYR,expense,dining,Maybank Premier,POS-648102,True
+TXN-1977,2026-04-02,Transit & Mobility - Shell Fuel,Shell Fuel,69.1,MYR,expense,transportation,Maybank Premier,TX-728950,True
+TXN-1978,2026-04-02,Healthcare Expense - Klinik Mediviron,Klinik Mediviron,141.62,MYR,expense,healthcare,Maybank Premier,CHG-197716,True
+TXN-1979,2026-04-04,Food & Beverage - GrabFood,GrabFood,71.68,MYR,expense,dining,Maybank Premier,POS-541119,True
+TXN-1980,2026-04-04,Food & Beverage - Nando's,Nando's,109.36,MYR,expense,dining,Maybank Premier,POS-831531,True
+TXN-1981,2026-04-04,Food & Beverage - Kopitiam,Kopitiam,71.46,MYR,expense,dining,Maybank Premier,POS-941272,True
+TXN-1982,2026-04-05,Electricity Utility Bill,Tenaga Nasional Berhad,164.54,MYR,expense,utilities,Maybank Premier,UTIL-202604,True
+TXN-1983,2026-04-05,Food & Beverage - Kopitiam,Kopitiam,43.31,MYR,expense,dining,Maybank Premier,POS-240386,True
+TXN-1984,2026-04-05,Food & Beverage - Nando's,Nando's,75.56,MYR,expense,dining,Maybank Premier,POS-343807,True
+TXN-1985,2026-04-05,Food & Beverage - Starbucks Coffee,Starbucks Coffee,59.08,MYR,expense,dining,Maybank Premier,POS-670143,True
+TXN-1986,2026-04-06,Food & Beverage - Kopitiam,Kopitiam,29.24,MYR,expense,dining,Maybank Premier,POS-645009,True
+TXN-1987,2026-04-06,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,56.27,MYR,expense,transportation,Maybank Premier,TX-431246,True
+TXN-1988,2026-04-07,Supermarket Purchase at AEON Supermarket,AEON Supermarket,182.51,MYR,expense,groceries,Maybank Premier,POS-365953,True
+TXN-1989,2026-04-07,Food & Beverage - Kopitiam,Kopitiam,25.98,MYR,expense,dining,Maybank Premier,POS-483405,True
+TXN-1990,2026-04-09,Food & Beverage - Din Tai Fung,Din Tai Fung,20.37,MYR,expense,dining,Maybank Premier,POS-421549,True
+TXN-1991,2026-04-10,Shopping Expense - IKEA Damansara,IKEA Damansara,146.38,MYR,expense,shopping,Maybank Premier,CHG-269654,True
+TXN-1992,2026-04-11,Supermarket Purchase at AEON Supermarket,AEON Supermarket,204.7,MYR,expense,groceries,Maybank Premier,POS-939756,True
+TXN-1993,2026-04-11,Food & Beverage - Kopitiam,Kopitiam,94.25,MYR,expense,dining,Maybank Premier,POS-841122,True
+TXN-1994,2026-04-11,Food & Beverage - Starbucks Coffee,Starbucks Coffee,48.66,MYR,expense,dining,Maybank Premier,POS-766764,True
+TXN-1995,2026-04-11,Food & Beverage - Starbucks Coffee,Starbucks Coffee,103.37,MYR,expense,dining,Maybank Premier,POS-963245,True
+TXN-1996,2026-04-11,Transit & Mobility - Shell Fuel,Shell Fuel,20.29,MYR,expense,transportation,Maybank Premier,TX-375871,True
+TXN-1997,2026-04-12,Supermarket Purchase at Jaya Grocer,Jaya Grocer,194.54,MYR,expense,groceries,Maybank Premier,POS-520106,True
+TXN-1998,2026-04-12,Food & Beverage - GrabFood,GrabFood,79.29,MYR,expense,dining,Maybank Premier,POS-846172,True
+TXN-1999,2026-04-12,Food & Beverage - Kopitiam,Kopitiam,39.88,MYR,expense,dining,Maybank Premier,POS-911187,True
+TXN-2000,2026-04-12,Food & Beverage - Zus Coffee,Zus Coffee,89.42,MYR,expense,dining,Maybank Premier,POS-560295,True
+TXN-2001,2026-04-12,Transit & Mobility - Petronas Gas,Petronas Gas,26.68,MYR,expense,transportation,Maybank Premier,TX-922041,True
+TXN-2002,2026-04-13,Transit & Mobility - Grab Ride,Grab Ride,36.58,MYR,expense,transportation,Maybank Premier,TX-786837,True
+TXN-2003,2026-04-13,Shopping Expense - Uniqlo Mid Valley,Uniqlo Mid Valley,179.51,MYR,expense,shopping,Maybank Premier,CHG-917546,True
+TXN-2004,2026-04-14,Food & Beverage - Din Tai Fung,Din Tai Fung,31.34,MYR,expense,dining,Maybank Premier,POS-642892,True
+TXN-2005,2026-04-14,Transit & Mobility - Grab Ride,Grab Ride,70.15,MYR,expense,transportation,Maybank Premier,TX-676289,True
+TXN-2006,2026-04-15,Home High-Speed Fibre Internet,Maxis Fibre Home Internet,139.0,MYR,expense,utilities,Maybank Premier,NET-202604,True
+TXN-2007,2026-04-15,Food & Beverage - Nando's,Nando's,23.47,MYR,expense,dining,Maybank Premier,POS-955129,True
+TXN-2008,2026-04-15,Food & Beverage - Nando's,Nando's,19.47,MYR,expense,dining,Maybank Premier,POS-303974,True
+TXN-2009,2026-04-16,Supermarket Purchase at Village Grocer,Village Grocer,142.18,MYR,expense,groceries,Maybank Premier,POS-211636,True
+TXN-2010,2026-04-16,Food & Beverage - Kopitiam,Kopitiam,21.71,MYR,expense,dining,Maybank Premier,POS-222692,True
+TXN-2011,2026-04-17,Food & Beverage - Kopitiam,Kopitiam,20.25,MYR,expense,dining,Maybank Premier,POS-564276,True
+TXN-2012,2026-04-17,Food & Beverage - Din Tai Fung,Din Tai Fung,30.58,MYR,expense,dining,Maybank Premier,POS-907369,True
+TXN-2013,2026-04-17,Transit & Mobility - Petronas Gas,Petronas Gas,72.67,MYR,expense,transportation,Maybank Premier,TX-581137,True
+TXN-2014,2026-04-18,Food & Beverage - Din Tai Fung,Din Tai Fung,44.88,MYR,expense,dining,Maybank Premier,POS-170835,True
+TXN-2015,2026-04-19,Supermarket Purchase at Village Grocer,Village Grocer,207.03,MYR,expense,groceries,Maybank Premier,POS-532459,True
+TXN-2016,2026-04-19,Food & Beverage - Kopitiam,Kopitiam,80.53,MYR,expense,dining,Maybank Premier,POS-834861,True
+TXN-2017,2026-04-19,Food & Beverage - Nando's,Nando's,56.1,MYR,expense,dining,Maybank Premier,POS-197527,True
+TXN-2018,2026-04-20,Food & Beverage - Zus Coffee,Zus Coffee,27.73,MYR,expense,dining,Maybank Premier,POS-470711,True
+TXN-2019,2026-04-20,Transit & Mobility - Petronas Gas,Petronas Gas,25.97,MYR,expense,transportation,Maybank Premier,TX-882401,True
+TXN-2020,2026-04-21,Food & Beverage - Zus Coffee,Zus Coffee,19.75,MYR,expense,dining,Maybank Premier,POS-353814,True
+TXN-2021,2026-04-23,Supermarket Purchase at Jaya Grocer,Jaya Grocer,186.51,MYR,expense,groceries,Maybank Premier,POS-795650,True
+TXN-2022,2026-04-23,Food & Beverage - Starbucks Coffee,Starbucks Coffee,37.22,MYR,expense,dining,Maybank Premier,POS-667776,True
+TXN-2023,2026-04-24,Food & Beverage - Kopitiam,Kopitiam,40.67,MYR,expense,dining,Maybank Premier,POS-614646,True
+TXN-2024,2026-04-24,Transit & Mobility - Petronas Gas,Petronas Gas,38.87,MYR,expense,transportation,Maybank Premier,TX-886609,True
+TXN-2025,2026-04-25,Monthly Corporate Salary Transfer,NextOmni Tech Sdn Bhd,6800.0,MYR,income,salary,Maybank Premier,SAL-202604,True
+TXN-2026,2026-04-25,Supermarket Purchase at AEON Supermarket,AEON Supermarket,153.92,MYR,expense,groceries,Maybank Premier,POS-667036,True
+TXN-2027,2026-04-25,Food & Beverage - Kopitiam,Kopitiam,64.52,MYR,expense,dining,Maybank Premier,POS-819678,True
+TXN-2028,2026-04-26,Supermarket Purchase at AEON Supermarket,AEON Supermarket,127.08,MYR,expense,groceries,Maybank Premier,POS-108827,True
+TXN-2029,2026-04-26,Food & Beverage - GrabFood,GrabFood,52.91,MYR,expense,dining,Maybank Premier,POS-709231,True
+TXN-2030,2026-04-26,Transit & Mobility - Petronas Gas,Petronas Gas,51.77,MYR,expense,transportation,Maybank Premier,TX-372315,True
+TXN-2031,2026-04-27,Food & Beverage - Kopitiam,Kopitiam,23.32,MYR,expense,dining,Maybank Premier,POS-292847,True
+TXN-2032,2026-04-28,Food & Beverage - Din Tai Fung,Din Tai Fung,21.23,MYR,expense,dining,Maybank Premier,POS-288627,True
+TXN-2033,2026-04-29,Food & Beverage - GrabFood,GrabFood,20.91,MYR,expense,dining,Maybank Premier,POS-347259,True
+TXN-2034,2026-04-29,Food & Beverage - Kopitiam,Kopitiam,26.26,MYR,expense,dining,Maybank Premier,POS-499385,True
+TXN-2035,2026-04-29,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,43.38,MYR,expense,transportation,Maybank Premier,TX-110215,True
+TXN-2036,2026-04-30,Food & Beverage - GrabFood,GrabFood,29.06,MYR,expense,dining,Maybank Premier,POS-855562,True
+TXN-2037,2026-04-30,Food & Beverage - Nando's,Nando's,37.92,MYR,expense,dining,Maybank Premier,POS-414608,True
+TXN-2038,2026-04-30,Transit & Mobility - Grab Ride,Grab Ride,38.9,MYR,expense,transportation,Maybank Premier,TX-824087,True
+TXN-2039,2026-05-01,Monthly Residential Rent,Sunway Geo Residences,1850.0,MYR,expense,rent,Maybank Premier,RENT-202605,True
+TXN-2040,2026-05-01,Food & Beverage - GrabFood,GrabFood,15.18,MYR,expense,dining,Maybank Premier,POS-880762,True
+TXN-2041,2026-05-01,Transit & Mobility - Petronas Gas,Petronas Gas,36.62,MYR,expense,transportation,Maybank Premier,TX-684572,True
+TXN-2042,2026-05-02,Supermarket Purchase at Jaya Grocer,Jaya Grocer,142.94,MYR,expense,groceries,Maybank Premier,POS-468145,True
+TXN-2043,2026-05-02,Food & Beverage - Kopitiam,Kopitiam,51.91,MYR,expense,dining,Maybank Premier,POS-703869,True
+TXN-2044,2026-05-02,Food & Beverage - GrabFood,GrabFood,90.18,MYR,expense,dining,Maybank Premier,POS-283017,True
+TXN-2045,2026-05-02,Food & Beverage - Nando's,Nando's,65.18,MYR,expense,dining,Maybank Premier,POS-805893,True
+TXN-2046,2026-05-03,Supermarket Purchase at Jaya Grocer,Jaya Grocer,137.88,MYR,expense,groceries,Maybank Premier,POS-400441,True
+TXN-2047,2026-05-03,Food & Beverage - GrabFood,GrabFood,116.31,MYR,expense,dining,Maybank Premier,POS-275715,True
+TXN-2048,2026-05-03,Food & Beverage - GrabFood,GrabFood,103.66,MYR,expense,dining,Maybank Premier,POS-453777,True
+TXN-2049,2026-05-04,Food & Beverage - Starbucks Coffee,Starbucks Coffee,17.35,MYR,expense,dining,Maybank Premier,POS-339303,True
+TXN-2050,2026-05-04,Food & Beverage - Nando's,Nando's,22.46,MYR,expense,dining,Maybank Premier,POS-405509,True
+TXN-2051,2026-05-05,Electricity Utility Bill,Tenaga Nasional Berhad,167.68,MYR,expense,utilities,Maybank Premier,UTIL-202605,True
+TXN-2052,2026-05-05,Food & Beverage - Nando's,Nando's,36.68,MYR,expense,dining,Maybank Premier,POS-646240,True
+TXN-2053,2026-05-07,Food & Beverage - Starbucks Coffee,Starbucks Coffee,18.95,MYR,expense,dining,Maybank Premier,POS-516332,True
+TXN-2054,2026-05-07,Transit & Mobility - Grab Ride,Grab Ride,71.21,MYR,expense,transportation,Maybank Premier,TX-596171,True
+TXN-2055,2026-05-08,Supermarket Purchase at AEON Supermarket,AEON Supermarket,161.46,MYR,expense,groceries,Maybank Premier,POS-187295,True
+TXN-2056,2026-05-08,Entertainment Expense - GSC Cinemas,GSC Cinemas,60.55,MYR,expense,entertainment,Maybank Premier,CHG-873422,True
+TXN-2057,2026-05-09,Supermarket Purchase at Village Grocer,Village Grocer,96.66,MYR,expense,groceries,Maybank Premier,POS-979249,True
+TXN-2058,2026-05-09,Food & Beverage - Starbucks Coffee,Starbucks Coffee,37.99,MYR,expense,dining,Maybank Premier,POS-474175,True
+TXN-2059,2026-05-10,Supermarket Purchase at Lotus's,Lotus's,165.51,MYR,expense,groceries,Maybank Premier,POS-241678,True
+TXN-2060,2026-05-10,Food & Beverage - Kopitiam,Kopitiam,50.05,MYR,expense,dining,Maybank Premier,POS-726612,True
+TXN-2061,2026-05-10,Food & Beverage - Din Tai Fung,Din Tai Fung,88.64,MYR,expense,dining,Maybank Premier,POS-766738,True
+TXN-2062,2026-05-10,Food & Beverage - Kopitiam,Kopitiam,71.97,MYR,expense,dining,Maybank Premier,POS-770864,True
+TXN-2063,2026-05-11,Food & Beverage - Starbucks Coffee,Starbucks Coffee,26.58,MYR,expense,dining,Maybank Premier,POS-483551,True
+TXN-2064,2026-05-12,Supermarket Purchase at Village Grocer,Village Grocer,131.74,MYR,expense,groceries,Maybank Premier,POS-591989,True
+TXN-2065,2026-05-12,Food & Beverage - GrabFood,GrabFood,42.43,MYR,expense,dining,Maybank Premier,POS-892170,True
+TXN-2066,2026-05-12,Entertainment Expense - GSC Cinemas,GSC Cinemas,117.54,MYR,expense,entertainment,Maybank Premier,CHG-935471,True
+TXN-2067,2026-05-13,Supermarket Purchase at Lotus's,Lotus's,106.11,MYR,expense,groceries,Maybank Premier,POS-687783,True
+TXN-2068,2026-05-13,Food & Beverage - Zus Coffee,Zus Coffee,17.39,MYR,expense,dining,Maybank Premier,POS-872924,True
+TXN-2069,2026-05-15,Home High-Speed Fibre Internet,Maxis Fibre Home Internet,139.0,MYR,expense,utilities,Maybank Premier,NET-202605,True
+TXN-2070,2026-05-15,Food & Beverage - GrabFood,GrabFood,34.59,MYR,expense,dining,Maybank Premier,POS-398505,True
+TXN-2071,2026-05-16,Supermarket Purchase at Village Grocer,Village Grocer,215.82,MYR,expense,groceries,Maybank Premier,POS-291267,True
+TXN-2072,2026-05-16,Food & Beverage - Nando's,Nando's,44.38,MYR,expense,dining,Maybank Premier,POS-577461,True
+TXN-2073,2026-05-17,Supermarket Purchase at Village Grocer,Village Grocer,127.91,MYR,expense,groceries,Maybank Premier,POS-259540,True
+TXN-2074,2026-05-17,Food & Beverage - Kopitiam,Kopitiam,36.88,MYR,expense,dining,Maybank Premier,POS-207241,True
+TXN-2075,2026-05-17,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,57.91,MYR,expense,transportation,Maybank Premier,TX-862427,True
+TXN-2076,2026-05-17,Shopping Expense - Shopee Online,Shopee Online,27.28,MYR,expense,shopping,Maybank Premier,CHG-327738,True
+TXN-2077,2026-05-18,Food & Beverage - Din Tai Fung,Din Tai Fung,44.93,MYR,expense,dining,Maybank Premier,POS-586208,True
+TXN-2078,2026-05-18,Shopping Expense - Shopee Online,Shopee Online,33.69,MYR,expense,shopping,Maybank Premier,CHG-913331,True
+TXN-2079,2026-05-19,Food & Beverage - Zus Coffee,Zus Coffee,18.34,MYR,expense,dining,Maybank Premier,POS-982417,True
+TXN-2080,2026-05-19,Transit & Mobility - Shell Fuel,Shell Fuel,64.7,MYR,expense,transportation,Maybank Premier,TX-227885,True
+TXN-2081,2026-05-20,Food & Beverage - Din Tai Fung,Din Tai Fung,20.16,MYR,expense,dining,Maybank Premier,POS-135138,True
+TXN-2082,2026-05-20,Transit & Mobility - Grab Ride,Grab Ride,46.27,MYR,expense,transportation,Maybank Premier,TX-318572,True
+TXN-2083,2026-05-21,Food & Beverage - Nando's,Nando's,17.23,MYR,expense,dining,Maybank Premier,POS-863611,True
+TXN-2084,2026-05-21,Transit & Mobility - Grab Ride,Grab Ride,30.2,MYR,expense,transportation,Maybank Premier,TX-769536,True
+TXN-2085,2026-05-23,Supermarket Purchase at AEON Supermarket,AEON Supermarket,128.54,MYR,expense,groceries,Maybank Premier,POS-275490,True
+TXN-2086,2026-05-23,Food & Beverage - Kopitiam,Kopitiam,45.17,MYR,expense,dining,Maybank Premier,POS-927477,True
+TXN-2087,2026-05-23,Food & Beverage - Zus Coffee,Zus Coffee,35.76,MYR,expense,dining,Maybank Premier,POS-144033,True
+TXN-2088,2026-05-24,Food & Beverage - Nando's,Nando's,100.52,MYR,expense,dining,Maybank Premier,POS-360804,True
+TXN-2089,2026-05-24,Transit & Mobility - Grab Ride,Grab Ride,56.16,MYR,expense,transportation,Maybank Premier,TX-454861,True
+TXN-2090,2026-05-25,Monthly Corporate Salary Transfer,NextOmni Tech Sdn Bhd,6800.0,MYR,income,salary,Maybank Premier,SAL-202605,True
+TXN-2091,2026-05-25,Food & Beverage - Starbucks Coffee,Starbucks Coffee,23.73,MYR,expense,dining,Maybank Premier,POS-261395,True
+TXN-2092,2026-05-26,Supermarket Purchase at Village Grocer,Village Grocer,127.26,MYR,expense,groceries,Maybank Premier,POS-685472,True
+TXN-2093,2026-05-26,Food & Beverage - Nando's,Nando's,38.58,MYR,expense,dining,Maybank Premier,POS-560030,True
+TXN-2094,2026-05-26,Entertainment Expense - GSC Cinemas,GSC Cinemas,137.28,MYR,expense,entertainment,Maybank Premier,CHG-362874,True
+TXN-2095,2026-05-27,Food & Beverage - Din Tai Fung,Din Tai Fung,30.45,MYR,expense,dining,Maybank Premier,POS-669097,True
+TXN-2096,2026-05-28,Food & Beverage - GrabFood,GrabFood,27.46,MYR,expense,dining,Maybank Premier,POS-971733,True
+TXN-2097,2026-05-29,Food & Beverage - Din Tai Fung,Din Tai Fung,21.76,MYR,expense,dining,Maybank Premier,POS-376141,True
+TXN-2098,2026-05-30,Food & Beverage - Din Tai Fung,Din Tai Fung,97.36,MYR,expense,dining,Maybank Premier,POS-119629,True
+TXN-2099,2026-05-30,Food & Beverage - Kopitiam,Kopitiam,107.83,MYR,expense,dining,Maybank Premier,POS-913712,True
+TXN-2100,2026-05-30,Food & Beverage - Kopitiam,Kopitiam,55.3,MYR,expense,dining,Maybank Premier,POS-856027,True
+TXN-2101,2026-05-30,Transit & Mobility - Shell Fuel,Shell Fuel,26.39,MYR,expense,transportation,Maybank Premier,TX-816412,True
+TXN-2102,2026-05-31,Supermarket Purchase at Lotus's,Lotus's,128.23,MYR,expense,groceries,Maybank Premier,POS-772036,True
+TXN-2103,2026-05-31,Food & Beverage - Starbucks Coffee,Starbucks Coffee,43.18,MYR,expense,dining,Maybank Premier,POS-790897,True
+TXN-2104,2026-05-31,Food & Beverage - Starbucks Coffee,Starbucks Coffee,38.72,MYR,expense,dining,Maybank Premier,POS-236078,True
+TXN-2105,2026-05-31,Transit & Mobility - Grab Ride,Grab Ride,27.12,MYR,expense,transportation,Maybank Premier,TX-608947,True
+TXN-2106,2026-06-01,Monthly Residential Rent,Sunway Geo Residences,1850.0,MYR,expense,rent,Maybank Premier,RENT-202606,True
+TXN-2107,2026-06-01,Supermarket Purchase at AEON Supermarket,AEON Supermarket,183.56,MYR,expense,groceries,Maybank Premier,POS-651363,True
+TXN-2108,2026-06-01,Food & Beverage - Kopitiam,Kopitiam,20.45,MYR,expense,dining,Maybank Premier,POS-484150,True
+TXN-2109,2026-06-01,Transit & Mobility - Grab Ride,Grab Ride,15.79,MYR,expense,transportation,Maybank Premier,TX-318877,True
+TXN-2110,2026-06-02,Food & Beverage - Din Tai Fung,Din Tai Fung,38.43,MYR,expense,dining,Maybank Premier,POS-163648,True
+TXN-2111,2026-06-02,Food & Beverage - Nando's,Nando's,30.41,MYR,expense,dining,Maybank Premier,POS-536158,True
+TXN-2112,2026-06-03,Supermarket Purchase at Lotus's,Lotus's,162.29,MYR,expense,groceries,Maybank Premier,POS-869969,True
+TXN-2113,2026-06-03,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,72.64,MYR,expense,transportation,Maybank Premier,TX-201836,True
+TXN-2114,2026-06-03,Shopping Expense - IKEA Damansara,IKEA Damansara,54.37,MYR,expense,shopping,Maybank Premier,CHG-651752,True
+TXN-2115,2026-06-04,Food & Beverage - Zus Coffee,Zus Coffee,30.43,MYR,expense,dining,Maybank Premier,POS-685253,True
+TXN-2116,2026-06-04,Healthcare Expense - Klinik Mediviron,Klinik Mediviron,80.48,MYR,expense,healthcare,Maybank Premier,CHG-581003,True
+TXN-2117,2026-06-05,Electricity Utility Bill,Tenaga Nasional Berhad,189.18,MYR,expense,utilities,Maybank Premier,UTIL-202606,True
+TXN-2118,2026-06-06,Supermarket Purchase at Village Grocer,Village Grocer,163.09,MYR,expense,groceries,Maybank Premier,POS-729057,True
+TXN-2119,2026-06-06,Food & Beverage - Nando's,Nando's,111.71,MYR,expense,dining,Maybank Premier,POS-676802,True
+TXN-2120,2026-06-06,Food & Beverage - Nando's,Nando's,106.81,MYR,expense,dining,Maybank Premier,POS-532373,True
+TXN-2121,2026-06-07,Food & Beverage - Zus Coffee,Zus Coffee,82.87,MYR,expense,dining,Maybank Premier,POS-324319,True
+TXN-2122,2026-06-07,Food & Beverage - Din Tai Fung,Din Tai Fung,100.09,MYR,expense,dining,Maybank Premier,POS-880746,True
+TXN-2123,2026-06-07,Food & Beverage - Nando's,Nando's,65.6,MYR,expense,dining,Maybank Premier,POS-574379,True
+TXN-2124,2026-06-08,Food & Beverage - Kopitiam,Kopitiam,12.54,MYR,expense,dining,Maybank Premier,POS-241647,True
+TXN-2125,2026-06-08,Food & Beverage - Nando's,Nando's,12.22,MYR,expense,dining,Maybank Premier,POS-332665,True
+TXN-2126,2026-06-08,Transit & Mobility - Petronas Gas,Petronas Gas,16.3,MYR,expense,transportation,Maybank Premier,TX-961866,True
+TXN-2127,2026-06-09,Food & Beverage - Kopitiam,Kopitiam,30.36,MYR,expense,dining,Maybank Premier,POS-699378,True
+TXN-2128,2026-06-09,Food & Beverage - Zus Coffee,Zus Coffee,15.11,MYR,expense,dining,Maybank Premier,POS-582732,True
+TXN-2129,2026-06-10,Food & Beverage - Zus Coffee,Zus Coffee,20.46,MYR,expense,dining,Maybank Premier,POS-414889,True
+TXN-2130,2026-06-10,Transit & Mobility - Shell Fuel,Shell Fuel,49.14,MYR,expense,transportation,Maybank Premier,TX-327999,True
+TXN-2131,2026-06-11,Food & Beverage - Zus Coffee,Zus Coffee,28.11,MYR,expense,dining,Maybank Premier,POS-823092,True
+TXN-2132,2026-06-12,Supermarket Purchase at Lotus's,Lotus's,81.17,MYR,expense,groceries,Maybank Premier,POS-947607,True
+TXN-2133,2026-06-12,Food & Beverage - Starbucks Coffee,Starbucks Coffee,37.74,MYR,expense,dining,Maybank Premier,POS-908348,True
+TXN-2134,2026-06-12,Transit & Mobility - Shell Fuel,Shell Fuel,39.99,MYR,expense,transportation,Maybank Premier,TX-226395,True
+TXN-2135,2026-06-13,Supermarket Purchase at Jaya Grocer,Jaya Grocer,179.59,MYR,expense,groceries,Maybank Premier,POS-762903,True
+TXN-2136,2026-06-13,Food & Beverage - Starbucks Coffee,Starbucks Coffee,60.91,MYR,expense,dining,Maybank Premier,POS-143182,True
+TXN-2137,2026-06-13,Food & Beverage - Nando's,Nando's,80.89,MYR,expense,dining,Maybank Premier,POS-256846,True
+TXN-2138,2026-06-13,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,24.19,MYR,expense,transportation,Maybank Premier,TX-806357,True
+TXN-2139,2026-06-14,Supermarket Purchase at AEON Supermarket,AEON Supermarket,199.22,MYR,expense,groceries,Maybank Premier,POS-703198,True
+TXN-2140,2026-06-14,Food & Beverage - Starbucks Coffee,Starbucks Coffee,53.88,MYR,expense,dining,Maybank Premier,POS-403859,True
+TXN-2141,2026-06-14,Food & Beverage - Din Tai Fung,Din Tai Fung,47.58,MYR,expense,dining,Maybank Premier,POS-452497,True
+TXN-2142,2026-06-14,Food & Beverage - Starbucks Coffee,Starbucks Coffee,75.45,MYR,expense,dining,Maybank Premier,POS-881519,True
+TXN-2143,2026-06-14,Transit & Mobility - Shell Fuel,Shell Fuel,30.75,MYR,expense,transportation,Maybank Premier,TX-517885,True
+TXN-2144,2026-06-15,Home High-Speed Fibre Internet,Maxis Fibre Home Internet,139.0,MYR,expense,utilities,Maybank Premier,NET-202606,True
+TXN-2145,2026-06-15,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,44.27,MYR,expense,transportation,Maybank Premier,TX-783932,True
+TXN-2146,2026-06-16,Food & Beverage - Kopitiam,Kopitiam,20.13,MYR,expense,dining,Maybank Premier,POS-175124,True
+TXN-2147,2026-06-16,Food & Beverage - Nando's,Nando's,37.63,MYR,expense,dining,Maybank Premier,POS-439121,True
+TXN-2148,2026-06-17,Supermarket Purchase at AEON Supermarket,AEON Supermarket,144.88,MYR,expense,groceries,Maybank Premier,POS-465227,True
+TXN-2149,2026-06-17,Transit & Mobility - Grab Ride,Grab Ride,61.18,MYR,expense,transportation,Maybank Premier,TX-277477,True
+TXN-2150,2026-06-18,Food & Beverage - Din Tai Fung,Din Tai Fung,32.57,MYR,expense,dining,Maybank Premier,POS-561859,True
+TXN-2151,2026-06-18,Food & Beverage - Starbucks Coffee,Starbucks Coffee,42.5,MYR,expense,dining,Maybank Premier,POS-344831,True
+TXN-2152,2026-06-18,Transit & Mobility - Petronas Gas,Petronas Gas,24.36,MYR,expense,transportation,Maybank Premier,TX-863873,True
+TXN-2153,2026-06-19,Supermarket Purchase at Jaya Grocer,Jaya Grocer,115.1,MYR,expense,groceries,Maybank Premier,POS-751168,True
+TXN-2154,2026-06-19,Food & Beverage - Nando's,Nando's,12.45,MYR,expense,dining,Maybank Premier,POS-827497,True
+TXN-2155,2026-06-19,Food & Beverage - Starbucks Coffee,Starbucks Coffee,22.07,MYR,expense,dining,Maybank Premier,POS-594078,True
+TXN-2156,2026-06-19,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,59.4,MYR,expense,transportation,Maybank Premier,TX-322167,True
+TXN-2157,2026-06-20,Supermarket Purchase at Lotus's,Lotus's,165.55,MYR,expense,groceries,Maybank Premier,POS-753306,True
+TXN-2158,2026-06-20,Food & Beverage - Zus Coffee,Zus Coffee,94.08,MYR,expense,dining,Maybank Premier,POS-800722,True
+TXN-2159,2026-06-20,Food & Beverage - Starbucks Coffee,Starbucks Coffee,67.01,MYR,expense,dining,Maybank Premier,POS-795759,True
+TXN-2160,2026-06-20,Food & Beverage - Kopitiam,Kopitiam,38.7,MYR,expense,dining,Maybank Premier,POS-278593,True
+TXN-2161,2026-06-20,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,62.35,MYR,expense,transportation,Maybank Premier,TX-747983,True
+TXN-2162,2026-06-21,Supermarket Purchase at Jaya Grocer,Jaya Grocer,85.99,MYR,expense,groceries,Maybank Premier,POS-792451,True
+TXN-2163,2026-06-21,Food & Beverage - GrabFood,GrabFood,107.43,MYR,expense,dining,Maybank Premier,POS-792165,True
+TXN-2164,2026-06-21,Food & Beverage - Nando's,Nando's,108.46,MYR,expense,dining,Maybank Premier,POS-120005,True
+TXN-2165,2026-06-21,Transit & Mobility - Shell Fuel,Shell Fuel,28.87,MYR,expense,transportation,Maybank Premier,TX-499194,True
+TXN-2166,2026-06-22,Food & Beverage - Din Tai Fung,Din Tai Fung,40.6,MYR,expense,dining,Maybank Premier,POS-657381,True
+TXN-2167,2026-06-22,Food & Beverage - Starbucks Coffee,Starbucks Coffee,18.15,MYR,expense,dining,Maybank Premier,POS-624970,True
+TXN-2168,2026-06-24,Food & Beverage - Starbucks Coffee,Starbucks Coffee,23.44,MYR,expense,dining,Maybank Premier,POS-469007,True
+TXN-2169,2026-06-25,Monthly Corporate Salary Transfer,NextOmni Tech Sdn Bhd,6800.0,MYR,income,salary,Maybank Premier,SAL-202606,True
+TXN-2170,2026-06-25,Food & Beverage - Nando's,Nando's,38.79,MYR,expense,dining,Maybank Premier,POS-756190,True
+TXN-2171,2026-06-25,Food & Beverage - Nando's,Nando's,41.0,MYR,expense,dining,Maybank Premier,POS-954441,True
+TXN-2172,2026-06-26,Transit & Mobility - Shell Fuel,Shell Fuel,54.42,MYR,expense,transportation,Maybank Premier,TX-192059,True
+TXN-2173,2026-06-27,Supermarket Purchase at Village Grocer,Village Grocer,143.86,MYR,expense,groceries,Maybank Premier,POS-700727,True
+TXN-2174,2026-06-27,Food & Beverage - Din Tai Fung,Din Tai Fung,117.5,MYR,expense,dining,Maybank Premier,POS-734775,True
+TXN-2175,2026-06-27,Transit & Mobility - Touch 'n Go RFID,Touch 'n Go RFID,27.41,MYR,expense,transportation,Maybank Premier,TX-245308,True
+TXN-2176,2026-06-28,Food & Beverage - Zus Coffee,Zus Coffee,61.26,MYR,expense,dining,Maybank Premier,POS-839389,True
+TXN-2177,2026-06-29,Food & Beverage - Zus Coffee,Zus Coffee,33.66,MYR,expense,dining,Maybank Premier,POS-692282,True
+TXN-2178,2026-06-29,Food & Beverage - Zus Coffee,Zus Coffee,22.48,MYR,expense,dining,Maybank Premier,POS-684413,True
+TXN-2179,2026-06-30,Food & Beverage - Zus Coffee,Zus Coffee,35.99,MYR,expense,dining,Maybank Premier,POS-902616,True
+TXN-2180,2026-06-30,Food & Beverage - Nando's,Nando's,41.04,MYR,expense,dining,Maybank Premier,POS-534152,True
+TXN-2181,2026-07-01,Monthly Residential Rent,Sunway Geo Residences,1850.0,MYR,expense,rent,Maybank Premier,RENT-202607,True
+TXN-2182,2026-07-01,Food & Beverage - GrabFood,GrabFood,42.8,MYR,expense,dining,Maybank Premier,POS-387096,True
+TXN-2183,2026-07-01,Food & Beverage - Zus Coffee,Zus Coffee,37.71,MYR,expense,dining,Maybank Premier,POS-211957,True
+TXN-2184,2026-07-01,Transit & Mobility - Grab Ride,Grab Ride,60.75,MYR,expense,transportation,Maybank Premier,TX-741709,True
+TXN-2185,2026-07-02,Food & Beverage - Kopitiam,Kopitiam,19.66,MYR,expense,dining,Maybank Premier,POS-820767,True
+TXN-2186,2026-07-02,Transit & Mobility - Grab Ride,Grab Ride,56.29,MYR,expense,transportation,Maybank Premier,TX-599753,True
+TXN-2187,2026-07-03,Food & Beverage - GrabFood,GrabFood,24.34,MYR,expense,dining,Maybank Premier,POS-993522,True
+TXN-2188,2026-07-04,Supermarket Purchase at Village Grocer,Village Grocer,80.32,MYR,expense,groceries,Maybank Premier,POS-901677,True
+TXN-2189,2026-07-04,Food & Beverage - Nando's,Nando's,115.77,MYR,expense,dining,Maybank Premier,POS-333365,True
