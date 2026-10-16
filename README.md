@@ -197,4 +197,4 @@ Visit `http://localhost:3000` to launch the application.
 
 ## 📜 License
 This project is open-source under the [MIT License](LICENSE).
-Part of the **NextOmni** systems architecture suite.
+Part of the **NextOmni** ecosystem architecture suite.
