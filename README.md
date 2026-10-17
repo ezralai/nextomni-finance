@@ -80,7 +80,7 @@ graph TD
 ```
 
 ### Why This Architecture Impresses:
-1. **Zero-Cost Serverless State**: Rather than paying $15+/month for a managed Redis instance, Laravel's queue workers (`QUEUE_CONNECTION=database`) and cache driver (`CACHE_STORE=database`) run natively on the free managed Postgres instance.
+1. **Zero-Cost Serverless State**: Rather than paying $15+/month for a managed Redis instance, Laravel's queue workers (`QUEUE_CONNECTION=database`) and cache driver (`CACHE_STORE=database`) run natively on free managed Postgres instance.
 2. **Cold Start Optimization**: The production container leverages Zend OPcache with `opcache.validate_timestamps=1` and pre-warmed artisan caches (`route:cache`, `config:cache`, `view:cache`) to slash cold boot overhead.
 3. **Dynamic Vercel Subdomain Wildcards**: The CORS engine dynamically recognizes pull request preview builds (`^https:\/\/.*\.vercel\.app$`) without compromising credentials.
 4. **Resilient Connection Pooling**: Utilizes PgBouncer pooling on port `6543` to stay within Supabase / Neon free connection limits.
