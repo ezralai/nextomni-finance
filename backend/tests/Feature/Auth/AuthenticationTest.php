@@ -231,4 +231,28 @@ class AuthenticationTest extends TestCase
 
         $response->assertStatus(401);
     }
+
+    public function test_registration_is_rate_limited(): void
+    {
+        RateLimiter::clear('register|127.0.0.1');
+
+        for ($i = 0; $i < 10; $i++) {
+            $response = $this->postJson('/api/v1/auth/register', [
+                'name' => "User {$i}",
+                'email' => "user{$i}@example.com",
+                'password' => 'Password123!',
+            ]);
+            $response->assertStatus(201);
+        }
+
+        // 11th attempt should trigger 429 Too Many Requests
+        $response = $this->postJson('/api/v1/auth/register', [
+            'name' => 'Exceeded User',
+            'email' => 'exceeded@example.com',
+            'password' => 'Password123!',
+        ]);
+
+        $response->assertStatus(429)
+            ->assertJsonStructure(['message']);
+    }
 }

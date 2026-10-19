@@ -37,12 +37,15 @@ Route::prefix('v1')->group(function () {
 
     // Public Authentication
     Route::prefix('auth')->group(function () {
-        Route::post('/register', [AuthController::class, 'register'])->name('api.v1.auth.register');
+        Route::post('/register', [AuthController::class, 'register'])
+            ->middleware('throttle:10,1')
+            ->name('api.v1.auth.register');
         Route::post('/login', [AuthController::class, 'login'])->name('api.v1.auth.login');
 
         // Google OAuth 2.0
         Route::get('/google/redirect', [GoogleAuthController::class, 'redirect'])->name('api.v1.auth.google.redirect');
         Route::match(['get', 'post'], '/google/callback', [GoogleAuthController::class, 'callback'])->name('api.v1.auth.google.callback');
+        Route::post('/google/exchange', [GoogleAuthController::class, 'exchangeTicket'])->name('api.v1.auth.google.exchange');
     });
 
     // Protected Routes (Sanctum Authenticated)

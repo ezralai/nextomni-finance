@@ -26,10 +26,20 @@ onMounted(async () => {
   // Process incoming Google OAuth callback tokens and errors
   if (typeof window !== 'undefined') {
     const urlParams = new URLSearchParams(window.location.search)
+    const ticket = urlParams.get('ticket')
     const authToken = urlParams.get('auth_token')
     const authErr = urlParams.get('auth_error')
 
-    if (authToken) {
+    if (ticket) {
+      window.history.replaceState({}, document.title, window.location.pathname)
+      try {
+        await authStore.exchangeOAuthTicket(ticket)
+        toast.success('Google Authentication Successful', 'Signed in via Google OAuth 2.0')
+        await navigateTo('/workspace')
+      } catch (err: any) {
+        toast.error('Authentication Error', err?.data?.message || 'Failed to exchange authentication ticket.')
+      }
+    } else if (authToken) {
       window.history.replaceState({}, document.title, window.location.pathname)
       await authStore.handleOAuthToken(authToken)
       toast.success('Google Authentication Successful', 'Signed in via Google OAuth 2.0')

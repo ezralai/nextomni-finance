@@ -21,6 +21,18 @@ class AuthController extends Controller
      */
     public function register(RegisterRequest $request): JsonResponse
     {
+        $throttleKey = 'register|' . $request->ip();
+
+        if (RateLimiter::tooManyAttempts($throttleKey, 10)) {
+            $seconds = RateLimiter::availableIn($throttleKey);
+
+            return response()->json([
+                'message' => "Too many registration attempts. Please try again in {$seconds} seconds.",
+            ], 429);
+        }
+
+        RateLimiter::hit($throttleKey, 60);
+
         $validated = $request->validated();
 
         $user = User::create([

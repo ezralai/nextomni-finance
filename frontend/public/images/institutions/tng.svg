@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%">
+  <defs>
+    <linearGradient id="tngBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00529B"/>
+      <stop offset="100%" stop-color="#013A6B"/>
+    </linearGradient>
+    <filter id="tngShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="2" stdDeviation="2" flood-color="#000" flood-opacity="0.25"/>
+    </filter>
+  </defs>
+  <!-- Background with smooth rounded corners -->
+  <rect width="120" height="120" rx="26" fill="url(#tngBg)"/>
+  
+  <!-- Outer accent ring -->
+  <rect x="3" y="3" width="114" height="114" rx="23" fill="none" stroke="#0077D4" stroke-width="1.5" opacity="0.6"/>
+
+  <!-- TNG Stylized Waves / 'n' Graphic -->
+  <g filter="url(#tngShadow)">
+    <!-- Yellow Wave -->
+    <path d="M26 40 C34 32, 48 30, 58 37 C68 44, 76 56, 86 52 C92 49, 94 44, 94 44 C94 44, 91 58, 80 62 C69 66, 61 54, 51 50 C42 46, 34 50, 26 56 Z" fill="#FFCB05"/>
+    
+    <!-- Touch 'n Go Distinctive Typography Badge -->
+    <text x="60" y="78" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="900" font-size="20" fill="#FFFFFF" letter-spacing="-0.5">Touch</text>
+    <text x="60" y="93" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="900" font-size="13" fill="#FFCB05" letter-spacing="1">'n GO</text>
+    <text x="60" y="105" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="700" font-size="8.5" fill="#FFFFFF" opacity="0.9" letter-spacing="0.5">eWallet</text>
+  </g>
+</svg>

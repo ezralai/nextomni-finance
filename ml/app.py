@@ -65,7 +65,8 @@ def load_and_process_data(file_bytes: bytes | None = None) -> tuple[pd.DataFrame
     Load, validate, and clean transactions.
     """
     if file_bytes is not None:
-        raw_df = pd.read_csv(io.BytesIO(file_bytes))
+        # Enforce maximum row threshold to prevent memory exhaustion
+        raw_df = pd.read_csv(io.BytesIO(file_bytes), nrows=100_000)
     else:
         sample_path = get_default_sample_path()
         if not sample_path.is_file():
@@ -124,7 +125,13 @@ with st.sidebar:
 # --- DATA PIPELINE EXECUTION ---
 try:
     if data_mode == "Upload Statement CSV" and uploaded_file is not None:
-        raw_df, clean_df, report = load_and_process_data(uploaded_file.getvalue())
+        file_bytes = uploaded_file.getvalue()
+        MAX_UPLOAD_BYTES = 10 * 1024 * 1024  # 10 MB limit
+        if len(file_bytes) > MAX_UPLOAD_BYTES:
+            st.error(f"Uploaded file exceeds maximum permitted limit of 10 MB ({len(file_bytes) / (1024 * 1024):.2f} MB provided).")
+            st.stop()
+
+        raw_df, clean_df, report = load_and_process_data(file_bytes)
         data_source_label = f"Uploaded CSV ({uploaded_file.name})"
     else:
         raw_df, clean_df, report = load_and_process_data(None)

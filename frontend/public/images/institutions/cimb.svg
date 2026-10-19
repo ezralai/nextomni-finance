@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%">
+  <defs>
+    <linearGradient id="cimbBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E0111A"/>
+      <stop offset="100%" stop-color="#B3050D"/>
+    </linearGradient>
+  </defs>
+  <!-- Background with smooth rounded corners -->
+  <rect width="120" height="120" rx="26" fill="url(#cimbBg)"/>
+  <rect x="3" y="3" width="114" height="114" rx="23" fill="none" stroke="#FF4D55" stroke-width="1.5" opacity="0.4"/>
+
+  <!-- CIMB Modern Octagon Emblem -->
+  <g transform="translate(30, 22)">
+    <!-- Red & White Segmented Octagon Shape -->
+    <path d="M18 4 L42 4 L56 18 L56 42 L42 56 L18 56 L4 42 L4 18 Z" fill="#7A0007"/>
+    <path d="M20 7 L40 7 L53 20 L53 40 L40 53 L20 53 L7 40 L7 20 Z" fill="#FFFFFF"/>
+    <!-- Center Burgundy Chevron -->
+    <path d="M20 16 L34 16 L44 30 L34 44 L20 44 L30 30 Z" fill="#A80710"/>
+  </g>
+
+  <!-- Wordmark -->
+  <text x="60" y="100" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="900" font-size="18" fill="#FFFFFF" letter-spacing="1">CIMB</text>
+</svg>

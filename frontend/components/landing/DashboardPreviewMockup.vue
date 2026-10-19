@@ -11,6 +11,7 @@ import {
   Calendar,
   Sparkles,
 } from 'lucide-vue-next'
+import InstitutionLogo from '~/components/ui/InstitutionLogo.vue'
 
 type Currency = 'MYR' | 'USD' | 'SGD' | 'EUR'
 
@@ -40,6 +41,7 @@ const sampleTransactions = computed(() => [
     id: 1,
     desc: 'Acme Cloud Infrastructure Services',
     account: 'Maybank Premier (MYR)',
+    institutionCode: 'MBB',
     amount: -450.0 * currentCurrencyInfo.value.rate,
     type: 'expense',
     date: 'Today, 09:30 AM',
@@ -50,6 +52,7 @@ const sampleTransactions = computed(() => [
     id: 2,
     desc: 'Consulting Retainer & Engineering Dividends',
     account: 'CIMB Singapore (SGD)',
+    institutionCode: 'CIMB',
     amount: 14200.0 * currentCurrencyInfo.value.rate,
     type: 'income',
     date: 'Yesterday, 14:15 PM',
@@ -60,6 +63,7 @@ const sampleTransactions = computed(() => [
     id: 3,
     desc: 'Stripe Global Merchant Inflow',
     account: 'Wise Business Multi-Currency',
+    institutionCode: 'WISE',
     amount: 3250.0 * currentCurrencyInfo.value.rate,
     type: 'income',
     date: 'Oct 12, 18:45 PM',
@@ -68,8 +72,20 @@ const sampleTransactions = computed(() => [
   },
   {
     id: 4,
+    desc: 'Touch n Go RFID Highway Tolls & Transit',
+    account: 'Touch n Go eWallet',
+    institutionCode: 'TNG',
+    amount: -85.50 * currentCurrencyInfo.value.rate,
+    type: 'expense',
+    date: 'Oct 11, 19:10 PM',
+    category: 'Transportation',
+    categoryColor: '#f59e0b',
+  },
+  {
+    id: 5,
     desc: 'Office Workspace & Fiber Backbone',
     account: 'Maybank Premier (MYR)',
+    institutionCode: 'MBB',
     amount: -1280.0 * currentCurrencyInfo.value.rate,
     type: 'expense',
     date: 'Oct 10, 11:20 AM',
@@ -199,6 +215,7 @@ const sampleTransactions = computed(() => [
                   <div class="min-w-0">
                     <p class="font-bold text-slate-900 dark:text-slate-100 truncate">{{ item.desc }}</p>
                     <div class="text-[10px] text-slate-500 dark:text-slate-400 font-mono flex items-center space-x-1.5">
+                      <InstitutionLogo :code="item.institutionCode" size="xs" />
                       <span>{{ item.account }}</span>
                       <span>•</span>
                       <span>{{ item.date }}</span>

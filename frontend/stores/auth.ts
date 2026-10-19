@@ -83,6 +83,17 @@ export const useAuthStore = defineStore('auth', () => {
     return response
   }
 
+  const exchangeOAuthTicket = async (ticket: string) => {
+    const response = await request<AuthResponse>('/auth/google/exchange', {
+      method: 'POST',
+      body: { ticket },
+    })
+
+    token.value = response.token
+    user.value = response.user
+    return response
+  }
+
   const handleOAuthToken = async (newToken: string) => {
     token.value = newToken
     return await fetchMe()
@@ -126,6 +137,7 @@ export const useAuthStore = defineStore('auth', () => {
     register,
     login,
     demoLogin,
+    exchangeOAuthTicket,
     handleOAuthToken,
     updateProfile,
     logout,

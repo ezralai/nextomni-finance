@@ -7,11 +7,15 @@ import {
   FileSpreadsheet,
 } from 'lucide-vue-next'
 
+import InstitutionLogo from '~/components/ui/InstitutionLogo.vue'
+
 interface Institution {
   id: number | string
   code: string
   name: string
   country: string
+  logo_url?: string | null
+  website?: string | null
 }
 
 interface Props {
@@ -120,24 +124,46 @@ const emit = defineEmits<{
       class="p-6 rounded-2xl bg-white dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4"
     >
       <div class="flex items-center justify-between">
-        <h3 class="text-base font-bold text-slate-900 dark:text-white">Supported Institutions & Connectors ({{ institutions.length }})</h3>
-        <span class="text-xs text-slate-500 dark:text-slate-400 font-mono">SE Asia Financial Registry</span>
+        <div>
+          <h3 class="text-base font-bold text-slate-900 dark:text-white">Supported Institutions & Connectors ({{ institutions.length }})</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Direct Malaysian e-wallets, Tier-1 retail banks, and multi-currency ledgers</p>
+        </div>
+        <span class="text-xs text-emerald-600 dark:text-emerald-400 font-mono flex items-center space-x-1.5">
+          <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Active Connectors</span>
+        </span>
       </div>
 
-      <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2">
-        <div
+      <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3.5 pt-2">
+        <component
+          :is="inst.website ? 'a' : 'div'"
           v-for="inst in institutions"
           :key="inst.id"
-          class="p-3 rounded-lg bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700/50 flex items-center space-x-3"
+          :href="inst.website || undefined"
+          :target="inst.website ? '_blank' : undefined"
+          :rel="inst.website ? 'noopener noreferrer' : undefined"
+          class="group p-3 rounded-xl bg-slate-50 dark:bg-slate-800/40 border border-slate-200/80 dark:border-slate-700/60 hover:border-emerald-500/50 dark:hover:border-emerald-500/50 hover:bg-white dark:hover:bg-slate-800/80 transition-all duration-200 flex items-center space-x-3.5 shadow-sm hover:shadow-md"
         >
-          <div class="w-8 h-8 rounded-md bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center justify-center font-bold text-xs font-mono flex-shrink-0">
-            {{ inst.code.slice(0, 4) }}
+          <!-- Authentic Vector Logo with Interactive Scale -->
+          <InstitutionLogo
+            :code="inst.code"
+            :name="inst.name"
+            :logo-url="inst.logo_url"
+            size="md"
+            interactive
+          />
+
+          <div class="overflow-hidden min-w-0 flex-1">
+            <div class="text-xs font-bold text-slate-900 dark:text-white truncate group-hover:text-emerald-500 transition-colors flex items-center space-x-1">
+              <span class="truncate">{{ inst.name }}</span>
+            </div>
+            <div class="text-[10px] text-slate-500 dark:text-slate-400 font-mono flex items-center space-x-1.5 mt-0.5">
+              <span class="px-1.5 py-0.2 rounded bg-slate-200/80 dark:bg-slate-700/80 text-slate-700 dark:text-slate-300 font-semibold uppercase">{{ inst.code }}</span>
+              <span>&bull;</span>
+              <span>{{ inst.country }}</span>
+            </div>
           </div>
-          <div class="overflow-hidden min-w-0">
-            <div class="text-xs font-semibold text-slate-900 dark:text-white truncate">{{ inst.name }}</div>
-            <div class="text-[10px] text-slate-500 dark:text-slate-400 font-mono">Country: {{ inst.country }}</div>
-          </div>
-        </div>
+        </component>
       </div>
     </div>
   </div>

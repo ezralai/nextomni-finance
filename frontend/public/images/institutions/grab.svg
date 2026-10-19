@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%">
+  <defs>
+    <linearGradient id="grabBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00C853"/>
+      <stop offset="100%" stop-color="#009639"/>
+    </linearGradient>
+  </defs>
+  <!-- Background with smooth rounded corners -->
+  <rect width="120" height="120" rx="26" fill="url(#grabBg)"/>
+  <rect x="3" y="3" width="114" height="114" rx="23" fill="none" stroke="#69F0AE" stroke-width="1.5" opacity="0.4"/>
+
+  <!-- Grab Interlocking Loop Icon -->
+  <g transform="translate(26, 22)" fill="none" stroke="#FFFFFF" stroke-width="7" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M48 20 C48 10, 39 4, 28 4 C15 4, 6 15, 6 28 C6 41, 15 52, 28 52 C37 52, 45 47, 48 38 L28 38"/>
+    <path d="M58 20 C58 10, 49 4, 38 4" opacity="0.4"/>
+  </g>
+
+  <!-- Wordmark & Pay pill -->
+  <text x="60" y="93" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="900" font-size="16" fill="#FFFFFF" letter-spacing="-0.3">Grab<tspan font-weight="500" fill="#E8F5E9">Pay</tspan></text>
+</svg>

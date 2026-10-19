@@ -71,6 +71,7 @@ import AmountInput from '~/components/ui/AmountInput.vue'
 import ConfirmModal from '~/components/ui/ConfirmModal.vue'
 import TransactionTable from '~/components/transactions/TransactionTable.vue'
 import ToolsTab from '~/components/tools/ToolsTab.vue'
+import InstitutionLogo from '~/components/ui/InstitutionLogo.vue'
 
 const config = useRuntimeConfig()
 const apiBase = config.public.apiBase
@@ -220,6 +221,10 @@ const newTransferForm = ref({
 
 const selectedTransferSourceAccount = computed(() => {
   return accountStore.accounts.find((a) => String(a.id) === String(newTransferForm.value.source_account_id))
+})
+
+const selectedTransferDestAccount = computed(() => {
+  return accountStore.accounts.find((a) => String(a.id) === String(newTransferForm.value.destination_account_id))
 })
 
 // Budget Modal State
@@ -1001,10 +1006,20 @@ onMounted(async () => {
   // Process incoming Google OAuth callback tokens and errors
   if (typeof window !== 'undefined') {
     const urlParams = new URLSearchParams(window.location.search)
+    const ticket = urlParams.get('ticket')
     const authToken = urlParams.get('auth_token')
     const authErr = urlParams.get('auth_error')
 
-    if (authToken) {
+    if (ticket) {
+      window.history.replaceState({}, document.title, window.location.pathname)
+      try {
+        await authStore.exchangeOAuthTicket(ticket)
+        showAuthModal.value = false
+      } catch {
+        authError.value = 'Failed to exchange authentication ticket. Please try again.'
+        showAuthModal.value = true
+      }
+    } else if (authToken) {
       window.history.replaceState({}, document.title, window.location.pathname)
       await authStore.handleOAuthToken(authToken)
       showAuthModal.value = false
@@ -1931,10 +1946,14 @@ onUnmounted(() => {
             class="p-5 rounded-xl bg-slate-900/70 border border-slate-800 hover:border-slate-700 transition relative group space-y-4"
           >
             <div class="flex items-start justify-between">
-              <div class="flex items-center space-x-3">
-                <div class="w-10 h-10 rounded-xl bg-slate-800 border border-slate-700 flex items-center justify-center text-emerald-400">
-                  <component :is="getAccountIcon(acc.account_type)" class="w-5 h-5" />
-                </div>
+              <div class="flex items-center space-x-3.5">
+                <InstitutionLogo
+                  :code="acc.institution?.code || acc.account_type"
+                  :name="acc.institution?.name || acc.name"
+                  :logo-url="acc.institution?.logo_url"
+                  size="md"
+                  interactive
+                />
                 <div>
                   <h3 class="font-bold text-sm text-white">{{ acc.name }}</h3>
                   <p class="text-xs text-slate-400 flex items-center space-x-1.5 mt-0.5">
@@ -2345,19 +2364,53 @@ onUnmounted(() => {
         </div>
 
         <form @submit.prevent="handleCreateAccount" class="space-y-4">
-          <div class="space-y-1.5">
-            <label class="text-xs font-medium text-slate-300">Financial Institution</label>
+          <div class="space-y-2">
+            <div class="flex items-center justify-between">
+              <label class="text-xs font-medium text-slate-300">Financial Institution</label>
+              <span class="text-[10px] text-slate-400 font-mono">1-Click Quick Select</span>
+            </div>
+
+            <!-- Quick Institution Logo Badges -->
+            <div class="grid grid-cols-4 sm:grid-cols-5 gap-2">
+              <button
+                v-for="inst in accountStore.institutions.slice(0, 8)"
+                :key="'quick-' + inst.id"
+                type="button"
+                @click="
+                  newAccountForm.institution_id = inst.id;
+                  if (!newAccountForm.name || newAccountForm.name.startsWith('My ')) {
+                    newAccountForm.name = inst.name;
+                  }
+                  if (inst.code === 'TNG' || inst.code === 'GRAB') {
+                    newAccountForm.account_type = 'e_wallet';
+                  }
+                "
+                class="p-2 rounded-xl border flex flex-col items-center justify-center space-y-1 transition-all duration-200 cursor-pointer text-center group"
+                :class="
+                  newAccountForm.institution_id === inst.id
+                    ? 'border-emerald-500 bg-emerald-500/10 shadow-sm shadow-emerald-500/20'
+                    : 'border-slate-800 bg-slate-950/60 hover:border-slate-700 hover:bg-slate-800/40'
+                "
+                :title="inst.name"
+              >
+                <InstitutionLogo :code="inst.code" :logo-url="inst.logo_url" size="sm" interactive />
+                <span class="text-[10px] font-semibold text-slate-300 truncate max-w-full leading-none group-hover:text-white">
+                  {{ inst.code }}
+                </span>
+              </button>
+            </div>
+
             <select
               v-model="newAccountForm.institution_id"
               required
-              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500"
+              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500 mt-2"
             >
               <option
                 v-for="inst in accountStore.institutions"
                 :key="inst.id"
                 :value="inst.id"
               >
-                {{ inst.name }} ({{ inst.code }})
+                {{ inst.name }} ({{ inst.code }}) &bull; {{ inst.country }}
               </option>
             </select>
           </div>
@@ -2598,6 +2651,43 @@ onUnmounted(() => {
         </div>
 
         <form @submit.prevent="handleCreateTransfer" class="space-y-4">
+          <!-- Visual Transfer Route Preview with Authentic Logos -->
+          <div v-if="selectedTransferSourceAccount" class="p-3 rounded-xl bg-slate-950/80 border border-slate-800/80 flex items-center justify-between gap-3 shadow-inner">
+            <div class="flex items-center space-x-2.5 min-w-0 flex-1">
+              <InstitutionLogo
+                :code="selectedTransferSourceAccount?.institution?.code || selectedTransferSourceAccount?.account_type"
+                :name="selectedTransferSourceAccount?.institution?.name || selectedTransferSourceAccount?.name"
+                :logo-url="selectedTransferSourceAccount?.institution?.logo_url"
+                size="sm"
+                interactive
+              />
+              <div class="min-w-0">
+                <div class="text-[9px] text-slate-400 uppercase tracking-wider font-semibold font-mono">Source Account</div>
+                <div class="text-xs font-bold text-white truncate">{{ selectedTransferSourceAccount?.name }}</div>
+              </div>
+            </div>
+
+            <div class="w-7 h-7 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center flex-shrink-0 border border-sky-500/30">
+              <ArrowRightLeft class="w-3.5 h-3.5" />
+            </div>
+
+            <div class="flex items-center space-x-2.5 min-w-0 flex-1 justify-end text-right">
+              <div class="min-w-0">
+                <div class="text-[9px] text-slate-400 uppercase tracking-wider font-semibold font-mono">Destination</div>
+                <div class="text-xs font-bold text-white truncate">{{ selectedTransferDestAccount?.name || 'Select...' }}</div>
+              </div>
+              <InstitutionLogo
+                v-if="selectedTransferDestAccount"
+                :code="selectedTransferDestAccount?.institution?.code || selectedTransferDestAccount?.account_type"
+                :name="selectedTransferDestAccount?.institution?.name || selectedTransferDestAccount?.name"
+                :logo-url="selectedTransferDestAccount?.institution?.logo_url"
+                size="sm"
+                interactive
+              />
+              <div v-else class="w-7 h-7 rounded-md border border-dashed border-slate-700 flex items-center justify-center text-slate-600 text-xs">?</div>
+            </div>
+          </div>
+
           <div class="space-y-1.5">
             <label class="text-xs font-medium text-slate-300">From Account (Source)</label>
             <select
@@ -3313,7 +3403,16 @@ onUnmounted(() => {
                   {{ selectedImportFile ? selectedImportFile.name : 'Click to select CSV file' }}
                 </div>
                 <div class="text-[11px] text-slate-500">
-                  Supports Maybank, CIMB, generic Date/Amount/Payee CSV files
+                  Supports Maybank, CIMB, Touch 'n Go, RHB, and standard canonical CSV formats
+                </div>
+                <!-- Supported Banks Interactive Logo Strip -->
+                <div class="flex items-center justify-center space-x-2 pt-1.5">
+                  <InstitutionLogo code="MBB" size="xs" interactive />
+                  <InstitutionLogo code="CIMB" size="xs" interactive />
+                  <InstitutionLogo code="TNG" size="xs" interactive />
+                  <InstitutionLogo code="RHB" size="xs" interactive />
+                  <InstitutionLogo code="PBB" size="xs" interactive />
+                  <InstitutionLogo code="WISE" size="xs" interactive />
                 </div>
               </label>
             </div>

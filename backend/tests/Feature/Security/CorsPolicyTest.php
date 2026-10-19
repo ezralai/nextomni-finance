@@ -53,4 +53,19 @@ class CorsPolicyTest extends TestCase
         $response->assertHeader('Access-Control-Allow-Credentials', 'true');
         $response->assertHeader('Access-Control-Max-Age', '86400');
     }
+
+    /**
+     * Test CORS rejects unauthorized third-party Vercel or external origins.
+     */
+    public function test_cors_rejects_unauthorized_external_origins(): void
+    {
+        $unauthorizedOrigin = 'https://attacker.vercel.app';
+
+        $response = $this->withHeaders([
+            'Origin' => $unauthorizedOrigin,
+        ])->getJson('/api/v1/health');
+
+        $response->assertStatus(200);
+        $this->assertFalse($response->headers->has('Access-Control-Allow-Origin'));
+    }
 }

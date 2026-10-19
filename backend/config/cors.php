@@ -13,7 +13,7 @@ $allowedOrigins = array_values(array_unique(array_filter(array_merge($defaultOri
 $configuredPatterns = array_filter(array_map('trim', explode(',', env('CORS_ALLOWED_ORIGIN_PATTERNS', ''))));
 
 $defaultPatterns = [
-    '{^https:\/\/.*\.vercel\.app$}i',
+    '{^https:\/\/nextomni-finance(-[a-z0-9-]+)?\.vercel\.app$}i',
 ];
 
 $allowedPatterns = array_values(array_unique(array_filter(array_merge($defaultPatterns, $configuredPatterns))));

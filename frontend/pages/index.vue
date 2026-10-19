@@ -20,6 +20,7 @@ import {
 import LandingNav from '~/components/landing/LandingNav.vue'
 import DashboardPreviewMockup from '~/components/landing/DashboardPreviewMockup.vue'
 import TechSpecsDrawer from '~/components/landing/TechSpecsDrawer.vue'
+import InstitutionLogo from '~/components/ui/InstitutionLogo.vue'
 import { useAuthStore } from '~/stores/auth'
 import { useToast } from '~/composables/useToast'
 
@@ -147,6 +148,43 @@ const handleDemoLaunch = async () => {
               <CheckCircle2 class="w-3.5 h-3.5 text-emerald-500" />
               <span>Malaysian PDPA Compliant</span>
             </span>
+          </div>
+
+          <!-- Interactive Partner & Institution Logo Ribbon -->
+          <div class="pt-6 pb-2">
+            <p class="text-[11px] uppercase tracking-wider font-semibold text-slate-500 dark:text-slate-400 font-mono text-center mb-3">
+              Seamless Reconciliation Across Leading Banks & Digital E-Wallets
+            </p>
+            <div class="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3.5 max-w-4xl mx-auto">
+              <div class="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-white/80 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 shadow-sm hover:border-sky-500/50 hover:shadow-sky-500/10 transition group">
+                <InstitutionLogo code="TNG" size="sm" interactive />
+                <span class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-sky-500 transition-colors">Touch 'n Go</span>
+              </div>
+              <div class="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-white/80 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 shadow-sm hover:border-amber-500/50 hover:shadow-amber-500/10 transition group">
+                <InstitutionLogo code="MBB" size="sm" interactive />
+                <span class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-amber-500 transition-colors">Maybank</span>
+              </div>
+              <div class="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-white/80 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 shadow-sm hover:border-red-500/50 hover:shadow-red-500/10 transition group">
+                <InstitutionLogo code="CIMB" size="sm" interactive />
+                <span class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-red-500 transition-colors">CIMB</span>
+              </div>
+              <div class="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-white/80 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 shadow-sm hover:border-emerald-500/50 hover:shadow-emerald-500/10 transition group">
+                <InstitutionLogo code="GRAB" size="sm" interactive />
+                <span class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-emerald-500 transition-colors">GrabPay</span>
+              </div>
+              <div class="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-white/80 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 shadow-sm hover:border-rose-500/50 hover:shadow-rose-500/10 transition group">
+                <InstitutionLogo code="PBB" size="sm" interactive />
+                <span class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-rose-500 transition-colors">Public Bank</span>
+              </div>
+              <div class="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-white/80 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 shadow-sm hover:border-blue-500/50 hover:shadow-blue-500/10 transition group">
+                <InstitutionLogo code="RHB" size="sm" interactive />
+                <span class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-blue-500 transition-colors">RHB</span>
+              </div>
+              <div class="flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-white/80 dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800/80 shadow-sm hover:border-lime-500/50 hover:shadow-lime-500/10 transition group">
+                <InstitutionLogo code="WISE" size="sm" interactive />
+                <span class="text-xs font-bold text-slate-800 dark:text-slate-200 group-hover:text-lime-500 transition-colors">Wise</span>
+              </div>
+            </div>
           </div>
         </div>
 

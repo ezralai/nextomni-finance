@@ -11,6 +11,7 @@ import {
   ReceiptText,
 } from 'lucide-vue-next'
 import SkeletonLoader from '~/components/ui/SkeletonLoader.vue'
+import InstitutionLogo from '~/components/ui/InstitutionLogo.vue'
 
 interface TransactionItem {
   id: number
@@ -22,9 +23,15 @@ interface TransactionItem {
   transacted_at: string
   notes?: string
   account?: {
-    id: number
+    id: number | string
     name: string
     currency: string
+    institution?: {
+      id?: string | number
+      code?: string
+      name?: string
+      logo_url?: string | null
+    }
   }
   category?: {
     id: number
@@ -202,7 +209,14 @@ const formatDate = (isoString: string) => {
                     <p class="font-bold text-sm text-slate-900 dark:text-white truncate">
                       {{ txn.description }}
                     </p>
-                    <div class="text-[11px] text-slate-500 dark:text-slate-400 flex items-center space-x-2 font-mono">
+                    <div class="text-[11px] text-slate-500 dark:text-slate-400 flex items-center space-x-1.5 font-mono">
+                      <InstitutionLogo
+                        v-if="txn.account?.institution?.code"
+                        :code="txn.account.institution.code"
+                        :name="txn.account.institution.name"
+                        :logo-url="txn.account.institution.logo_url"
+                        size="xs"
+                      />
                       <span>{{ txn.account?.name || 'Main Account' }}</span>
                       <span v-if="txn.notes" class="italic truncate max-w-xs text-slate-400">
                         &mdash; {{ txn.notes }}

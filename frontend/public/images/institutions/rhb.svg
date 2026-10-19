@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%">
+  <defs>
+    <linearGradient id="rhbBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0066B3"/>
+      <stop offset="100%" stop-color="#004380"/>
+    </linearGradient>
+  </defs>
+  <!-- Background with smooth rounded corners -->
+  <rect width="120" height="120" rx="26" fill="url(#rhbBg)"/>
+  <rect x="3" y="3" width="114" height="114" rx="23" fill="none" stroke="#3399FF" stroke-width="1.5" opacity="0.4"/>
+
+  <!-- RHB Dynamic Chevron/Diamond Emblem -->
+  <g transform="translate(36, 20)">
+    <!-- Red Chevron Right -->
+    <path d="M12 6 L26 6 L38 26 L26 46 L12 46 L24 26 Z" fill="#ED1C24"/>
+    <path d="M26 6 L40 6 L52 26 L40 46 L26 46 L38 26 Z" fill="#FFFFFF"/>
+  </g>
+
+  <!-- Wordmark -->
+  <text x="60" y="93" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="900" font-size="20" fill="#FFFFFF" letter-spacing="1.5">RHB</text>
+</svg>

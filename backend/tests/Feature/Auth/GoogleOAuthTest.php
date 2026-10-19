@@ -224,4 +224,83 @@ class GoogleOAuthTest extends TestCase
         $response->assertStatus(302);
         $this->assertStringContainsString('auth_error=access_denied', $response->headers->get('Location'));
     }
+
+    public function test_google_callback_browser_redirect_uses_ephemeral_ticket_without_exposing_token(): void
+    {
+        $mockAuthService = Mockery::mock(GoogleAuthService::class);
+        $mockAuthService->shouldReceive('getGoogleUserFromCode')
+            ->once()
+            ->with('browser-code-123')
+            ->andReturn([
+                'id' => 'google-user-browser-1',
+                'name' => 'Browser User',
+                'email' => 'browser.user@gmail.com',
+                'avatar' => null,
+            ]);
+
+        $realService = new GoogleAuthService();
+        $mockAuthService->shouldReceive('findOrCreateUser')
+            ->once()
+            ->andReturnUsing(function ($googleData) use ($realService) {
+                return $realService->findOrCreateUser($googleData);
+            });
+
+        $this->app->instance(GoogleAuthService::class, $mockAuthService);
+
+        $response = $this->get('/api/v1/auth/google/callback?code=browser-code-123');
+
+        $response->assertStatus(302);
+        $location = $response->headers->get('Location');
+
+        // Verify ticket parameter is present and token is NEVER in the query string
+        $this->assertStringContainsString('ticket=', $location);
+        $this->assertStringNotContainsString('auth_token=', $location);
+
+        // Extract ticket
+        parse_str(parse_url($location, PHP_URL_QUERY), $params);
+        $this->assertNotEmpty($params['ticket']);
+        $ticket = $params['ticket'];
+
+        // Now test exchange endpoint with this ticket
+        $exchangeResponse = $this->postJson('/api/v1/auth/google/exchange', [
+            'ticket' => $ticket,
+        ]);
+
+        $exchangeResponse->assertStatus(200)
+            ->assertJsonStructure([
+                'message',
+                'user' => ['id', 'email', 'name'],
+                'token',
+                'token_type',
+            ])
+            ->assertJson([
+                'user' => ['email' => 'browser.user@gmail.com'],
+                'token_type' => 'Bearer',
+            ]);
+
+        // Attempting to reuse the same ticket immediately fails (replay attack protection)
+        $replayResponse = $this->postJson('/api/v1/auth/google/exchange', [
+            'ticket' => $ticket,
+        ]);
+
+        $replayResponse->assertStatus(422)
+            ->assertJson([
+                'message' => 'The authentication ticket is invalid or has expired.',
+            ]);
+    }
+
+    public function test_exchange_ticket_rejects_invalid_or_missing_ticket(): void
+    {
+        $response = $this->postJson('/api/v1/auth/google/exchange', [
+            'ticket' => 'non-existent-or-expired-ticket-abc',
+        ]);
+
+        $response->assertStatus(422)
+            ->assertJson([
+                'message' => 'The authentication ticket is invalid or has expired.',
+            ]);
+
+        $missingResponse = $this->postJson('/api/v1/auth/google/exchange', []);
+        $missingResponse->assertStatus(422);
+    }
 }

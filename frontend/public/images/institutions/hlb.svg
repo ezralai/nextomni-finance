@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%">
+  <defs>
+    <linearGradient id="hlbBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#002D62"/>
+      <stop offset="100%" stop-color="#001838"/>
+    </linearGradient>
+  </defs>
+  <!-- Background with smooth rounded corners -->
+  <rect width="120" height="120" rx="26" fill="url(#hlbBg)"/>
+  <rect x="3" y="3" width="114" height="114" rx="23" fill="none" stroke="#2563EB" stroke-width="1.5" opacity="0.3"/>
+
+  <!-- Hong Leong Shield / Crest Graphic -->
+  <g transform="translate(36, 18)">
+    <path d="M24 4 C38 4, 46 12, 46 26 C46 42, 24 52, 24 52 C24 52, 2 42, 2 26 C2 12, 10 4, 24 4 Z" fill="#D9222A"/>
+    <path d="M24 10 C34 10, 40 16, 40 26 C40 38, 24 46, 24 46 C24 46, 8 38, 8 26 C8 16, 14 10, 24 10 Z" fill="#FFFFFF"/>
+    <!-- Center blue cross / star motif -->
+    <path d="M24 15 L27 23 L35 24 L29 30 L31 38 L24 33 L17 38 L19 30 L13 24 L21 23 Z" fill="#002D62"/>
+  </g>
+
+  <!-- Wordmark -->
+  <text x="60" y="89" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="900" font-size="12" fill="#FFFFFF" letter-spacing="0.5">Hong Leong</text>
+  <text x="60" y="103" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif" font-weight="700" font-size="10" fill="#93C5FD" letter-spacing="1">BANK</text>
+</svg>
