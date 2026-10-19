@@ -170,7 +170,7 @@ graph LR
    - **Category-Level Non-Parametric IQR**: Flags purchases exceeding $Q_3 + (k \times \text{IQR})$ with deviation multiples relative to category medians.
    - **Multidimensional Isolation Forest**: Evaluates decision-tree path isolation across log-scaled amounts, calendar day of week, and categorical frequencies.
 4. **Interactive Streamlit Interface ([ml/app.py](ml/app.py))**:
-   Features 4 comprehensive tabs for data ingestion audit, financial intelligence, forecasting comparison, and unusual transactions review.
+   Features 4 comprehensive tabs for data ingestion audit, financial intelligence, forecasting comparison, and unusual transaction review.
 
 ### Running the ML Module & Tests:
 
