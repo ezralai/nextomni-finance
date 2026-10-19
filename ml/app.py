@@ -38,6 +38,11 @@ from src.models.anomaly_detection import (
     detect_statistical_anomalies,
     IsolationForestAnomalyDetector,
 )
+from src.analytics.recurring import (
+    detect_recurring_expenses,
+    compute_recurring_summary,
+)
+from src.models.category_forecasting import forecast_category_expenses
 
 
 # Page configuration
@@ -298,6 +303,53 @@ with tab2:
             height=280,
         )
 
+    st.divider()
+    st.subheader("🔁 Detected Subscriptions & Scheduled Commitments")
+    st.markdown(
+        "Using temporal cadence clustering and coefficient of variation ($CV$), this engine automatically isolates "
+        "recurring commitments (fixed subscriptions vs. variable metered bills)."
+    )
+    rec_df = detect_recurring_expenses(clean_df)
+    rec_summary = compute_recurring_summary(rec_df)
+
+    r1, r2, r3, r4 = st.columns(4)
+    with r1:
+        st.metric("Active Subscriptions", f"{rec_summary['total_commitments']:,}")
+    with r2:
+        st.metric("Monthly Recurring Burden", f"MYR {rec_summary['total_monthly_recurring']:,.2f}")
+    with r3:
+        st.metric("Annual Projected Outflow", f"MYR {rec_summary['total_annual_recurring']:,.2f}")
+    with r4:
+        st.metric("Fixed Obligations Share", f"{rec_summary['fixed_share_percent']}%")
+
+    if not rec_df.empty:
+        st.dataframe(
+            rec_df[[
+                "merchant",
+                "category",
+                "cadence",
+                "cost_type",
+                "average_amount",
+                "monthly_equivalent",
+                "last_billed_date",
+                "next_expected_date",
+            ]].rename(
+                columns={
+                    "merchant": "Merchant / Service",
+                    "category": "Category",
+                    "cadence": "Cadence",
+                    "cost_type": "Cost Structure",
+                    "average_amount": "Avg Charge (MYR)",
+                    "monthly_equivalent": "Monthly Burden (MYR)",
+                    "last_billed_date": "Last Charged",
+                    "next_expected_date": "Next Expected Charge",
+                }
+            ),
+            use_container_width=True,
+        )
+    else:
+        st.info("No recurring subscriptions or scheduled obligations detected with sufficient confidence.")
+
 
 # ==============================================================================
 # TAB 3: EXPENSE FORECASTING ARENA
@@ -379,6 +431,64 @@ with tab3:
         composite_chart = (actual_line + pred_lines).properties(height=360)
         st.altair_chart(composite_chart, use_container_width=True)
 
+        st.divider()
+        st.subheader("🧩 Hierarchical Category-Level Spending Forecast")
+        st.markdown(
+            "Disaggregates upcoming monthly expenditure across individual spending categories by anchoring "
+            "detected fixed obligations (Rent, Utilities) and applying 3-month moving averages to discretionary outgoings."
+        )
+
+        cat_forecast_df, cat_summary = forecast_category_expenses(clean_df)
+
+        cf1, cf2, cf3 = st.columns(3)
+        with cf1:
+            st.metric("Forecast Target Month", cat_summary["forecast_period"])
+        with cf2:
+            st.metric("Total Category Forecast", f"MYR {cat_summary['total_projected_expense']:,.2f}")
+        with cf3:
+            st.metric("Active Spending Categories", f"{cat_summary['total_categories']:,}")
+
+        cat_bar_chart = (
+            alt.Chart(cat_forecast_df)
+            .mark_bar(cornerRadiusTopRight=4, cornerRadiusBottomRight=4)
+            .encode(
+                y=alt.Y("category:N", sort="-x", title="Category"),
+                x=alt.X("forecast_amount:Q", title="Projected Spend (MYR)"),
+                color=alt.Color("category:N", legend=None),
+                tooltip=[
+                    "category",
+                    alt.Tooltip("forecast_amount:Q", format=",.2f", title="Forecast (MYR)"),
+                    alt.Tooltip("last_month_actual:Q", format=",.2f", title="Last Month (MYR)"),
+                    alt.Tooltip("share_of_total_pct:Q", format=".1f", title="Share (%)"),
+                    "trend",
+                ],
+            )
+            .properties(height=260)
+        )
+        st.altair_chart(cat_bar_chart, use_container_width=True)
+
+        st.dataframe(
+            cat_forecast_df[[
+                "category",
+                "forecast_amount",
+                "last_month_actual",
+                "historical_mean",
+                "share_of_total_pct",
+                "trend",
+            ]].rename(
+                columns={
+                    "category": "Spending Category",
+                    "forecast_amount": "Projected Next Month (MYR)",
+                    "last_month_actual": "Last Month Actual (MYR)",
+                    "historical_mean": "Historical Monthly Avg (MYR)",
+                    "share_of_total_pct": "Projected Share (%)",
+                    "trend": "Velocity Trend",
+                }
+            ),
+            use_container_width=True,
+        )
+
+        st.divider()
         st.subheader("📊 Systematic Model Benchmark Comparison Table")
         st.dataframe(
             summary_table.rename(
