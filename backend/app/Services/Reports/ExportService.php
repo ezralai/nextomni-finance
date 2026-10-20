@@ -56,7 +56,7 @@ class ExportService
                     return '';
                 }
                 $clean = trim($val);
-                if ($clean !== '' && in_array($clean[0], ['=', '+', '-', '@'])) {
+                if ($clean !== '' && in_array($clean[0], ['=', '+', '-', '@', "\t", "\r", "\n", '|', '%'])) {
                     return "'" . $clean;
                 }
                 return $clean;

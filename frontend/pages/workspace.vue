@@ -76,6 +76,7 @@ import InstitutionLogo from '~/components/ui/InstitutionLogo.vue'
 import InfoTooltip from '~/components/ui/InfoTooltip.vue'
 import OnboardingModal from '~/components/ui/OnboardingModal.vue'
 import GettingStartedChecklist from '~/components/ui/GettingStartedChecklist.vue'
+import QuickStartHub from '~/components/ui/QuickStartHub.vue'
 import MarketTickerTape from '~/components/markets/MarketTickerTape.vue'
 import MarketsTab from '~/components/markets/MarketsTab.vue'
 import AnalyticsTab from '~/components/analytics/AnalyticsTab.vue'
@@ -433,6 +434,26 @@ const openAddAccountModal = () => {
   showAddAccountModal.value = true
 }
 
+// 1-Click Popular Account Presets for Quick Setup
+const popularAccountPresets = [
+  { flag: '🇲🇾', label: 'Maybank Savings', code: 'MBB', type: 'bank', currency: 'MYR' },
+  { flag: '🇲🇾', label: 'Touch \'n Go eWallet', code: 'TNG', type: 'e_wallet', currency: 'MYR' },
+  { flag: '🇲🇾', label: 'CIMB Current', code: 'CIMB', type: 'bank', currency: 'MYR' },
+  { flag: '💵', label: 'Cash Wallet', code: 'MBB', type: 'cash', currency: 'MYR' },
+  { flag: '🇺🇸', label: 'US Brokerage', code: 'MBB', type: 'investment', currency: 'USD' },
+  { flag: '🇸🇬', label: 'Singapore DBS', code: 'CIMB', type: 'bank', currency: 'SGD' },
+]
+
+const applyAccountPreset = (preset: typeof popularAccountPresets[0]) => {
+  const matchInst = accountStore.institutions.find(i => i.code === preset.code) || accountStore.institutions[0]
+  if (matchInst) {
+    newAccountForm.value.institution_id = matchInst.id
+  }
+  newAccountForm.value.name = preset.label
+  newAccountForm.value.account_type = preset.type
+  newAccountForm.value.currency = preset.currency
+}
+
 const handleCreateAccount = async () => {
   isAccountSubmitting.value = true
   accountError.value = null
@@ -482,8 +503,13 @@ const handleDeleteAccount = (id: string, name: string) => {
 
 // Transaction Modal Handlers
 const openAddTransactionModal = (defaultType: 'expense' | 'income' = 'expense') => {
+  if (accountStore.accounts.length === 0) {
+    toast.info('Account Required', 'Please set up an account first (e.g. Maybank, Touch \'n Go, or Cash) before recording transactions.')
+    openAddAccountModal()
+    return
+  }
   newTransactionForm.value.type = defaultType
-  if (accountStore.accounts.length > 0 && !newTransactionForm.value.account_id) {
+  if (!newTransactionForm.value.account_id) {
     newTransactionForm.value.account_id = accountStore.accounts[0].id
   }
   newTransactionForm.value.amount = null
@@ -521,12 +547,13 @@ const handleCreateTransaction = async () => {
 }
 
 const openAddTransferModal = () => {
-  if (accountStore.accounts.length >= 2) {
-    newTransferForm.value.source_account_id = accountStore.accounts[0].id
-    newTransferForm.value.destination_account_id = accountStore.accounts[1].id
-  } else if (accountStore.accounts.length === 1) {
-    newTransferForm.value.source_account_id = accountStore.accounts[0].id
+  if (accountStore.accounts.length < 2) {
+    toast.info('Multiple Accounts Required', 'Transfers require at least two accounts (e.g. Bank to E-Wallet). Please add another account first.')
+    openAddAccountModal()
+    return
   }
+  newTransferForm.value.source_account_id = accountStore.accounts[0].id
+  newTransferForm.value.destination_account_id = accountStore.accounts[1].id
   newTransferForm.value.amount = null
   newTransferForm.value.fee = '0.00'
   newTransferForm.value.notes = ''
@@ -587,6 +614,35 @@ const openAddBudgetModal = () => {
   newBudgetForm.value.notes = ''
   budgetError.value = null
   showBudgetModal.value = true
+}
+
+// 1-Click Starter Budget Presets for New Users
+const popularBudgetPresets = [
+  { icon: '🍔', name: 'Food & Dining', slug: 'food-dining', amount: 800 },
+  { icon: '🛒', name: 'Groceries', slug: 'groceries-supermarket', amount: 500 },
+  { icon: '🚗', name: 'Transportation', slug: 'transportation', amount: 350 },
+  { icon: '💡', name: 'Utilities & Bills', slug: 'housing-utilities', amount: 450 },
+  { icon: '🛍️', name: 'Lifestyle & Shopping', slug: 'lifestyle-shopping', amount: 300 },
+]
+
+const applyBudgetPreset = (preset: typeof popularBudgetPresets[0]) => {
+  let cat = transactionStore.categories.find(c => c.slug === preset.slug)
+  if (!cat) {
+    for (const parent of transactionStore.categories) {
+      const match = parent.children?.find(ch => ch.slug === preset.slug)
+      if (match) {
+        cat = parent
+        break
+      }
+    }
+  }
+  if (!cat) {
+    cat = transactionStore.categories.find(c => c.name.toLowerCase().includes(preset.name.toLowerCase().slice(0, 4)))
+  }
+  if (cat) {
+    newBudgetForm.value.category_id = cat.id
+  }
+  newBudgetForm.value.amount = preset.amount
 }
 
 const handleCreateBudget = async () => {
@@ -1455,8 +1511,7 @@ onUnmounted(() => {
         <div class="flex flex-wrap items-center gap-2">
           <button
             @click="openAddTransactionModal('expense')"
-            :disabled="accountStore.accounts.length === 0"
-            class="px-3 py-2 rounded-xl text-xs font-bold bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 transition flex items-center space-x-1.5 disabled:opacity-50"
+            class="px-3 py-2 rounded-xl text-xs font-bold bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 transition flex items-center space-x-1.5 cursor-pointer"
           >
             <ArrowUpRight class="w-4 h-4 text-rose-400" />
             <span>Record Expense</span>
@@ -1464,8 +1519,7 @@ onUnmounted(() => {
 
           <button
             @click="openAddTransactionModal('income')"
-            :disabled="accountStore.accounts.length === 0"
-            class="px-3 py-2 rounded-xl text-xs font-bold bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 transition flex items-center space-x-1.5 disabled:opacity-50"
+            class="px-3 py-2 rounded-xl text-xs font-bold bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 transition flex items-center space-x-1.5 cursor-pointer"
           >
             <ArrowDownLeft class="w-4 h-4 text-emerald-400" />
             <span>Record Income</span>
@@ -1473,8 +1527,7 @@ onUnmounted(() => {
 
           <button
             @click="openAddTransferModal"
-            :disabled="accountStore.accounts.length < 2"
-            class="px-3 py-2 rounded-xl text-xs font-bold bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/40 transition flex items-center space-x-1.5 disabled:opacity-50"
+            class="px-3 py-2 rounded-xl text-xs font-bold bg-sky-500/20 hover:bg-sky-500/30 text-sky-300 border border-sky-500/40 transition flex items-center space-x-1.5 cursor-pointer"
           >
             <ArrowRightLeft class="w-4 h-4 text-sky-400" />
             <span>Transfer Funds</span>
@@ -1538,6 +1591,18 @@ onUnmounted(() => {
           </div>
         </div>
       </section>
+
+      <!-- First-Time User Quick-Start Command Center (Shown on Dashboard when 0 accounts exist) -->
+      <QuickStartHub
+        v-if="authStore.isAuthenticated && accountStore.accounts.length === 0 && activeTab === 'dashboard'"
+        :user-name="authStore.user?.name"
+        :base-currency="authStore.user?.base_currency"
+        :is-submitting="isAccountSubmitting"
+        @add-account="openAddAccountModal"
+        @seed-demo="seedSamplePortfolio"
+        @import-csv="openImportModal"
+        @open-tour="openOnboardingTour"
+      />
 
       <!-- Live Financial Metrics Grid (Bound to Real API Aggregations with Multi-Currency Consolidation) -->
       <section v-if="!authStore.isAuthenticated || activeTab === 'dashboard' || activeTab === 'accounts'" class="space-y-4">
@@ -2599,6 +2664,30 @@ onUnmounted(() => {
         </div>
 
         <form @submit.prevent="handleCreateAccount" class="space-y-4">
+          <!-- 1-Click Starter Presets for New Users -->
+          <div class="space-y-1.5 p-3 rounded-xl bg-slate-950/60 border border-slate-800">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-emerald-400 flex items-center space-x-1">
+                <Sparkles class="w-3.5 h-3.5" />
+                <span>1-Click Popular Presets</span>
+              </span>
+              <span class="text-[10px] text-slate-400">Pre-fills institution & currency</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <button
+                v-for="preset in popularAccountPresets"
+                :key="preset.label"
+                type="button"
+                @click="applyAccountPreset(preset)"
+                class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-emerald-500/10 text-slate-300 hover:text-emerald-400 border border-slate-800 hover:border-emerald-500/40 transition flex items-center space-x-1.5 cursor-pointer"
+              >
+                <span>{{ preset.flag }}</span>
+                <span>{{ preset.label }}</span>
+                <span class="text-[10px] font-mono text-slate-400">({{ preset.currency }})</span>
+              </button>
+            </div>
+          </div>
+
           <div class="space-y-2">
             <div class="flex items-center justify-between">
               <label class="text-xs font-medium text-slate-300">Financial Institution</label>
@@ -3037,6 +3126,30 @@ onUnmounted(() => {
         </div>
 
         <form @submit.prevent="handleCreateBudget" class="space-y-4">
+          <!-- 1-Click Budget Starter Presets for New Users -->
+          <div class="space-y-1.5 p-3 rounded-xl bg-slate-950/60 border border-slate-800">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-indigo-400 flex items-center space-x-1">
+                <Sparkles class="w-3.5 h-3.5" />
+                <span>1-Click Starter Presets</span>
+              </span>
+              <span class="text-[10px] text-slate-400">Pre-fills category & limit</span>
+            </div>
+            <div class="flex flex-wrap gap-1.5 pt-1">
+              <button
+                v-for="preset in popularBudgetPresets"
+                :key="preset.name"
+                type="button"
+                @click="applyBudgetPreset(preset)"
+                class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-indigo-500/10 text-slate-300 hover:text-indigo-400 border border-slate-800 hover:border-indigo-500/40 transition flex items-center space-x-1.5 cursor-pointer"
+              >
+                <span>{{ preset.icon }}</span>
+                <span>{{ preset.name }}</span>
+                <span class="text-[10px] font-mono text-indigo-300 font-bold">({{ currencySymbol }} {{ preset.amount }})</span>
+              </button>
+            </div>
+          </div>
+
           <div class="space-y-1.5">
             <label class="text-xs font-medium text-slate-300">Expense Category</label>
             <select

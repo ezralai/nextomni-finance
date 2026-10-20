@@ -22,6 +22,14 @@ class BankStatementParserService
      */
     public function parseAndImport(User $user, Account $account, UploadedFile $file): array
     {
+        // Sanitize original filename (prevent path traversal, formula injection, and XSS)
+        $rawFilename = basename($file->getClientOriginalName());
+        $safeFilename = preg_replace('/[^a-zA-Z0-9_\-\. ]/', '', $rawFilename);
+        $safeFilename = ltrim($safeFilename ?: 'statement', "=+-\t\r\n|%@");
+        if (empty($safeFilename)) {
+            $safeFilename = 'statement_' . date('Ymd_His') . '.csv';
+        }
+
         $handle = fopen($file->getRealPath(), 'r');
         if (! $handle) {
             throw ValidationException::withMessages([
@@ -103,7 +111,7 @@ class BankStatementParserService
                     'amount' => (string) $amount,
                     'description' => $description,
                     'transacted_at' => $transactedAt->toDateString(),
-                    'notes' => "Reconciled from bank statement import: {$file->getClientOriginalName()}",
+                    'notes' => "Reconciled from bank statement import: {$safeFilename}",
                 ]);
 
                 $importedCount++;
@@ -133,7 +141,7 @@ class BankStatementParserService
         $importRecord = StatementImport::create([
             'user_id' => $user->id,
             'account_id' => $account->id,
-            'filename' => $file->getClientOriginalName(),
+            'filename' => $safeFilename,
             'total_rows' => $totalRows,
             'imported_count' => $importedCount,
             'duplicate_count' => $duplicateCount,

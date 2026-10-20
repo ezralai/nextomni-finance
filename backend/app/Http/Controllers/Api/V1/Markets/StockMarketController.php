@@ -31,6 +31,13 @@ class StockMarketController extends Controller
      */
     public function quote(string $symbol): JsonResponse
     {
+        if (! preg_match('/^[A-Za-z0-9\.\^\-]{1,16}$/', $symbol)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invalid stock ticker symbol format.',
+            ], 422);
+        }
+
         $quote = $this->stockMarketService->getQuote($symbol);
 
         return response()->json([
@@ -44,7 +51,18 @@ class StockMarketController extends Controller
      */
     public function chart(Request $request, string $symbol): JsonResponse
     {
-        $range = $request->query('range', '1d');
+        if (! preg_match('/^[A-Za-z0-9\.\^\-]{1,16}$/', $symbol)) {
+            return response()->json([
+                'status' => 'error',
+                'message' => 'Invalid stock ticker symbol format.',
+            ], 422);
+        }
+
+        $range = strtolower((string) $request->query('range', '1d'));
+        if (! in_array($range, ['1d', '5d', '1mo', '3mo', '6mo', '1y', '5y', 'max'])) {
+            $range = '1d';
+        }
+
         $chart = $this->stockMarketService->getChart($symbol, $range);
 
         return response()->json([

@@ -49,12 +49,18 @@ Route::prefix('v1')->group(function () {
         Route::post('/register', [AuthController::class, 'register'])
             ->middleware('throttle:10,1')
             ->name('api.v1.auth.register');
-        Route::post('/login', [AuthController::class, 'login'])->name('api.v1.auth.login');
+        Route::post('/login', [AuthController::class, 'login'])
+            ->middleware('throttle:10,1')
+            ->name('api.v1.auth.login');
 
         // Google OAuth 2.0
         Route::get('/google/redirect', [GoogleAuthController::class, 'redirect'])->name('api.v1.auth.google.redirect');
-        Route::match(['get', 'post'], '/google/callback', [GoogleAuthController::class, 'callback'])->name('api.v1.auth.google.callback');
-        Route::post('/google/exchange', [GoogleAuthController::class, 'exchangeTicket'])->name('api.v1.auth.google.exchange');
+        Route::match(['get', 'post'], '/google/callback', [GoogleAuthController::class, 'callback'])
+            ->middleware('throttle:15,1')
+            ->name('api.v1.auth.google.callback');
+        Route::post('/google/exchange', [GoogleAuthController::class, 'exchangeTicket'])
+            ->middleware('throttle:15,1')
+            ->name('api.v1.auth.google.exchange');
     });
 
     // Protected Routes (Sanctum Authenticated)
@@ -94,13 +100,19 @@ Route::prefix('v1')->group(function () {
 
         // Financial Statements & Export Engine
         Route::prefix('reports')->group(function () {
-            Route::get('/transactions/csv', [ExportController::class, 'exportCsv'])->name('api.v1.reports.transactions.csv');
-            Route::get('/transactions/json', [ExportController::class, 'exportJson'])->name('api.v1.reports.transactions.json');
+            Route::get('/transactions/csv', [ExportController::class, 'exportCsv'])
+                ->middleware('throttle:30,1')
+                ->name('api.v1.reports.transactions.csv');
+            Route::get('/transactions/json', [ExportController::class, 'exportJson'])
+                ->middleware('throttle:30,1')
+                ->name('api.v1.reports.transactions.json');
         });
 
         // Bank Statement Reconciliation & CSV Ingestion Engine
         Route::prefix('imports')->group(function () {
-            Route::post('/statements', [\App\Http\Controllers\Api\V1\Imports\BankStatementImportController::class, 'import'])->name('api.v1.imports.statements');
+            Route::post('/statements', [\App\Http\Controllers\Api\V1\Imports\BankStatementImportController::class, 'import'])
+                ->middleware('throttle:15,1')
+                ->name('api.v1.imports.statements');
             Route::get('/statements/history', [\App\Http\Controllers\Api\V1\Imports\BankStatementImportController::class, 'history'])->name('api.v1.imports.statements.history');
         });
     });

@@ -9,6 +9,7 @@ import {
   ArrowDown,
   Trash2,
   ReceiptText,
+  Plus,
 } from 'lucide-vue-next'
 import SkeletonLoader from '~/components/ui/SkeletonLoader.vue'
 import InstitutionLogo from '~/components/ui/InstitutionLogo.vue'
@@ -358,6 +359,16 @@ const formatDate = (isoString: string) => {
           class="px-4 py-2 rounded-xl text-xs font-semibold bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow transition cursor-pointer"
         >
           Record Income
+        </button>
+      </div>
+      <div v-else class="flex items-center justify-center pt-2">
+        <button
+          type="button"
+          @click="emit('record', 'expense')"
+          class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 shadow transition cursor-pointer flex items-center space-x-1.5"
+        >
+          <Plus class="w-4 h-4" />
+          <span>Add Account to Start Recording</span>
         </button>
       </div>
     </div>
