@@ -58,6 +58,7 @@ import {
   Moon,
   Menu,
   LayoutDashboard,
+  HelpCircle,
 } from 'lucide-vue-next'
 import { useTheme } from '~/composables/useTheme'
 import { useToast } from '~/composables/useToast'
@@ -72,6 +73,9 @@ import ConfirmModal from '~/components/ui/ConfirmModal.vue'
 import TransactionTable from '~/components/transactions/TransactionTable.vue'
 import ToolsTab from '~/components/tools/ToolsTab.vue'
 import InstitutionLogo from '~/components/ui/InstitutionLogo.vue'
+import InfoTooltip from '~/components/ui/InfoTooltip.vue'
+import OnboardingModal from '~/components/ui/OnboardingModal.vue'
+import GettingStartedChecklist from '~/components/ui/GettingStartedChecklist.vue'
 
 const config = useRuntimeConfig()
 const apiBase = config.public.apiBase
@@ -106,6 +110,23 @@ const responseTimeMs = ref<number | null>(null)
 const { isDark, toggleTheme } = useTheme()
 const activeTab = ref<'dashboard' | 'accounts' | 'transactions' | 'budgets' | 'analytics' | 'tools'>('dashboard')
 const isMobileMenuOpen = ref(false)
+const isOnboardingTourOpen = ref(false)
+
+const openOnboardingTour = () => {
+  isOnboardingTourOpen.value = true
+}
+
+const handleOnboardingAction = (actionName: string) => {
+  if (actionName === 'add-account') {
+    openAddAccountModal()
+  } else if (actionName === 'record-transaction') {
+    openAddTransactionModal('expense')
+  } else if (actionName === 'add-budget') {
+    openAddBudgetModal()
+  } else if (actionName === 'add-recurring') {
+    openAddRecurringModal()
+  }
+}
 
 // Global Confirmation Dialog State
 const confirmState = ref({
@@ -1047,6 +1068,16 @@ onMounted(async () => {
 
   if (authStore.isAuthenticated) {
     await refreshDashboard()
+    if (typeof window !== 'undefined') {
+      try {
+        const completed = localStorage.getItem('nextomni_onboarding_completed')
+        if (!completed) {
+          isOnboardingTourOpen.value = true
+        }
+      } catch {
+        // Ignore localStorage restrictions
+      }
+    }
   }
 })
 
@@ -1125,6 +1156,17 @@ onUnmounted(() => {
           >
             <Sun v-if="isDark" class="w-4 h-4 text-amber-400 transition-transform duration-200 hover:rotate-45" />
             <Moon v-else class="w-4 h-4 text-indigo-500 transition-transform duration-200 hover:-rotate-12" />
+          </button>
+
+          <!-- Interactive Guide & Onboarding Tour Trigger -->
+          <button
+            @click="openOnboardingTour"
+            class="px-2.5 py-1.5 rounded-lg bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 transition flex items-center space-x-1.5 text-xs font-semibold cursor-pointer"
+            title="Interactive Beginner Guide & Tutorial Tour"
+            aria-label="Interactive Beginner Guide & Tutorial Tour"
+          >
+            <HelpCircle class="w-3.5 h-3.5 text-emerald-500" />
+            <span class="hidden sm:inline">Help & Tour</span>
           </button>
 
           <!-- User Authentication Section -->
@@ -1332,12 +1374,32 @@ onUnmounted(() => {
             <Layers class="w-4 h-4" />
             <span>FX & Tools</span>
           </button>
+
+          <button
+            @click="openOnboardingTour(); isMobileMenuOpen = false"
+            class="p-3 rounded-xl flex items-center space-x-2.5 text-xs font-semibold bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 transition cursor-pointer"
+          >
+            <HelpCircle class="w-4 h-4 text-emerald-500" />
+            <span>Beginner Guide & Tour</span>
+          </button>
         </div>
       </div>
     </div>
 
     <!-- Main Content -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+      <!-- Getting Started Onboarding Progress Checklist -->
+      <GettingStartedChecklist
+        v-if="authStore.isAuthenticated && (activeTab === 'dashboard' || activeTab === 'accounts')"
+        :account-count="accountStore.accounts.length"
+        :transaction-count="transactionStore.transactions.length"
+        :budget-count="budgetStore.budgets.length"
+        :recurring-count="recurringStore.recurringTransactions.length"
+        @navigate="(tab) => activeTab = tab as any"
+        @action="handleOnboardingAction"
+        @open-tour="openOnboardingTour"
+      />
+
       <!-- Authenticated User Banner with Quick Financial Actions -->
       <section v-if="authStore.isAuthenticated" class="p-6 rounded-2xl bg-gradient-to-r from-emerald-950/40 via-slate-900 to-slate-900/60 border border-emerald-500/30 shadow-xl backdrop-blur-md flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div class="flex items-center space-x-4">
@@ -1448,12 +1510,19 @@ onUnmounted(() => {
 
       <!-- Live Financial Metrics Grid (Bound to Real API Aggregations with Multi-Currency Consolidation) -->
       <section v-if="!authStore.isAuthenticated || activeTab === 'dashboard' || activeTab === 'accounts'" class="space-y-4">
-        <div class="flex items-center justify-between">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <h2 class="text-lg font-bold text-slate-900 dark:text-white flex items-center space-x-2">
             <TrendingUp class="w-5 h-5 text-emerald-500 dark:text-emerald-400" />
             <span>Consolidated Portfolio Net Worth & Liquidity (In {{ authStore.user?.base_currency || 'MYR' }})</span>
           </h2>
-          <span class="text-xs text-slate-500 dark:text-slate-400 font-mono">Multi-Currency Consolidated with BCMath Arbitrary Precision</span>
+          <div class="flex items-center space-x-1.5 text-xs text-slate-500 dark:text-slate-400 font-medium">
+            <span>Multi-currency consolidated</span>
+            <InfoTooltip
+              title="Net Worth"
+              text="The total value of everything you own (bank deposits, cash, investments) minus what you owe (credit card debt, loans). Foreign currencies are converted to your base currency."
+              position="bottom"
+            />
+          </div>
         </div>
 
         <div v-if="accountStore.isLoading" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -1462,7 +1531,14 @@ onUnmounted(() => {
         <div v-else class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           <!-- Total Net Worth Card -->
           <div class="p-5 rounded-xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition shadow-sm dark:shadow-none space-y-2">
-            <div class="text-xs font-medium text-slate-500 dark:text-slate-400">Total Consolidated Net Worth</div>
+            <div class="flex items-center justify-between">
+              <div class="text-xs font-medium text-slate-500 dark:text-slate-400">Total Net Worth</div>
+              <InfoTooltip
+                title="Consolidated Net Worth"
+                text="Calculated as (Bank Deposits + Investments + Cash) minus Credit Card balances and Liabilities."
+                position="top"
+              />
+            </div>
             <div class="text-2xl font-extrabold text-slate-900 dark:text-white font-mono">
               {{ accountStore.summary ? accountStore.summary.net_worth_formatted : `${currencySymbol} 0.00` }}
             </div>
@@ -1474,7 +1550,14 @@ onUnmounted(() => {
 
           <!-- Liquid Cash & Bank Deposits -->
           <div class="p-5 rounded-xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition shadow-sm dark:shadow-none space-y-2">
-            <div class="text-xs font-medium text-slate-500 dark:text-slate-400">Bank Deposits</div>
+            <div class="flex items-center justify-between">
+              <div class="text-xs font-medium text-slate-500 dark:text-slate-400">Bank Deposits</div>
+              <InfoTooltip
+                title="Liquid Cash & Banks"
+                text="Checking, savings, and e-wallet balances immediately available for spending or transfers."
+                position="top"
+              />
+            </div>
             <div class="text-2xl font-extrabold text-slate-900 dark:text-white font-mono">
               {{ currencySymbol }} {{ accountStore.summary ? accountStore.summary.breakdown.bank : '0.00' }}
             </div>
@@ -1486,7 +1569,14 @@ onUnmounted(() => {
 
           <!-- Investments -->
           <div class="p-5 rounded-xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition shadow-sm dark:shadow-none space-y-2">
-            <div class="text-xs font-medium text-slate-500 dark:text-slate-400">Global Investments & Brokerage</div>
+            <div class="flex items-center justify-between">
+              <div class="text-xs font-medium text-slate-500 dark:text-slate-400">Global Investments & Brokerage</div>
+              <InfoTooltip
+                title="Investments & Assets"
+                text="Foreign equity, ETF portfolios, and brokerage accounts converted to your base currency."
+                position="top"
+              />
+            </div>
             <div class="text-2xl font-extrabold text-sky-600 dark:text-sky-400 font-mono">
               {{ currencySymbol }} {{ accountStore.summary ? accountStore.summary.breakdown.investment : '0.00' }}
             </div>
@@ -1498,7 +1588,14 @@ onUnmounted(() => {
 
           <!-- Liabilities (Credit Cards & Loans) -->
           <div class="p-5 rounded-xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition shadow-sm dark:shadow-none space-y-2">
-            <div class="text-xs font-medium text-slate-500 dark:text-slate-400">Credit Card Debt</div>
+            <div class="flex items-center justify-between">
+              <div class="text-xs font-medium text-slate-500 dark:text-slate-400">Credit Card Debt</div>
+              <InfoTooltip
+                title="Liabilities & Debt"
+                text="Outstanding credit balances that reduce your overall net worth."
+                position="top"
+              />
+            </div>
             <div class="text-2xl font-extrabold text-amber-600 dark:text-amber-400 font-mono">
               {{ currencySymbol }} {{ accountStore.summary ? accountStore.summary.breakdown.credit_card : '0.00' }}
             </div>
@@ -1524,26 +1621,52 @@ onUnmounted(() => {
           <div class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-xs font-mono font-bold">
             <Percent class="w-4 h-4" />
             <span>Savings Rate: {{ budgetStore.cashFlow.summary.savings_rate }}%</span>
+            <InfoTooltip
+              title="Savings Rate"
+              text="Percentage of your income saved this month: ((Income - Expenses) / Income) × 100. Target 20%+ for healthy wealth accumulation."
+              position="left"
+            />
           </div>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div class="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-1">
-            <span class="text-xs text-slate-400 font-medium">Total Inflows (Income)</span>
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-slate-400 font-medium">Total Inflows (Income)</span>
+              <InfoTooltip
+                title="Total Income"
+                text="All salaries, investment dividends, and incoming transfers recorded for this calendar period."
+                position="top"
+              />
+            </div>
             <div class="text-xl font-bold font-mono text-emerald-400">
               {{ budgetStore.cashFlow.summary.total_income_formatted }}
             </div>
           </div>
 
           <div class="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-1">
-            <span class="text-xs text-slate-400 font-medium">Total Outflows (Expenses)</span>
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-slate-400 font-medium">Total Outflows (Expenses)</span>
+              <InfoTooltip
+                title="Total Expenses"
+                text="All living costs, bills, and discretionary spending deducted from your accounts."
+                position="top"
+              />
+            </div>
             <div class="text-xl font-bold font-mono text-rose-400">
               {{ budgetStore.cashFlow.summary.total_expense_formatted }}
             </div>
           </div>
 
           <div class="p-4 rounded-xl bg-slate-950/60 border border-slate-800/80 space-y-1">
-            <span class="text-xs text-slate-400 font-medium">Net Monthly Savings</span>
+            <div class="flex items-center justify-between">
+              <span class="text-xs text-slate-400 font-medium">Net Monthly Savings</span>
+              <InfoTooltip
+                title="Net Cash Flow"
+                text="Surplus money remaining after all expenses: Inflows minus Outflows."
+                position="top"
+              />
+            </div>
             <div
               class="text-xl font-bold font-mono"
               :class="Number(budgetStore.cashFlow.summary.net_cash_flow) >= 0 ? 'text-emerald-400' : 'text-rose-400'"
@@ -1574,6 +1697,47 @@ onUnmounted(() => {
               </span>
             </div>
           </div>
+        </div>
+      </section>
+
+      <!-- Dedicated Empty State for Analytics Tab -->
+      <section
+        v-else-if="authStore.isAuthenticated && activeTab === 'analytics'"
+        class="p-10 rounded-2xl bg-white dark:bg-slate-900/60 border border-dashed border-slate-200 dark:border-slate-800 text-center space-y-4 shadow-sm"
+      >
+        <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 mx-auto flex items-center justify-center text-indigo-500">
+          <BarChart3 class="w-7 h-7" />
+        </div>
+        <div class="space-y-1">
+          <h3 class="text-lg font-bold text-slate-900 dark:text-white">No Cash Flow Analytics Available Yet</h3>
+          <p class="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto">
+            Cash flow velocity, category spending distribution, and savings rate calculations will automatically appear once you record transactions or import a bank statement.
+          </p>
+        </div>
+        <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
+          <button
+            @click="openAddTransactionModal('expense')"
+            :disabled="accountStore.accounts.length === 0"
+            class="px-4 py-2 rounded-xl text-xs font-bold bg-rose-500 hover:bg-rose-400 text-white transition inline-flex items-center space-x-1.5 shadow disabled:opacity-50 cursor-pointer"
+          >
+            <Plus class="w-4 h-4" />
+            <span>Record Expense</span>
+          </button>
+          <button
+            @click="openAddTransactionModal('income')"
+            :disabled="accountStore.accounts.length === 0"
+            class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition inline-flex items-center space-x-1.5 shadow disabled:opacity-50 cursor-pointer"
+          >
+            <Plus class="w-4 h-4" />
+            <span>Record Income</span>
+          </button>
+          <button
+            @click="openImportModal"
+            class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 transition inline-flex items-center space-x-1.5 cursor-pointer"
+          >
+            <Upload class="w-4 h-4 text-emerald-500" />
+            <span>Import Statement CSV</span>
+          </button>
         </div>
       </section>
 
@@ -3429,6 +3593,14 @@ onUnmounted(() => {
         </form>
       </div>
     </div>
+
+    <!-- Interactive Onboarding & Beginner Tutorial Modal -->
+    <OnboardingModal
+      :is-open="isOnboardingTourOpen"
+      @close="isOnboardingTourOpen = false"
+      @action="handleOnboardingAction"
+      @navigate="(tab) => activeTab = tab as any"
+    />
 
     <!-- High-Trust Confirmation Dialog -->
     <ConfirmModal
