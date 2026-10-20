@@ -34,7 +34,7 @@ For hiring managers and senior engineering recruiters evaluating the platform: *
 ### Preloaded Malaysian Portfolio
 The demo account is automatically initialized with high-fidelity ASEAN and international financial data:
 - **Banking & Liquid Accounts**: Maybank Premier Savings (`RM 28,450.50`), Touch 'n Go eWallet (`RM 650.00`), GrabPay Wallet (`RM 380.00`).
-- **Liabilities & Credit Cards**: CIMB Visa Infinite Card (`-RM 2,450.00` outstanding with transaction itemization).
+- **Liability & Credit Cards**: CIMB Visa Infinite Card (`-RM 2,450.00` outstanding with transaction itemization).
 - **Cross-Border & FX Assets**: Wise SGD Savings (`SGD 4,500.00`), Interactive Brokers USD ETF Portfolio (`USD 12,500.00`).
 - **Categorized Ledger Activity**: Real-world transactions (Jaya Grocer, Petronas Primax 97, RapidKL MRT commuter fares, Village Park Nasi Lemak, TM Unifi 300Mbps, TNB Electricity).
 - **Active Budgets & Spending Limits**: Real-time consumption tracking across Groceries, Dining, Fuel, and Utilities.
