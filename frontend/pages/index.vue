@@ -100,7 +100,7 @@ const handleDemoLaunch = async () => {
 
           <!-- Value Proposition Subheadline -->
           <p class="text-base sm:text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
-            Consolidate Malaysian and global bank accounts, forecast automated recurring subscriptions, and reconcile statements with zero custodial risk.
+            Consolidate Malaysian and global bank accounts, stream live Bursa & US stock portfolios, forecast recurring subscriptions, and reconcile statements with zero custodial risk.
           </p>
 
           <!-- Action CTAs -->
@@ -139,6 +139,10 @@ const handleDemoLaunch = async () => {
             <span class="flex items-center space-x-1.5">
               <CheckCircle2 class="w-3.5 h-3.5 text-emerald-500" />
               <span>Zero Scraping Credentials</span>
+            </span>
+            <span class="flex items-center space-x-1.5">
+              <CheckCircle2 class="w-3.5 h-3.5 text-emerald-500" />
+              <span>Real-Time Bursa & US Markets</span>
             </span>
             <span class="flex items-center space-x-1.5">
               <CheckCircle2 class="w-3.5 h-3.5 text-emerald-500" />
@@ -210,8 +214,31 @@ const handleDemoLaunch = async () => {
           </p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          <!-- Feature 1: Automated Recurring Transactions -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <!-- Feature 1: Real-Time Stock Markets -->
+          <div class="p-7 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 hover:border-emerald-500/40 transition">
+            <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center justify-center">
+              <TrendingUp class="w-6 h-6" />
+            </div>
+            <div class="space-y-1.5">
+              <h3 class="text-lg font-bold text-slate-900 dark:text-white">Real-Time Stock Markets</h3>
+              <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
+                Stream live quotes, technical charts, and position P&L for Bursa Malaysia (KLSE) and US Markets (NYSE/NASDAQ).
+              </p>
+            </div>
+            <ul class="text-xs font-mono text-slate-500 dark:text-slate-400 space-y-1.5 pt-1">
+              <li class="flex items-center space-x-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                <span>Live USD ↔ MYR valuation</span>
+              </li>
+              <li class="flex items-center space-x-2">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                <span>Personal watchlist & P&L tracker</span>
+              </li>
+            </ul>
+          </div>
+
+          <!-- Feature 2: Automated Recurring Transactions -->
           <div class="p-7 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 hover:border-emerald-500/40 transition">
             <div class="w-12 h-12 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20 flex items-center justify-center">
               <Repeat class="w-6 h-6" />
@@ -219,45 +246,45 @@ const handleDemoLaunch = async () => {
             <div class="space-y-1.5">
               <h3 class="text-lg font-bold text-slate-900 dark:text-white">Recurring Obligation Engine</h3>
               <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                Automatically track and project recurring SaaS subscriptions, utility bills, and insurance premiums. Never get surprised by silent subscription renewals.
+                Automatically track and project recurring SaaS subscriptions, utility bills, and insurance premiums. Never get surprised by renewals.
               </p>
             </div>
             <ul class="text-xs font-mono text-slate-500 dark:text-slate-400 space-y-1.5 pt-1">
               <li class="flex items-center space-x-2">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                <span>Flexible cadences (Weekly, Monthly, Yearly)</span>
+                <span>Flexible cadences (Weekly, Monthly)</span>
               </li>
               <li class="flex items-center space-x-2">
                 <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                <span>Autonomous ledger posting scheduling</span>
+                <span>Autonomous scheduling</span>
               </li>
             </ul>
           </div>
 
-          <!-- Feature 2: Multi-Currency Triangulation -->
+          <!-- Feature 3: Multi-Currency Triangulation -->
           <div class="p-7 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 hover:border-sky-500/40 transition">
             <div class="w-12 h-12 rounded-xl bg-sky-500/10 text-sky-600 dark:text-sky-400 border border-sky-500/20 flex items-center justify-center">
               <Coins class="w-6 h-6" />
             </div>
             <div class="space-y-1.5">
-              <h3 class="text-lg font-bold text-slate-900 dark:text-white">Multi-Currency Arbitrary Precision</h3>
+              <h3 class="text-lg font-bold text-slate-900 dark:text-white">Multi-Currency Engine</h3>
               <p class="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                Consolidate bank accounts in MYR, USD, SGD, EUR, and GBP into your primary base currency with zero floating-point calculation drift.
+                Consolidate bank accounts in MYR, USD, SGD, EUR, and GBP into your primary base currency with zero calculation drift.
               </p>
             </div>
             <ul class="text-xs font-mono text-slate-500 dark:text-slate-400 space-y-1.5 pt-1">
               <li class="flex items-center space-x-2">
                 <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
-                <span>Real-time cross-currency triangulation</span>
+                <span>Cross-currency triangulation</span>
               </li>
               <li class="flex items-center space-x-2">
                 <span class="w-1.5 h-1.5 rounded-full bg-sky-500"></span>
-                <span>BCMath decimal precision storage</span>
+                <span>BCMath decimal precision</span>
               </li>
             </ul>
           </div>
 
-          <!-- Feature 3: Non-Custodial Bank Statement ETL -->
+          <!-- Feature 4: Non-Custodial Bank Statement ETL -->
           <div class="p-7 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 hover:border-indigo-500/40 transition">
             <div class="w-12 h-12 rounded-xl bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 border border-indigo-500/20 flex items-center justify-center">
               <FileSpreadsheet class="w-6 h-6" />
@@ -271,11 +298,11 @@ const handleDemoLaunch = async () => {
             <ul class="text-xs font-mono text-slate-500 dark:text-slate-400 space-y-1.5 pt-1">
               <li class="flex items-center space-x-2">
                 <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
-                <span>Deterministic idempotency hashing</span>
+                <span>Deterministic hashing</span>
               </li>
               <li class="flex items-center space-x-2">
                 <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
-                <span>Anti-formula CSV injection mitigation</span>
+                <span>Anti-formula CSV mitigation</span>
               </li>
             </ul>
           </div>

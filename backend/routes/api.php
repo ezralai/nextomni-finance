@@ -35,6 +35,15 @@ Route::prefix('v1')->group(function () {
         Route::post('/convert', [\App\Http\Controllers\Api\V1\Currencies\ExchangeRateController::class, 'convert'])->name('api.v1.currencies.convert');
     });
 
+    // Public Real-Time Stock Markets (Bursa Malaysia & US Markets)
+    Route::prefix('markets')->group(function () {
+        Route::get('/indices', [\App\Http\Controllers\Api\V1\Markets\StockMarketController::class, 'indices'])->name('api.v1.markets.indices');
+        Route::get('/quote/{symbol}', [\App\Http\Controllers\Api\V1\Markets\StockMarketController::class, 'quote'])->name('api.v1.markets.quote');
+        Route::get('/chart/{symbol}', [\App\Http\Controllers\Api\V1\Markets\StockMarketController::class, 'chart'])->name('api.v1.markets.chart');
+        Route::get('/movers', [\App\Http\Controllers\Api\V1\Markets\StockMarketController::class, 'movers'])->name('api.v1.markets.movers');
+        Route::get('/search', [\App\Http\Controllers\Api\V1\Markets\StockMarketController::class, 'search'])->name('api.v1.markets.search');
+    });
+
     // Public Authentication
     Route::prefix('auth')->group(function () {
         Route::post('/register', [AuthController::class, 'register'])

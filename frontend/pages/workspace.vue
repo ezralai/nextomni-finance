@@ -76,6 +76,9 @@ import InstitutionLogo from '~/components/ui/InstitutionLogo.vue'
 import InfoTooltip from '~/components/ui/InfoTooltip.vue'
 import OnboardingModal from '~/components/ui/OnboardingModal.vue'
 import GettingStartedChecklist from '~/components/ui/GettingStartedChecklist.vue'
+import MarketTickerTape from '~/components/markets/MarketTickerTape.vue'
+import MarketsTab from '~/components/markets/MarketsTab.vue'
+import { useMarketStore } from '~/stores/markets'
 
 const config = useRuntimeConfig()
 const apiBase = config.public.apiBase
@@ -88,6 +91,7 @@ const reportStore = useReportStore()
 const recurringStore = useRecurringStore()
 const goalStore = useGoalStore()
 const importStore = useImportStore()
+const marketStore = useMarketStore()
 const toast = useToast()
 
 interface HealthResponse {
@@ -108,7 +112,7 @@ const responseTimeMs = ref<number | null>(null)
 
 // Theme & Navigation System
 const { isDark, toggleTheme } = useTheme()
-const activeTab = ref<'dashboard' | 'accounts' | 'transactions' | 'budgets' | 'analytics' | 'tools'>('dashboard')
+const activeTab = ref<'dashboard' | 'accounts' | 'transactions' | 'budgets' | 'analytics' | 'markets' | 'tools'>('dashboard')
 const isMobileMenuOpen = ref(false)
 const isOnboardingTourOpen = ref(false)
 
@@ -1064,6 +1068,7 @@ onMounted(async () => {
     accountStore.fetchInstitutions(),
     currencyStore.fetchRates('MYR'),
     authStore.fetchMe(),
+    marketStore.fetchIndices(),
   ])
 
   if (authStore.isAuthenticated) {
@@ -1293,6 +1298,16 @@ onUnmounted(() => {
           </button>
 
           <button
+            @click="activeTab = 'markets'"
+            class="flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition whitespace-nowrap cursor-pointer"
+            :class="activeTab === 'markets' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60'"
+          >
+            <TrendingUp class="w-4 h-4" />
+            <span>Markets</span>
+            <span class="flex h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          </button>
+
+          <button
             @click="activeTab = 'tools'"
             class="flex items-center space-x-2 px-3.5 py-2 rounded-xl text-xs font-semibold transition whitespace-nowrap cursor-pointer"
             :class="activeTab === 'tools' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30 shadow-sm' : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800/60'"
@@ -1303,6 +1318,12 @@ onUnmounted(() => {
         </div>
       </div>
     </nav>
+
+    <!-- Real-time Market Ticker Tape -->
+    <MarketTickerTape
+      @select-index="(sym) => { activeTab = 'markets'; marketStore.selectQuote(sym) }"
+      @view-markets="activeTab = 'markets'"
+    />
 
     <!-- Mobile Slide-Over Navigation Drawer -->
     <div
@@ -1364,6 +1385,15 @@ onUnmounted(() => {
           >
             <BarChart3 class="w-4 h-4" />
             <span>Analytics</span>
+          </button>
+
+          <button
+            @click="activeTab = 'markets'; isMobileMenuOpen = false"
+            class="p-3 rounded-xl flex items-center space-x-2.5 text-xs font-semibold border transition cursor-pointer"
+            :class="activeTab === 'markets' ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30' : 'border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800'"
+          >
+            <TrendingUp class="w-4 h-4" />
+            <span>Markets</span>
           </button>
 
           <button
@@ -1737,6 +1767,72 @@ onUnmounted(() => {
           >
             <Upload class="w-4 h-4 text-emerald-500" />
             <span>Import Statement CSV</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- Real-Time Market Overview & Watchlist Widget (Dashboard Overview) -->
+      <section v-if="authStore.isAuthenticated && activeTab === 'dashboard'" class="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none space-y-4">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+          <div class="flex items-center space-x-2">
+            <Activity class="w-5 h-5 text-emerald-500" />
+            <h3 class="text-base font-bold text-slate-900 dark:text-white">
+              Live Stock Markets & Personal Watchlist
+            </h3>
+            <span class="px-2 py-0.5 rounded text-[10px] font-mono bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-bold border border-emerald-500/20">
+              🇲🇾 KLSE &bull; 🇺🇸 NYSE/NASDAQ
+            </span>
+          </div>
+
+          <button
+            @click="activeTab = 'markets'"
+            class="text-xs font-semibold text-emerald-600 dark:text-emerald-400 hover:underline flex items-center space-x-1 cursor-pointer"
+          >
+            <span>Open Market Terminal</span>
+            <ArrowUpRight class="w-3.5 h-3.5" />
+          </button>
+        </div>
+
+        <!-- Major Index Cards Snapshot -->
+        <div class="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          <div
+            v-for="idx in marketStore.indices"
+            :key="idx.symbol"
+            @click="activeTab = 'markets'; marketStore.selectQuote(idx.symbol)"
+            class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200/80 dark:border-slate-800 hover:border-emerald-500/40 transition cursor-pointer space-y-1 group"
+          >
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold text-slate-900 dark:text-white group-hover:text-emerald-500 transition">
+                {{ idx.name }}
+              </span>
+              <span
+                class="w-1.5 h-1.5 rounded-full"
+                :class="idx.market_status?.is_open ? 'bg-emerald-500 animate-pulse' : 'bg-slate-400'"
+              />
+            </div>
+            <div class="text-sm font-black font-mono text-slate-900 dark:text-white tabular-nums">
+              {{ idx.price?.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) }}
+            </div>
+            <div
+              class="text-[11px] font-mono font-bold flex items-center space-x-0.5"
+              :class="idx.is_positive ? 'text-emerald-600 dark:text-emerald-400' : 'text-rose-600 dark:text-rose-400'"
+            >
+              <span>{{ idx.is_positive ? '+' : '' }}{{ idx.change_percent?.toFixed(2) }}%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Watchlist Strip -->
+        <div v-if="marketStore.watchlist.length > 0" class="pt-2 flex flex-wrap items-center gap-2">
+          <span class="text-xs font-medium text-slate-400">Quick Watchlist:</span>
+          <button
+            v-for="sym in marketStore.watchlist"
+            :key="sym"
+            @click="activeTab = 'markets'; marketStore.selectQuote(sym)"
+            class="px-2.5 py-1 rounded-lg bg-slate-100 dark:bg-slate-800 text-xs font-mono font-bold text-slate-700 dark:text-slate-300 hover:bg-emerald-500/10 hover:text-emerald-500 transition cursor-pointer flex items-center space-x-1"
+          >
+            <span>{{ sym }}</span>
+            <ArrowUpRight class="w-3 h-3 text-slate-400" />
           </button>
         </div>
       </section>
@@ -2299,6 +2395,11 @@ onUnmounted(() => {
           @delete="handleDeleteTransaction"
           @record="openAddTransactionModal"
         />
+      </section>
+
+      <!-- Real-Time Stock Market Intelligence Hub (Malaysia Bursa & US Markets) -->
+      <section v-if="activeTab === 'markets'" class="space-y-6">
+        <MarketsTab />
       </section>
 
       <!-- Tools & Financial Utilities Hub -->

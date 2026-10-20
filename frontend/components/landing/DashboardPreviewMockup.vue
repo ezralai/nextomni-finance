@@ -129,6 +129,37 @@ const sampleTransactions = computed(() => [
         </div>
       </div>
 
+      <!-- Mockup Live Market Ticker Tape Strip -->
+      <div class="px-4 py-1.5 bg-slate-100/90 dark:bg-slate-900/60 border-b border-slate-200 dark:border-slate-800 text-[11px] font-mono flex items-center justify-between overflow-x-auto no-scrollbar gap-4">
+        <div class="flex items-center space-x-1.5 text-slate-500 font-semibold uppercase text-[10px]">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span>Markets</span>
+        </div>
+        <div class="flex items-center space-x-4 sm:space-x-6 whitespace-nowrap">
+          <div class="flex items-center space-x-1.5">
+            <span class="font-bold text-slate-800 dark:text-slate-200">FBM KLCI</span>
+            <span class="text-slate-600 dark:text-slate-400">1,642.50</span>
+            <span class="text-emerald-500 font-bold">+0.48%</span>
+          </div>
+          <div class="flex items-center space-x-1.5">
+            <span class="font-bold text-slate-800 dark:text-slate-200">S&P 500</span>
+            <span class="text-slate-600 dark:text-slate-400">5,864.67</span>
+            <span class="text-emerald-500 font-bold">+0.40%</span>
+          </div>
+          <div class="flex items-center space-x-1.5">
+            <span class="font-bold text-slate-800 dark:text-slate-200">NASDAQ</span>
+            <span class="text-slate-600 dark:text-slate-400">18,373.61</span>
+            <span class="text-emerald-500 font-bold">+0.63%</span>
+          </div>
+          <div class="flex items-center space-x-1.5">
+            <span class="font-bold text-slate-800 dark:text-slate-200">MAYBANK</span>
+            <span class="text-slate-600 dark:text-slate-400">RM 10.42</span>
+            <span class="text-emerald-500 font-bold">+0.58%</span>
+          </div>
+        </div>
+        <span class="text-[10px] text-emerald-500 font-semibold hidden md:inline">● Live Feed</span>
+      </div>
+
       <!-- Mockup Workspace Content -->
       <div class="p-4 sm:p-6 space-y-6">
         <!-- Metric Cards -->
