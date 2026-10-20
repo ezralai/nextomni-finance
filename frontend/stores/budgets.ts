@@ -70,6 +70,44 @@ export interface CashFlowAnalytics {
     amount: string
     amount_formatted: string
   }>
+  runway?: {
+    liquid_balance: string
+    liquid_balance_formatted: string
+    daily_burn_rate: string
+    monthly_burn_rate: string
+    runway_months: number
+    health_tier: 'robust' | 'healthy' | 'caution' | 'critical'
+    health_label: string
+  }
+  top_merchants?: Array<{
+    name: string
+    count: number
+    amount: string
+    amount_formatted: string
+    percentage: number
+  }>
+  spending_patterns?: {
+    weekday_expense: string
+    weekday_formatted: string
+    weekday_percent: number
+    weekday_daily_avg: number
+    weekend_expense: string
+    weekend_formatted: string
+    weekend_percent: number
+    weekend_daily_avg: number
+  }
+  anomalies?: Array<{
+    id: string
+    description: string
+    amount: string
+    amount_formatted: string
+    category: string
+    date: string
+    z_score: number
+    multiplier: number
+    severity: 'high' | 'medium'
+    reason: string
+  }>
 }
 
 export const useBudgetStore = defineStore('budgets', () => {

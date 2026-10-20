@@ -78,6 +78,7 @@ import OnboardingModal from '~/components/ui/OnboardingModal.vue'
 import GettingStartedChecklist from '~/components/ui/GettingStartedChecklist.vue'
 import MarketTickerTape from '~/components/markets/MarketTickerTape.vue'
 import MarketsTab from '~/components/markets/MarketsTab.vue'
+import AnalyticsTab from '~/components/analytics/AnalyticsTab.vue'
 import { useMarketStore } from '~/stores/markets'
 
 const config = useRuntimeConfig()
@@ -1637,8 +1638,8 @@ onUnmounted(() => {
         </div>
       </section>
 
-      <!-- Cash Flow & Monthly Analytics -->
-      <section v-if="authStore.isAuthenticated && (activeTab === 'dashboard' || activeTab === 'analytics') && budgetStore.cashFlow" class="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none space-y-6">
+      <!-- Cash Flow & Monthly Analytics (Dashboard Overview) -->
+      <section v-if="authStore.isAuthenticated && activeTab === 'dashboard' && budgetStore.cashFlow" class="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none space-y-6">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div>
             <h3 class="text-base font-bold text-white flex items-center space-x-2">
@@ -1730,45 +1731,14 @@ onUnmounted(() => {
         </div>
       </section>
 
-      <!-- Dedicated Empty State for Analytics Tab -->
-      <section
-        v-else-if="authStore.isAuthenticated && activeTab === 'analytics'"
-        class="p-10 rounded-2xl bg-white dark:bg-slate-900/60 border border-dashed border-slate-200 dark:border-slate-800 text-center space-y-4 shadow-sm"
-      >
-        <div class="w-14 h-14 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 mx-auto flex items-center justify-center text-indigo-500">
-          <BarChart3 class="w-7 h-7" />
-        </div>
-        <div class="space-y-1">
-          <h3 class="text-lg font-bold text-slate-900 dark:text-white">No Cash Flow Analytics Available Yet</h3>
-          <p class="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto">
-            Cash flow velocity, category spending distribution, and savings rate calculations will automatically appear once you record transactions or import a bank statement.
-          </p>
-        </div>
-        <div class="flex flex-wrap items-center justify-center gap-3 pt-2">
-          <button
-            @click="openAddTransactionModal('expense')"
-            :disabled="accountStore.accounts.length === 0"
-            class="px-4 py-2 rounded-xl text-xs font-bold bg-rose-500 hover:bg-rose-400 text-white transition inline-flex items-center space-x-1.5 shadow disabled:opacity-50 cursor-pointer"
-          >
-            <Plus class="w-4 h-4" />
-            <span>Record Expense</span>
-          </button>
-          <button
-            @click="openAddTransactionModal('income')"
-            :disabled="accountStore.accounts.length === 0"
-            class="px-4 py-2 rounded-xl text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition inline-flex items-center space-x-1.5 shadow disabled:opacity-50 cursor-pointer"
-          >
-            <Plus class="w-4 h-4" />
-            <span>Record Income</span>
-          </button>
-          <button
-            @click="openImportModal"
-            class="px-4 py-2 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-300 dark:border-slate-700 transition inline-flex items-center space-x-1.5 cursor-pointer"
-          >
-            <Upload class="w-4 h-4 text-emerald-500" />
-            <span>Import Statement CSV</span>
-          </button>
-        </div>
+      <!-- Dedicated Financial Intelligence & Health Analytics Hub -->
+      <section v-if="authStore.isAuthenticated && activeTab === 'analytics'" class="space-y-6">
+        <AnalyticsTab
+          :currency-symbol="currencySymbol"
+          @record-expense="openAddTransactionModal('expense')"
+          @record-income="openAddTransactionModal('income')"
+          @open-import="openImportModal"
+        />
       </section>
 
       <!-- Real-Time Market Overview & Watchlist Widget (Dashboard Overview) -->
