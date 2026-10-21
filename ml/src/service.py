@@ -33,6 +33,141 @@ from src.models.anomaly_detection import (
 )
 from src.models.forecasting import ExpenseRegressionForecaster
 from src.analytics.recurring import detect_recurring_expenses
+from src.features.engineering import build_monthly_spending_series
+from src.models.evaluation import prepare_modeling_dataset
+from src.models.category_forecasting import forecast_category_expenses
+
+
+def generate_spending_forecast(
+    cleaned: pd.DataFrame,
+    forecast_horizon_months: int = 3,
+    recurring_floor: float = 0.0,
+) -> tuple[List[Dict[str, Any]], Dict[str, Any]]:
+    """
+    Generate out-of-sample monthly expense projections across 3 tiered strategies:
+    - Tier 1: Autoregressive Ridge Regression (>= 5 monthly periods)
+    - Tier 2: Weighted Trend Baseline (2 to 4 monthly periods)
+    - Tier 3: Daily Run-Rate Projection (< 2 monthly periods / cold-start)
+    Also constructs hierarchical category-level breakdowns and budget overrun alerts.
+    """
+    expenses = cleaned[cleaned["type"] == "expense"]
+    if expenses.empty:
+        base_date = pd.Timestamp.now()
+        return [
+            {
+                "month": (base_date + pd.DateOffset(months=i)).strftime("%Y-%m"),
+                "predicted_expense": 0.0,
+                "confidence_level": 1.0,
+                "method": "zero_expense_baseline",
+            }
+            for i in range(1, forecast_horizon_months + 1)
+        ], {}
+
+    monthly = build_monthly_spending_series(cleaned)
+    num_months = len(monthly)
+    last_date = (
+        pd.to_datetime(str(monthly.iloc[-1]["period"]))
+        if not monthly.empty
+        else pd.to_datetime(expenses["transaction_date"].max())
+    )
+    forecast_list: List[Dict[str, Any]] = []
+
+    # ---------------------------------------------------------
+    # Tier 1: Autoregressive Ridge Regression (>= 5 monthly periods)
+    # ---------------------------------------------------------
+    if num_months >= 5:
+        try:
+            modeling_df = prepare_modeling_dataset(monthly)
+            if len(modeling_df) >= 2:
+                forecaster = ExpenseRegressionForecaster(model_type="ridge", alpha=1.0)
+                forecaster.fit(modeling_df, modeling_df["actual_expense"])
+
+                history = list(monthly["actual_expense"].to_numpy(dtype=float))
+                for step in range(1, forecast_horizon_months + 1):
+                    target_dt = last_date + pd.DateOffset(months=step)
+                    row = pd.DataFrame([{
+                        "lag_1": history[-1],
+                        "lag_2": history[-2],
+                        "lag_3": history[-3],
+                        "rolling_3m_mean": float(np.mean(history[-3:])),
+                        "days_in_month": float(target_dt.days_in_month),
+                    }])
+                    pred = float(forecaster.predict(row)[0])
+                    pred = max(pred, recurring_floor, 0.0)
+                    history.append(pred)
+                    forecast_list.append({
+                        "month": target_dt.strftime("%Y-%m"),
+                        "predicted_expense": round(pred, 2),
+                        "confidence_level": 0.85,
+                        "method": "ridge_autoregression",
+                    })
+        except Exception:
+            forecast_list = []
+
+    # ---------------------------------------------------------
+    # Tier 2: Weighted Trend Baseline (2 to 4 monthly periods)
+    # ---------------------------------------------------------
+    if not forecast_list and num_months >= 2:
+        try:
+            history = list(monthly["actual_expense"].to_numpy(dtype=float))
+            weights = np.linspace(0.5, 1.0, len(history))
+            weighted_base = float(np.average(history, weights=weights))
+            slope = (history[-1] - history[0]) / max(len(history) - 1, 1)
+
+            for step in range(1, forecast_horizon_months + 1):
+                target_dt = last_date + pd.DateOffset(months=step)
+                # Dampen slope by 0.8^step to avoid runaway extrapolation
+                pred = weighted_base + slope * (0.8 ** step)
+                pred = max(pred, recurring_floor, 0.0)
+                forecast_list.append({
+                    "month": target_dt.strftime("%Y-%m"),
+                    "predicted_expense": round(pred, 2),
+                    "confidence_level": 0.70,
+                    "method": "weighted_trend_baseline",
+                })
+        except Exception:
+            forecast_list = []
+
+    # ---------------------------------------------------------
+    # Tier 3: Daily Run-Rate Projection (< 2 months / cold-start)
+    # ---------------------------------------------------------
+    if not forecast_list:
+        try:
+            min_date = pd.to_datetime(expenses["transaction_date"].min())
+            max_date = pd.to_datetime(expenses["transaction_date"].max())
+            days_span = max(1, (max_date - min_date).days + 1)
+            daily_rate = float(expenses["amount"].sum()) / days_span
+
+            for step in range(1, forecast_horizon_months + 1):
+                target_dt = last_date + pd.DateOffset(months=step)
+                monthly_estimate = daily_rate * target_dt.days_in_month
+                pred = max(monthly_estimate, recurring_floor, 0.0)
+                forecast_list.append({
+                    "month": target_dt.strftime("%Y-%m"),
+                    "predicted_expense": round(pred, 2),
+                    "confidence_level": 0.55,
+                    "method": "daily_run_rate_projection",
+                })
+        except Exception:
+            forecast_list = []
+
+    # ---------------------------------------------------------
+    # Hierarchical Category Projections & Overrun Analytics
+    # ---------------------------------------------------------
+    category_summary: Dict[str, Any] = {}
+    try:
+        table_df, kpis = forecast_category_expenses(cleaned)
+        if not table_df.empty:
+            category_summary = {
+                "forecast_period": kpis.get("forecast_period"),
+                "total_projected_expense": float(kpis.get("total_projected_expense", 0.0)),
+                "categories_at_risk_count": int(kpis.get("categories_at_risk_count", 0)),
+                "categories": table_df.to_dict(orient="records"),
+            }
+    except Exception:
+        category_summary = {}
+
+    return forecast_list, category_summary
 
 
 def run_ml_pipeline(
@@ -146,35 +281,16 @@ def run_ml_pipeline(
     except Exception as e:
         pass
 
-    # 4. Spending Forecasting
-    forecast_list: List[Dict[str, Any]] = []
-    try:
-        expense_series = cleaned[cleaned["type"] == "expense"].set_index("transaction_date")["amount"]
-        monthly_series = expense_series.resample("ME").sum()
-
-        if len(monthly_series) >= 3:
-            forecaster = ExpenseRegressionForecaster(model_type="ridge")
-            forecaster.fit(monthly_series)
-            projected = forecaster.forecast(steps=forecast_horizon_months)
-
-            last_date = monthly_series.index[-1]
-            for step_idx, val in enumerate(projected, start=1):
-                next_month = (last_date + pd.DateOffset(months=step_idx)).strftime("%Y-%m")
-                forecast_list.append({
-                    "month": next_month,
-                    "predicted_expense": max(0.0, round(float(val), 2)),
-                    "confidence_level": 0.85,
-                })
-    except Exception as e:
-        pass
-
-    # 5. Recurring Bill Detection
+    # 4. Recurring Bill Detection (computed before forecasting to establish baseline obligations floor)
     recurring_list: List[Dict[str, Any]] = []
+    recurring_floor_total: float = 0.0
     try:
         recurring_df = detect_recurring_expenses(cleaned)
         if not recurring_df.empty:
             for _, row in recurring_df.iterrows():
                 avg_amt = float(row.get("average_amount", 0.0))
+                monthly_eq = float(row.get("monthly_equivalent", avg_amt))
+                recurring_floor_total += monthly_eq
                 recurring_list.append({
                     "merchant": str(row.get("merchant", "")),
                     "category": str(row.get("category", "general")),
@@ -182,13 +298,25 @@ def run_ml_pipeline(
                     "cost_type": str(row.get("cost_type", "Fixed Amount")),
                     "average_amount": avg_amt,
                     "estimated_amount": avg_amt,  # backward compatibility alias
-                    "monthly_equivalent": float(row.get("monthly_equivalent", avg_amt)),
+                    "monthly_equivalent": monthly_eq,
                     "annual_projected": float(row.get("annual_projected", avg_amt * 12.0)),
                     "recurrence_count": int(row.get("recurrence_count", 0)),
                     "confidence": 0.9 if str(row.get("cost_type")) == "Fixed Amount" else 0.75,
                     "last_billed_date": str(row.get("last_billed_date", "")),
                     "next_expected_date": str(row.get("next_expected_date", "")),
                 })
+    except Exception as e:
+        pass
+
+    # 5. Multi-Tier Spending Forecasting & Category Breakdown
+    forecast_list: List[Dict[str, Any]] = []
+    category_forecast: Dict[str, Any] = {}
+    try:
+        forecast_list, category_forecast = generate_spending_forecast(
+            cleaned=cleaned,
+            forecast_horizon_months=forecast_horizon_months,
+            recurring_floor=recurring_floor_total,
+        )
     except Exception as e:
         pass
 
@@ -206,6 +334,7 @@ def run_ml_pipeline(
         },
         "anomalies": anomalies_list,
         "forecast": forecast_list,
+        "category_forecast": category_forecast,
         "recurring": recurring_list,
     }
 

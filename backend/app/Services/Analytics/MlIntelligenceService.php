@@ -146,10 +146,29 @@ class MlIntelligenceService
             'anomalies' => [],
             'forecast' => [
                 [
-                    'month' => now()->addMonth()->format('Y-m'),
-                    'predicted_expense' => round($avgExpense * 1.05, 2),
+                    'month' => now()->addMonth(1)->format('Y-m'),
+                    'predicted_expense' => round($avgExpense * 1.02, 2),
                     'confidence_level' => 0.75,
+                    'method' => 'fallback_moving_average',
                 ],
+                [
+                    'month' => now()->addMonths(2)->format('Y-m'),
+                    'predicted_expense' => round($avgExpense * 1.04, 2),
+                    'confidence_level' => 0.70,
+                    'method' => 'fallback_moving_average',
+                ],
+                [
+                    'month' => now()->addMonths(3)->format('Y-m'),
+                    'predicted_expense' => round($avgExpense * 1.06, 2),
+                    'confidence_level' => 0.65,
+                    'method' => 'fallback_moving_average',
+                ],
+            ],
+            'category_forecast' => [
+                'forecast_period' => now()->addMonth(1)->format('Y-m'),
+                'total_projected_expense' => round($totalExpense, 2),
+                'categories_at_risk_count' => 0,
+                'categories' => [],
             ],
             'recurring' => $recurringFallback,
         ];

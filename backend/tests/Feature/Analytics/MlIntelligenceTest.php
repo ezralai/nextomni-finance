@@ -112,6 +112,16 @@ class MlIntelligenceTest extends TestCase
             ]);
 
         $this->assertGreaterThanOrEqual(15, $response->json('data.records_analyzed'));
+
+        $forecast = $response->json('data.forecast');
+        $this->assertIsArray($forecast);
+        $this->assertNotEmpty($forecast);
+        $firstStep = $forecast[0];
+        $this->assertArrayHasKey('month', $firstStep);
+        $this->assertArrayHasKey('predicted_expense', $firstStep);
+        $this->assertArrayHasKey('confidence_level', $firstStep);
+        $this->assertGreaterThan(0, (float) $firstStep['predicted_expense']);
+        $this->assertGreaterThan(0, (float) $firstStep['confidence_level']);
     }
 
     /**
