@@ -88,6 +88,8 @@ import AddAccountModal from '~/components/workspace/modals/AddAccountModal.vue'
 import TransactionModal from '~/components/workspace/modals/TransactionModal.vue'
 import TransferModal from '~/components/workspace/modals/TransferModal.vue'
 import RecurringModal from '~/components/workspace/modals/RecurringModal.vue'
+import GoalModal from '~/components/workspace/modals/GoalModal.vue'
+import ContributeModal from '~/components/workspace/modals/ContributeModal.vue'
 import { useMarketStore } from '~/stores/markets'
 
 const config = useRuntimeConfig()
@@ -210,6 +212,7 @@ const handleGlobalKeydown = (e: KeyboardEvent) => {
     else if (showAddAccountModal.value) showAddAccountModal.value = false
     else if (showBudgetModal.value) showBudgetModal.value = false
     else if (showGoalModal.value) showGoalModal.value = false
+    else if (showContributeModal.value) showContributeModal.value = false
     else if (showRecurringModal.value) showRecurringModal.value = false
     else if (showImportModal.value) showImportModal.value = false
     else if (showConverterModal.value) showConverterModal.value = false
@@ -262,17 +265,7 @@ const recurringError = ref<string | null>(null)
 const showGoalModal = ref(false)
 const showContributeModal = ref(false)
 const selectedGoalForContribution = ref<any>(null)
-const contributionAmount = ref('')
 const goalError = ref<string | null>(null)
-const newGoalForm = ref({
-  name: '',
-  description: '',
-  target_amount: '',
-  current_amount: '',
-  target_date: '',
-  account_id: '',
-  color: '#10b981',
-})
 
 // Bank Statement Import Modal State
 const showImportModal = ref(false)
@@ -566,29 +559,21 @@ const handleToggleRecurringActive = async (recurring: any) => {
 
 // Financial Goals Handlers
 const openAddGoalModal = () => {
-  if (accountStore.accounts.length > 0 && !newGoalForm.value.account_id) {
-    newGoalForm.value.account_id = accountStore.accounts[0]?.id || ''
-  }
-  newGoalForm.value.name = ''
-  newGoalForm.value.description = ''
-  newGoalForm.value.target_amount = ''
-  newGoalForm.value.current_amount = ''
-  newGoalForm.value.target_date = ''
   goalError.value = null
   showGoalModal.value = true
 }
 
-const handleCreateGoal = async () => {
+const handleCreateGoal = async (formData: any) => {
   goalError.value = null
   try {
     await goalStore.createGoal({
-      name: newGoalForm.value.name,
-      description: newGoalForm.value.description || undefined,
-      target_amount: newGoalForm.value.target_amount,
-      current_amount: newGoalForm.value.current_amount || undefined,
-      target_date: newGoalForm.value.target_date || undefined,
-      account_id: newGoalForm.value.account_id || undefined,
-      color: newGoalForm.value.color,
+      name: formData.name,
+      description: formData.description || undefined,
+      target_amount: formData.target_amount,
+      current_amount: formData.current_amount || undefined,
+      target_date: formData.target_date || undefined,
+      account_id: formData.account_id || undefined,
+      color: formData.color,
     })
     showGoalModal.value = false
     await refreshDashboard()
@@ -617,16 +602,15 @@ const handleDeleteGoal = (id: string, name: string) => {
 
 const openContributeModal = (goalItem: any) => {
   selectedGoalForContribution.value = goalItem
-  contributionAmount.value = ''
   goalError.value = null
   showContributeModal.value = true
 }
 
-const handleContribute = async () => {
+const handleContribute = async (amount: string) => {
   if (!selectedGoalForContribution.value) return
   goalError.value = null
   try {
-    await goalStore.contribute(selectedGoalForContribution.value.goal.id, contributionAmount.value)
+    await goalStore.contribute(selectedGoalForContribution.value.goal.id, amount)
     showContributeModal.value = false
     await refreshDashboard()
   } catch (err: any) {
@@ -2578,207 +2562,24 @@ onUnmounted(() => {
     />
 
     <!-- Create Financial Goal Modal -->
-    <div
-      v-if="showGoalModal"
-      class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4"
-    >
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl relative space-y-6">
-        <button
-          @click="showGoalModal = false"
-          class="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
-        >
-          <X class="w-5 h-5" />
-        </button>
-
-        <div class="space-y-1">
-          <h3 class="text-lg font-bold text-white flex items-center space-x-2">
-            <Trophy class="w-5 h-5 text-amber-400" />
-            <span>Create Financial Savings Goal</span>
-          </h3>
-          <p class="text-xs text-slate-400">Track target accumulation with automated monthly savings pace calculations</p>
-        </div>
-
-        <div v-if="goalError" class="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-300 flex items-start space-x-2">
-          <AlertCircle class="w-4 h-4 flex-shrink-0 mt-0.5 text-red-400" />
-          <span>{{ goalError }}</span>
-        </div>
-
-        <form @submit.prevent="handleCreateGoal" class="space-y-4">
-          <div class="space-y-1.5">
-            <label class="text-xs font-medium text-slate-300">Goal Name</label>
-            <input
-              v-model="newGoalForm.name"
-              type="text"
-              required
-              placeholder="e.g. Emergency Fund (6 Months), House Down Payment"
-              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"
-            />
-          </div>
-
-          <div class="grid grid-cols-2 gap-3">
-            <div class="space-y-1.5">
-              <label class="text-xs font-medium text-slate-300">Target Amount</label>
-              <div class="relative">
-                <span class="absolute left-3 top-2.5 text-slate-400 font-mono text-xs">{{ currencySymbol }}</span>
-                <input
-                  v-model="newGoalForm.target_amount"
-                  type="number"
-                  step="0.01"
-                  min="0.01"
-                  required
-                  placeholder="30000.00"
-                  class="w-full pl-10 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white font-mono placeholder-slate-500 focus:outline-none focus:border-amber-500"
-                />
-              </div>
-            </div>
-
-            <div class="space-y-1.5">
-              <label class="text-xs font-medium text-slate-300">Initial Saved</label>
-              <div class="relative">
-                <span class="absolute left-3 top-2.5 text-slate-400 font-mono text-xs">{{ currencySymbol }}</span>
-                <input
-                  v-model="newGoalForm.current_amount"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  placeholder="5000.00"
-                  class="w-full pl-10 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white font-mono placeholder-slate-500 focus:outline-none focus:border-amber-500"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-2 gap-3">
-            <div class="space-y-1.5">
-              <label class="text-xs font-medium text-slate-300">Target Deadline</label>
-              <input
-                v-model="newGoalForm.target_date"
-                type="date"
-                class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-amber-500"
-              />
-            </div>
-
-            <div class="space-y-1.5">
-              <label class="text-xs font-medium text-slate-300">Accent Color</label>
-              <select
-                v-model="newGoalForm.color"
-                class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-amber-500"
-              >
-                <option value="#10b981">Emerald Green</option>
-                <option value="#0ea5e9">Sky Blue</option>
-                <option value="#f59e0b">Amber Gold</option>
-                <option value="#8b5cf6">Purple</option>
-                <option value="#ec4899">Pink</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="space-y-1.5">
-            <label class="text-xs font-medium text-slate-300">Dedicated Account (Optional)</label>
-            <select
-              v-model="newGoalForm.account_id"
-              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-amber-500"
-            >
-              <option value="">(Unlinked / Portfolio-wide)</option>
-              <option v-for="acc in accountStore.accounts" :key="acc.id" :value="acc.id">
-                {{ acc.name }} ({{ acc.currency }})
-              </option>
-            </select>
-          </div>
-
-          <div class="space-y-1.5">
-            <label class="text-xs font-medium text-slate-300">Notes / Strategy</label>
-            <textarea
-              v-model="newGoalForm.description"
-              rows="2"
-              placeholder="e.g. Save 20% of monthly salary into fixed deposit"
-              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-amber-500"
-            ></textarea>
-          </div>
-
-          <button
-            type="submit"
-            :disabled="goalStore.isSubmitting"
-            class="w-full py-2.5 rounded-xl text-sm font-bold bg-amber-500 hover:bg-amber-400 text-slate-950 transition flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer"
-          >
-            <Trophy class="w-4 h-4" />
-            <span>{{ goalStore.isSubmitting ? 'Establishing Goal...' : 'Establish Goal' }}</span>
-          </button>
-        </form>
-      </div>
-    </div>
+    <GoalModal
+      v-model="showGoalModal"
+      :accounts="accountStore.accounts"
+      :currency-symbol="currencySymbol"
+      :is-submitting="goalStore.isSubmitting"
+      :error="goalError"
+      @submit="handleCreateGoal"
+    />
 
     <!-- Contribute to Goal Modal -->
-    <div
-      v-if="showContributeModal && selectedGoalForContribution"
-      class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4"
-    >
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-sm p-6 shadow-2xl relative space-y-5">
-        <button
-          @click="showContributeModal = false"
-          class="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
-        >
-          <X class="w-5 h-5" />
-        </button>
-
-        <div class="space-y-1">
-          <h3 class="text-base font-bold text-white flex items-center space-x-2">
-            <Flag class="w-4 h-4 text-emerald-400" />
-            <span>Deposit Savings Funds</span>
-          </h3>
-          <p class="text-xs text-slate-400">
-            Contributing to <strong class="text-white">{{ selectedGoalForContribution.goal.name }}</strong>
-          </p>
-        </div>
-
-        <div class="p-3 rounded-xl bg-slate-950/80 border border-slate-800 space-y-1 text-xs">
-          <div class="flex justify-between text-slate-400">
-            <span>Current Saved:</span>
-            <span class="font-mono text-white font-bold">{{ selectedGoalForContribution.current_amount_formatted }}</span>
-          </div>
-          <div class="flex justify-between text-slate-400">
-            <span>Target Goal:</span>
-            <span class="font-mono text-slate-300">{{ selectedGoalForContribution.target_amount_formatted }}</span>
-          </div>
-          <div class="flex justify-between text-slate-400 pt-1 border-t border-slate-800">
-            <span>Remaining Target:</span>
-            <span class="font-mono text-emerald-400 font-bold">{{ selectedGoalForContribution.remaining_amount_formatted }}</span>
-          </div>
-        </div>
-
-        <div v-if="goalError" class="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-300 flex items-start space-x-2">
-          <AlertCircle class="w-4 h-4 flex-shrink-0 mt-0.5 text-red-400" />
-          <span>{{ goalError }}</span>
-        </div>
-
-        <form @submit.prevent="handleContribute" class="space-y-4">
-          <div class="space-y-1.5">
-            <label class="text-xs font-medium text-slate-300">Deposit Amount</label>
-            <div class="relative">
-              <span class="absolute left-3 top-2.5 text-slate-400 font-mono text-xs">{{ currencySymbol }}</span>
-              <input
-                v-model="contributionAmount"
-                type="number"
-                step="0.01"
-                min="0.01"
-                required
-                placeholder="500.00"
-                class="w-full pl-10 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white font-mono placeholder-slate-500 focus:outline-none focus:border-emerald-500"
-              />
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            :disabled="goalStore.isSubmitting"
-            class="w-full py-2.5 rounded-xl text-sm font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer"
-          >
-            <Check class="w-4 h-4" />
-            <span>{{ goalStore.isSubmitting ? 'Recording Deposit...' : 'Confirm Deposit' }}</span>
-          </button>
-        </form>
-      </div>
-    </div>
+    <ContributeModal
+      v-model="showContributeModal"
+      :goal="selectedGoalForContribution"
+      :currency-symbol="currencySymbol"
+      :is-submitting="goalStore.isSubmitting"
+      :error="goalError"
+      @submit="handleContribute"
+    />
 
     <!-- Bank Statement Import & Reconciliation Modal -->
     <div

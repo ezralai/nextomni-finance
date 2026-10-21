@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Repositories\Contracts\GoalRepositoryInterface;
 use App\Support\Money;
 use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
 class GoalService
@@ -206,29 +207,35 @@ class GoalService
     }
 
     /**
-     * Record a milestone contribution toward the savings goal.
+     * Record a milestone contribution toward the savings goal with atomic concurrency locking.
      */
     public function contributeToGoal(Goal $goal, string|float $amount): Goal
     {
-        $contribution = Money::of($amount, $goal->currency);
-        if ($contribution->isZero() || $contribution->isNegative()) {
-            throw ValidationException::withMessages([
-                'amount' => ['Contribution amount must be strictly greater than 0.'],
-            ]);
-        }
+        return DB::transaction(function () use ($goal, $amount) {
+            $lockedGoal = Goal::where('id', $goal->id)
+                ->lockForUpdate()
+                ->findOrFail($goal->id);
 
-        $current = Money::of($goal->current_amount, $goal->currency);
-        $newCurrent = $current->add($contribution);
+            $contribution = Money::of($amount, $lockedGoal->currency);
+            if ($contribution->isZero() || $contribution->isNegative()) {
+                throw ValidationException::withMessages([
+                    'amount' => ['Contribution amount must be strictly greater than 0.'],
+                ]);
+            }
 
-        $updateData = [
-            'current_amount' => $newCurrent->toDecimal(),
-        ];
+            $current = Money::of($lockedGoal->current_amount, $lockedGoal->currency);
+            $newCurrent = $current->add($contribution);
 
-        $target = Money::of($goal->target_amount, $goal->currency);
-        if ($newCurrent->isGreaterThanOrEqualTo($target)) {
-            $updateData['status'] = 'achieved';
-        }
+            $updateData = [
+                'current_amount' => $newCurrent->toDecimal(),
+            ];
 
-        return $this->goalRepository->update($goal, $updateData);
+            $target = Money::of($lockedGoal->target_amount, $lockedGoal->currency);
+            if ($newCurrent->isGreaterThanOrEqualTo($target)) {
+                $updateData['status'] = 'achieved';
+            }
+
+            return $this->goalRepository->update($lockedGoal, $updateData);
+        });
     }
 }
