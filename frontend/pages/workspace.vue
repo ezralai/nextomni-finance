@@ -90,6 +90,9 @@ import TransferModal from '~/components/workspace/modals/TransferModal.vue'
 import RecurringModal from '~/components/workspace/modals/RecurringModal.vue'
 import GoalModal from '~/components/workspace/modals/GoalModal.vue'
 import ContributeModal from '~/components/workspace/modals/ContributeModal.vue'
+import ImportStatementModal from '~/components/workspace/modals/ImportStatementModal.vue'
+import CurrencyConverterModal from '~/components/workspace/modals/CurrencyConverterModal.vue'
+import BudgetModal from '~/components/workspace/modals/BudgetModal.vue'
 import { useMarketStore } from '~/stores/markets'
 
 const config = useRuntimeConfig()
@@ -234,28 +237,8 @@ const defaultTransactionType = ref<'expense' | 'income'>('expense')
 const showBudgetModal = ref(false)
 const budgetError = ref<string | null>(null)
 
-const now = new Date()
-const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString().slice(0, 10)
-const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).toISOString().slice(0, 10)
-
-const newBudgetForm = ref({
-  category_id: '',
-  amount: '',
-  period: 'monthly',
-  start_date: firstDayOfMonth,
-  end_date: lastDayOfMonth,
-  notes: '',
-})
-
 // FX Converter Modal State
 const showConverterModal = ref(false)
-const converterForm = ref({
-  amount: 100,
-  from: 'USD',
-  to: 'MYR',
-})
-const conversionResult = ref<ConversionResult | null>(null)
-const converterError = ref<string | null>(null)
 
 // Recurring Transactions & Subscription Modal State
 const showRecurringModal = ref(false)
@@ -269,8 +252,6 @@ const goalError = ref<string | null>(null)
 
 // Bank Statement Import Modal State
 const showImportModal = ref(false)
-const importAccountId = ref('')
-const selectedImportFile = ref<File | null>(null)
 const importError = ref<string | null>(null)
 const importSuccessMessage = ref<string | null>(null)
 
@@ -401,55 +382,20 @@ const handleDeleteTransaction = (id: string | number, desc: string) => {
 
 // Budget Modal Handlers
 const openAddBudgetModal = () => {
-  if (transactionStore.categories.length > 0 && !newBudgetForm.value.category_id) {
-    const expenseCats = transactionStore.categories.filter(c => c.type === 'expense')
-    newBudgetForm.value.category_id = expenseCats[0]?.id || ''
-  }
-  newBudgetForm.value.amount = ''
-  newBudgetForm.value.notes = ''
   budgetError.value = null
   showBudgetModal.value = true
 }
 
-// 1-Click Starter Budget Presets for New Users
-const popularBudgetPresets = [
-  { icon: '🍔', name: 'Food & Dining', slug: 'food-dining', amount: 800 },
-  { icon: '🛒', name: 'Groceries', slug: 'groceries-supermarket', amount: 500 },
-  { icon: '🚗', name: 'Transportation', slug: 'transportation', amount: 350 },
-  { icon: '💡', name: 'Utilities & Bills', slug: 'housing-utilities', amount: 450 },
-  { icon: '🛍️', name: 'Lifestyle & Shopping', slug: 'lifestyle-shopping', amount: 300 },
-]
-
-const applyBudgetPreset = (preset: typeof popularBudgetPresets[0]) => {
-  let cat = transactionStore.categories.find(c => c.slug === preset.slug)
-  if (!cat) {
-    for (const parent of transactionStore.categories) {
-      const match = parent.children?.find(ch => ch.slug === preset.slug)
-      if (match) {
-        cat = parent
-        break
-      }
-    }
-  }
-  if (!cat) {
-    cat = transactionStore.categories.find(c => c.name.toLowerCase().includes(preset.name.toLowerCase().slice(0, 4)))
-  }
-  if (cat) {
-    newBudgetForm.value.category_id = cat.id
-  }
-  newBudgetForm.value.amount = preset.amount
-}
-
-const handleCreateBudget = async () => {
+const handleCreateBudget = async (formData: any) => {
   budgetError.value = null
   try {
     await budgetStore.createBudget({
-      category_id: newBudgetForm.value.category_id,
-      amount: newBudgetForm.value.amount,
-      period: newBudgetForm.value.period,
-      start_date: newBudgetForm.value.start_date,
-      end_date: newBudgetForm.value.end_date,
-      notes: newBudgetForm.value.notes || undefined,
+      category_id: formData.category_id,
+      amount: formData.amount,
+      period: formData.period,
+      start_date: formData.start_date,
+      end_date: formData.end_date,
+      notes: formData.notes || undefined,
     })
     showBudgetModal.value = false
     await refreshDashboard()
@@ -478,26 +424,7 @@ const handleDeleteBudget = (id: string, catName: string) => {
 
 // FX Converter Handlers
 const openConverterModal = () => {
-  converterForm.value.from = 'USD'
-  converterForm.value.to = authStore.user?.base_currency || 'MYR'
-  converterForm.value.amount = 100
-  conversionResult.value = null
-  converterError.value = null
   showConverterModal.value = true
-  runConversion()
-}
-
-const runConversion = async () => {
-  converterError.value = null
-  try {
-    conversionResult.value = await currencyStore.convert(
-      converterForm.value.amount,
-      converterForm.value.from,
-      converterForm.value.to
-    )
-  } catch (err: any) {
-    converterError.value = err.message || 'Conversion failed.'
-  }
 }
 
 // Recurring Transactions Handlers
@@ -620,28 +547,16 @@ const handleContribute = async (amount: string) => {
 
 // Statement Import Handlers
 const openImportModal = () => {
-  if (accountStore.accounts.length > 0 && !importAccountId.value) {
-    importAccountId.value = accountStore.accounts[0]?.id || ''
-  }
-  selectedImportFile.value = null
   importError.value = null
   importSuccessMessage.value = null
   showImportModal.value = true
 }
 
-const handleFileSelect = (e: Event) => {
-  const target = e.target as HTMLInputElement
-  if (target.files && target.files.length > 0) {
-    selectedImportFile.value = target.files[0] || null
-  }
-}
-
-const handleUploadStatement = async () => {
-  if (!selectedImportFile.value || !importAccountId.value) return
+const handleUploadStatement = async (payload: { accountId: string; file: File }) => {
   importError.value = null
   importSuccessMessage.value = null
   try {
-    const res = await importStore.uploadStatement(importAccountId.value, selectedImportFile.value)
+    const res = await importStore.uploadStatement(payload.accountId, payload.file)
     importSuccessMessage.value = `Statement reconciled: ${res.imported_count} new transactions posted, ${res.duplicate_count} duplicates skipped.`
     toast.success('Statement Reconciled', `${res.imported_count} new transactions posted, ${res.duplicate_count} duplicates skipped.`)
     await refreshDashboard()
@@ -2335,220 +2250,20 @@ onUnmounted(() => {
     />
 
     <!-- Set Budget Modal -->
-    <div
-      v-if="showBudgetModal"
-      class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4"
-    >
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl relative space-y-6">
-        <button
-          @click="showBudgetModal = false"
-          class="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
-        >
-          <X class="w-5 h-5" />
-        </button>
-
-        <div class="space-y-1">
-          <h3 class="text-lg font-bold text-white flex items-center space-x-2">
-            <Target class="w-5 h-5 text-indigo-400" />
-            <span>Set Category Spending Target</span>
-          </h3>
-          <p class="text-xs text-slate-400">Establish budget caps with threshold progress tracking</p>
-        </div>
-
-        <div v-if="budgetError" class="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-300 flex items-start space-x-2">
-          <AlertCircle class="w-4 h-4 flex-shrink-0 mt-0.5 text-red-400" />
-          <span>{{ budgetError }}</span>
-        </div>
-
-        <form @submit.prevent="handleCreateBudget" class="space-y-4">
-          <!-- 1-Click Budget Starter Presets for New Users -->
-          <div class="space-y-1.5 p-3 rounded-xl bg-slate-950/60 border border-slate-800">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-indigo-400 flex items-center space-x-1">
-                <Sparkles class="w-3.5 h-3.5" />
-                <span>1-Click Starter Presets</span>
-              </span>
-              <span class="text-[10px] text-slate-400">Pre-fills category & limit</span>
-            </div>
-            <div class="flex flex-wrap gap-1.5 pt-1">
-              <button
-                v-for="preset in popularBudgetPresets"
-                :key="preset.name"
-                type="button"
-                @click="applyBudgetPreset(preset)"
-                class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-indigo-500/10 text-slate-300 hover:text-indigo-400 border border-slate-800 hover:border-indigo-500/40 transition flex items-center space-x-1.5 cursor-pointer"
-              >
-                <span>{{ preset.icon }}</span>
-                <span>{{ preset.name }}</span>
-                <span class="text-[10px] font-mono text-indigo-300 font-bold">({{ currencySymbol }} {{ preset.amount }})</span>
-              </button>
-            </div>
-          </div>
-
-          <div class="space-y-1.5">
-            <label class="text-xs font-medium text-slate-300">Expense Category</label>
-            <select
-              v-model="newBudgetForm.category_id"
-              required
-              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-indigo-500"
-            >
-              <option
-                v-for="cat in transactionStore.categories.filter(c => c.type === 'expense')"
-                :key="cat.id"
-                :value="cat.id"
-              >
-                {{ cat.name }} (Parent & Subcategories)
-              </option>
-            </select>
-          </div>
-
-          <div class="space-y-1.5">
-            <label class="text-xs font-medium text-slate-300">Spending Cap Limit</label>
-            <div class="relative">
-              <span class="absolute left-3 top-2.5 text-slate-400 font-mono text-xs">{{ currencySymbol }}</span>
-              <input
-                v-model="newBudgetForm.amount"
-                type="number"
-                step="0.01"
-                min="0.01"
-                required
-                placeholder="1000.00"
-                class="w-full pl-10 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white font-mono placeholder-slate-500 focus:outline-none focus:border-indigo-500"
-              />
-            </div>
-          </div>
-
-          <div class="grid grid-cols-2 gap-3">
-            <div class="space-y-1.5">
-              <label class="text-xs font-medium text-slate-300">Start Date</label>
-              <input
-                v-model="newBudgetForm.start_date"
-                type="date"
-                required
-                class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-indigo-500"
-              />
-            </div>
-            <div class="space-y-1.5">
-              <label class="text-xs font-medium text-slate-300">End Date</label>
-              <input
-                v-model="newBudgetForm.end_date"
-                type="date"
-                required
-                class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-indigo-500"
-              />
-            </div>
-          </div>
-
-          <div class="space-y-1.5">
-            <label class="text-xs font-medium text-slate-300">Optional Notes</label>
-            <input
-              v-model="newBudgetForm.notes"
-              type="text"
-              placeholder="e.g. Monthly groceries and food cap"
-              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500"
-            />
-          </div>
-
-          <button
-            type="submit"
-            :disabled="budgetStore.isSubmitting"
-            class="w-full py-2.5 rounded-lg text-xs font-bold bg-indigo-500 hover:bg-indigo-400 text-slate-950 transition flex items-center justify-center space-x-2 disabled:opacity-50"
-          >
-            <RefreshCw v-if="budgetStore.isSubmitting" class="w-4 h-4 animate-spin" />
-            <span>{{ budgetStore.isSubmitting ? 'Establishing Limit...' : 'Confirm & Set Budget Cap' }}</span>
-          </button>
-        </form>
-      </div>
-    </div>
+    <BudgetModal
+      v-model="showBudgetModal"
+      :categories="transactionStore.categories"
+      :currency-symbol="currencySymbol"
+      :is-submitting="budgetStore.isSubmitting"
+      :error="budgetError"
+      @submit="handleCreateBudget"
+    />
 
     <!-- Real-Time Foreign Exchange (FX) Converter Modal -->
-    <div
-      v-if="showConverterModal"
-      class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4"
-    >
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl relative space-y-6">
-        <button
-          @click="showConverterModal = false"
-          class="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
-        >
-          <X class="w-5 h-5" />
-        </button>
-
-        <div class="space-y-1">
-          <h3 class="text-lg font-bold text-white flex items-center space-x-2">
-            <ArrowLeftRight class="w-5 h-5 text-sky-400" />
-            <span>Foreign Exchange (FX) Rate Engine</span>
-          </h3>
-          <p class="text-xs text-slate-400">Strict 6-decimal arbitrary precision currency conversion</p>
-        </div>
-
-        <div v-if="converterError" class="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-300 flex items-start space-x-2">
-          <AlertCircle class="w-4 h-4 flex-shrink-0 mt-0.5 text-red-400" />
-          <span>{{ converterError }}</span>
-        </div>
-
-        <form @submit.prevent="runConversion" class="space-y-4">
-          <div class="space-y-1.5">
-            <label class="text-xs font-medium text-slate-300">Amount to Convert</label>
-            <input
-              v-model.number="converterForm.amount"
-              @input="runConversion"
-              type="number"
-              step="0.01"
-              min="0.01"
-              required
-              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white font-mono focus:outline-none focus:border-sky-500"
-            />
-          </div>
-
-          <div class="grid grid-cols-2 gap-3">
-            <div class="space-y-1.5">
-              <label class="text-xs font-medium text-slate-300">From</label>
-              <select
-                v-model="converterForm.from"
-                @change="runConversion"
-                class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-sky-500"
-              >
-                <option value="USD">USD ($)</option>
-                <option value="MYR">MYR (RM)</option>
-                <option value="SGD">SGD (S$)</option>
-                <option value="EUR">EUR (€)</option>
-                <option value="GBP">GBP (£)</option>
-              </select>
-            </div>
-
-            <div class="space-y-1.5">
-              <label class="text-xs font-medium text-slate-300">To</label>
-              <select
-                v-model="converterForm.to"
-                @change="runConversion"
-                class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-sky-500"
-              >
-                <option value="MYR">MYR (RM)</option>
-                <option value="SGD">SGD (S$)</option>
-                <option value="USD">USD ($)</option>
-                <option value="EUR">EUR (€)</option>
-                <option value="GBP">GBP (£)</option>
-              </select>
-            </div>
-          </div>
-        </form>
-
-        <!-- Live Conversion Calculation Result Card -->
-        <div v-if="conversionResult" class="p-4 rounded-xl bg-slate-950/80 border border-slate-800 space-y-2">
-          <div class="text-xs text-slate-400 flex items-center justify-between">
-            <span>Exchange Rate (6 Decimals)</span>
-            <span class="font-mono text-sky-400 font-bold">1 {{ conversionResult.from_currency }} = {{ conversionResult.rate }} {{ conversionResult.to_currency }}</span>
-          </div>
-          <div class="pt-2 border-t border-slate-800/80 flex items-center justify-between">
-            <span class="text-xs text-slate-400">Converted Value</span>
-            <span class="text-xl font-extrabold font-mono text-white">
-              {{ conversionResult.converted_formatted }}
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
+    <CurrencyConverterModal
+      v-model="showConverterModal"
+      :default-to-currency="authStore.user?.base_currency || 'MYR'"
+    />
 
     <!-- Set Recurring Bill / Subscription Modal -->
     <RecurringModal
@@ -2582,95 +2297,14 @@ onUnmounted(() => {
     />
 
     <!-- Bank Statement Import & Reconciliation Modal -->
-    <div
-      v-if="showImportModal"
-      class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4"
-    >
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl relative space-y-6">
-        <button
-          @click="showImportModal = false"
-          class="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
-        >
-          <X class="w-5 h-5" />
-        </button>
-
-        <div class="space-y-1">
-          <h3 class="text-lg font-bold text-white flex items-center space-x-2">
-            <Upload class="w-5 h-5 text-emerald-400" />
-            <span>Reconcile Bank Statement (CSV)</span>
-          </h3>
-          <p class="text-xs text-slate-400">
-            Upload exported statement from Maybank, CIMB, or any financial CSV with automated deduplication
-          </p>
-        </div>
-
-        <div v-if="importError" class="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-300 flex items-start space-x-2">
-          <AlertCircle class="w-4 h-4 flex-shrink-0 mt-0.5 text-red-400" />
-          <span>{{ importError }}</span>
-        </div>
-
-        <div v-if="importSuccessMessage" class="p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/30 text-xs text-emerald-300 flex items-start space-x-2">
-          <CheckCircle2 class="w-4 h-4 flex-shrink-0 mt-0.5 text-emerald-400" />
-          <span>{{ importSuccessMessage }}</span>
-        </div>
-
-        <form @submit.prevent="handleUploadStatement" class="space-y-4">
-          <div class="space-y-1.5">
-            <label class="text-xs font-medium text-slate-300">Target Account</label>
-            <select
-              v-model="importAccountId"
-              required
-              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500"
-            >
-              <option v-for="acc in accountStore.accounts" :key="acc.id" :value="acc.id">
-                {{ acc.name }} ({{ acc.currency }}) - {{ acc.institution?.name || 'Manual' }}
-              </option>
-            </select>
-          </div>
-
-          <div class="space-y-1.5">
-            <label class="text-xs font-medium text-slate-300">Statement CSV File</label>
-            <div class="border-2 border-dashed border-slate-800 hover:border-emerald-500/50 rounded-xl p-4 text-center transition bg-slate-950/50">
-              <input
-                id="statementFileInput"
-                type="file"
-                accept=".csv,.txt"
-                required
-                @change="handleFileSelect"
-                class="hidden"
-              />
-              <label for="statementFileInput" class="cursor-pointer block space-y-2">
-                <Upload class="w-6 h-6 text-slate-400 mx-auto" />
-                <div class="text-xs text-slate-300 font-medium">
-                  {{ selectedImportFile ? selectedImportFile.name : 'Click to select CSV file' }}
-                </div>
-                <div class="text-[11px] text-slate-500">
-                  Supports Maybank, CIMB, Touch 'n Go, RHB, and standard canonical CSV formats
-                </div>
-                <!-- Supported Banks Interactive Logo Strip -->
-                <div class="flex items-center justify-center space-x-2 pt-1.5">
-                  <InstitutionLogo code="MBB" size="xs" interactive />
-                  <InstitutionLogo code="CIMB" size="xs" interactive />
-                  <InstitutionLogo code="TNG" size="xs" interactive />
-                  <InstitutionLogo code="RHB" size="xs" interactive />
-                  <InstitutionLogo code="PBB" size="xs" interactive />
-                  <InstitutionLogo code="WISE" size="xs" interactive />
-                </div>
-              </label>
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            :disabled="importStore.isUploading || !selectedImportFile"
-            class="w-full py-2.5 rounded-xl text-sm font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition flex items-center justify-center space-x-2 disabled:opacity-50 cursor-pointer"
-          >
-            <Upload class="w-4 h-4" />
-            <span>{{ importStore.isUploading ? 'Reconciling Ledger...' : 'Parse & Reconcile Statement' }}</span>
-          </button>
-        </form>
-      </div>
-    </div>
+    <ImportStatementModal
+      v-model="showImportModal"
+      :accounts="accountStore.accounts"
+      :is-uploading="importStore.isUploading"
+      :error="importError"
+      :success-message="importSuccessMessage"
+      @submit="handleUploadStatement"
+    />
 
     <!-- Financial Terms & Concepts Glossary Modal -->
     <FinancialGlossaryModal
