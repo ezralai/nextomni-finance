@@ -95,8 +95,11 @@ Route::prefix('v1')->group(function () {
         Route::apiResource('goals', \App\Http\Controllers\Api\V1\Goals\GoalController::class)->names('api.v1.goals');
         Route::post('/goals/{goal}/contribute', [\App\Http\Controllers\Api\V1\Goals\GoalController::class, 'contribute'])->name('api.v1.goals.contribute');
 
-        // Cash Flow Analytics
+        // Cash Flow Analytics & Machine Learning Intelligence
         Route::get('/analytics/cash-flow', [AnalyticsController::class, 'cashFlow'])->name('api.v1.analytics.cash_flow');
+        Route::get('/analytics/ml-intelligence', [AnalyticsController::class, 'mlIntelligence'])->name('api.v1.analytics.ml_intelligence');
+        Route::get('/analytics/malaysian-insights', [\App\Http\Controllers\Api\V1\Analytics\ConsumerInsightsController::class, 'index'])->name('api.v1.analytics.malaysian_insights');
+        Route::post('/analytics/malaysian-insights/consent', [\App\Http\Controllers\Api\V1\Analytics\ConsumerInsightsController::class, 'updateConsent'])->name('api.v1.analytics.malaysian_insights.consent');
 
         // Financial Statements & Export Engine
         Route::prefix('reports')->group(function () {

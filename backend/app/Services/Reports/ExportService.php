@@ -91,14 +91,14 @@ class ExportService
     public function exportTransactionsJson(User $user, array $filters = []): array
     {
         $query = $this->buildFilteredQuery($user, $filters);
-        $transactions = $query->get();
 
         $baseCurrency = $user->base_currency ?? 'MYR';
         $totalInflow = Money::zero($baseCurrency);
         $totalOutflow = Money::zero($baseCurrency);
 
         $items = [];
-        foreach ($transactions as $txn) {
+        // Process in lazy cursor batches of 500 to maintain bounded memory
+        foreach ($query->lazy(500) as $txn) {
             $money = Money::of($txn->amount, $txn->currency);
 
             if ($txn->type === 'income') {

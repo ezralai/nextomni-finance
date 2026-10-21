@@ -59,6 +59,8 @@ import {
   Menu,
   LayoutDashboard,
   HelpCircle,
+  BookOpen,
+  SlidersHorizontal,
 } from 'lucide-vue-next'
 import { useTheme } from '~/composables/useTheme'
 import { useToast } from '~/composables/useToast'
@@ -75,11 +77,16 @@ import ToolsTab from '~/components/tools/ToolsTab.vue'
 import InstitutionLogo from '~/components/ui/InstitutionLogo.vue'
 import InfoTooltip from '~/components/ui/InfoTooltip.vue'
 import OnboardingModal from '~/components/ui/OnboardingModal.vue'
+import FinancialGlossaryModal from '~/components/ui/FinancialGlossaryModal.vue'
 import GettingStartedChecklist from '~/components/ui/GettingStartedChecklist.vue'
 import QuickStartHub from '~/components/ui/QuickStartHub.vue'
 import MarketTickerTape from '~/components/markets/MarketTickerTape.vue'
 import MarketsTab from '~/components/markets/MarketsTab.vue'
 import AnalyticsTab from '~/components/analytics/AnalyticsTab.vue'
+import AuthModal from '~/components/auth/AuthModal.vue'
+import AddAccountModal from '~/components/workspace/modals/AddAccountModal.vue'
+import TransactionModal from '~/components/workspace/modals/TransactionModal.vue'
+import TransferModal from '~/components/workspace/modals/TransferModal.vue'
 import { useMarketStore } from '~/stores/markets'
 
 const config = useRuntimeConfig()
@@ -117,9 +124,27 @@ const { isDark, toggleTheme } = useTheme()
 const activeTab = ref<'dashboard' | 'accounts' | 'transactions' | 'budgets' | 'analytics' | 'markets' | 'tools'>('dashboard')
 const isMobileMenuOpen = ref(false)
 const isOnboardingTourOpen = ref(false)
+const isGlossaryOpen = ref(false)
+const isBeginnerDashboardMode = ref(false)
+const isChecklistForceVisible = ref(false)
 
 const openOnboardingTour = () => {
   isOnboardingTourOpen.value = true
+}
+
+const openGlossary = () => {
+  isGlossaryOpen.value = true
+}
+
+const toggleBeginnerDashboardMode = () => {
+  isBeginnerDashboardMode.value = !isBeginnerDashboardMode.value
+  if (typeof window !== 'undefined') {
+    try {
+      localStorage.setItem('nextomni_beginner_mode', String(isBeginnerDashboardMode.value))
+    } catch {
+      // Ignore localStorage restrictions
+    }
+  }
 }
 
 const handleOnboardingAction = (actionName: string) => {
@@ -192,67 +217,14 @@ const handleGlobalKeydown = (e: KeyboardEvent) => {
   }
 }
 
-// Auth Modal State
+// Modal Visibility & Trigger State
 const showAuthModal = ref(false)
 const authMode = ref<'login' | 'register'>('login')
 const isAuthSubmitting = ref(false)
-const authError = ref<string | null>(null)
-
-// Forms
-const loginForm = ref({ email: '', password: '' })
-const registerForm = ref({ name: '', email: '', password: '', base_currency: 'MYR' })
-
-// Add Account Modal State
 const showAddAccountModal = ref(false)
-const isAccountSubmitting = ref(false)
-const accountError = ref<string | null>(null)
-
-const newAccountForm = ref({
-  institution_id: '',
-  name: '',
-  account_type: 'bank',
-  currency: 'MYR',
-  opening_balance: 0,
-  account_number_masked: '',
-  notes: '',
-})
-
-// Transaction & Transfer Modals State
 const showTransactionModal = ref(false)
 const showTransferModal = ref(false)
-const transactionError = ref<string | null>(null)
-const transferError = ref<string | null>(null)
-
-const newTransactionForm = ref({
-  account_id: '' as string | number,
-  category_id: '' as string | number,
-  type: 'expense' as 'expense' | 'income',
-  amount: null as number | null,
-  description: '',
-  notes: '',
-  transacted_at: new Date().toISOString().slice(0, 16),
-})
-
-const selectedTransactionAccount = computed(() => {
-  return accountStore.accounts.find((a) => String(a.id) === String(newTransactionForm.value.account_id))
-})
-
-const newTransferForm = ref({
-  source_account_id: '' as string | number,
-  destination_account_id: '' as string | number,
-  amount: null as number | null,
-  fee: '0.00',
-  notes: '',
-  transacted_at: new Date().toISOString().slice(0, 16),
-})
-
-const selectedTransferSourceAccount = computed(() => {
-  return accountStore.accounts.find((a) => String(a.id) === String(newTransferForm.value.source_account_id))
-})
-
-const selectedTransferDestAccount = computed(() => {
-  return accountStore.accounts.find((a) => String(a.id) === String(newTransferForm.value.destination_account_id))
-})
+const defaultTransactionType = ref<'expense' | 'income'>('expense')
 
 // Budget Modal State
 const showBudgetModal = ref(false)
@@ -359,54 +331,20 @@ const checkHealth = async () => {
   }
 }
 
-const handleLogin = async () => {
-  isAuthSubmitting.value = true
-  authError.value = null
-  try {
-    await authStore.login(loginForm.value)
-    showAuthModal.value = false
-    loginForm.value = { email: '', password: '' }
-    await refreshDashboard()
-  } catch (err: any) {
-    authError.value = err?.data?.message || err?.message || 'Login failed. Please check credentials.'
-  } finally {
-    isAuthSubmitting.value = false
-  }
-}
-
-const handleRegister = async () => {
-  isAuthSubmitting.value = true
-  authError.value = null
-  try {
-    await authStore.register(registerForm.value)
-    showAuthModal.value = false
-    registerForm.value = { name: '', email: '', password: '', base_currency: 'MYR' }
-    await refreshDashboard()
-  } catch (err: any) {
-    authError.value = err?.data?.message || err?.message || 'Registration failed.'
-  } finally {
-    isAuthSubmitting.value = false
-  }
-}
-
-const handleGoogleLogin = () => {
-  isAuthSubmitting.value = true
-  authError.value = null
-  if (typeof window !== 'undefined') {
-    window.location.href = `${apiBase}/auth/google/redirect`
-  }
+const handleAuthSuccess = async () => {
+  showAuthModal.value = false
+  await refreshDashboard()
 }
 
 const handleDemoLogin = async () => {
   isAuthSubmitting.value = true
-  authError.value = null
-
   try {
     await authStore.demoLogin()
     showAuthModal.value = false
+    toast.success('Demo Session Active', 'Signed in as Demo User')
     await refreshDashboard()
   } catch (err: any) {
-    authError.value = err?.data?.message || 'Failed to authenticate demo session.'
+    toast.error('Demo Error', err?.message || 'Failed to authenticate demo session.')
   } finally {
     isAuthSubmitting.value = false
   }
@@ -426,61 +364,11 @@ const handleCurrencyChange = async (newCurrency: string) => {
 }
 
 const openAddAccountModal = () => {
-  if (accountStore.institutions.length > 0 && !newAccountForm.value.institution_id) {
-    newAccountForm.value.institution_id = accountStore.institutions[0].id
-  }
-  newAccountForm.value.currency = authStore.user?.base_currency || 'MYR'
-  accountError.value = null
   showAddAccountModal.value = true
 }
 
-// 1-Click Popular Account Presets for Quick Setup
-const popularAccountPresets = [
-  { flag: '🇲🇾', label: 'Maybank Savings', code: 'MBB', type: 'bank', currency: 'MYR' },
-  { flag: '🇲🇾', label: 'Touch \'n Go eWallet', code: 'TNG', type: 'e_wallet', currency: 'MYR' },
-  { flag: '🇲🇾', label: 'CIMB Current', code: 'CIMB', type: 'bank', currency: 'MYR' },
-  { flag: '💵', label: 'Cash Wallet', code: 'MBB', type: 'cash', currency: 'MYR' },
-  { flag: '🇺🇸', label: 'US Brokerage', code: 'MBB', type: 'investment', currency: 'USD' },
-  { flag: '🇸🇬', label: 'Singapore DBS', code: 'CIMB', type: 'bank', currency: 'SGD' },
-]
-
-const applyAccountPreset = (preset: typeof popularAccountPresets[0]) => {
-  const matchInst = accountStore.institutions.find(i => i.code === preset.code) || accountStore.institutions[0]
-  if (matchInst) {
-    newAccountForm.value.institution_id = matchInst.id
-  }
-  newAccountForm.value.name = preset.label
-  newAccountForm.value.account_type = preset.type
-  newAccountForm.value.currency = preset.currency
-}
-
-const handleCreateAccount = async () => {
-  isAccountSubmitting.value = true
-  accountError.value = null
-  const accountName = newAccountForm.value.name
-  try {
-    await accountStore.createAccount({
-      ...newAccountForm.value,
-      opening_balance: Number(newAccountForm.value.opening_balance),
-    })
-    showAddAccountModal.value = false
-    newAccountForm.value = {
-      institution_id: accountStore.institutions[0]?.id || '',
-      name: '',
-      account_type: 'bank',
-      currency: authStore.user?.base_currency || 'MYR',
-      opening_balance: 0,
-      account_number_masked: '',
-      notes: '',
-    }
-    await refreshDashboard()
-    toast.success('Account Created', `Successfully opened account "${accountName}"`)
-  } catch (err: any) {
-    accountError.value = err?.data?.message || err?.message || 'Failed to create account.'
-    toast.error('Account Creation Failed', accountError.value)
-  } finally {
-    isAccountSubmitting.value = false
-  }
+const handleAccountCreated = async () => {
+  await refreshDashboard()
 }
 
 const handleDeleteAccount = (id: string, name: string) => {
@@ -501,89 +389,14 @@ const handleDeleteAccount = (id: string, name: string) => {
   })
 }
 
-// Transaction Modal Handlers
+// Transaction & Transfer Modal Triggers
 const openAddTransactionModal = (defaultType: 'expense' | 'income' = 'expense') => {
-  if (accountStore.accounts.length === 0) {
-    toast.info('Account Required', 'Please set up an account first (e.g. Maybank, Touch \'n Go, or Cash) before recording transactions.')
-    openAddAccountModal()
-    return
-  }
-  newTransactionForm.value.type = defaultType
-  if (!newTransactionForm.value.account_id) {
-    newTransactionForm.value.account_id = accountStore.accounts[0].id
-  }
-  newTransactionForm.value.amount = null
-  newTransactionForm.value.description = ''
-  newTransactionForm.value.notes = ''
-  newTransactionForm.value.transacted_at = new Date().toISOString().slice(0, 16)
-  transactionError.value = null
+  defaultTransactionType.value = defaultType
   showTransactionModal.value = true
 }
 
-const handleCreateTransaction = async () => {
-  transactionError.value = null
-  if (!newTransactionForm.value.amount || Number(newTransactionForm.value.amount) <= 0) {
-    transactionError.value = 'Please enter a valid amount greater than zero.'
-    return
-  }
-  const desc = newTransactionForm.value.description
-  try {
-    await transactionStore.createTransaction({
-      account_id: newTransactionForm.value.account_id,
-      category_id: newTransactionForm.value.category_id || undefined,
-      type: newTransactionForm.value.type,
-      amount: newTransactionForm.value.amount,
-      description: newTransactionForm.value.description,
-      notes: newTransactionForm.value.notes || undefined,
-      transacted_at: newTransactionForm.value.transacted_at || undefined,
-    })
-    showTransactionModal.value = false
-    await refreshDashboard()
-    toast.success('Transaction Recorded', `Successfully saved "${desc}"`)
-  } catch (err: any) {
-    transactionError.value = err.message || 'Failed to record transaction.'
-    toast.error('Record Failed', transactionError.value)
-  }
-}
-
 const openAddTransferModal = () => {
-  if (accountStore.accounts.length < 2) {
-    toast.info('Multiple Accounts Required', 'Transfers require at least two accounts (e.g. Bank to E-Wallet). Please add another account first.')
-    openAddAccountModal()
-    return
-  }
-  newTransferForm.value.source_account_id = accountStore.accounts[0].id
-  newTransferForm.value.destination_account_id = accountStore.accounts[1].id
-  newTransferForm.value.amount = null
-  newTransferForm.value.fee = '0.00'
-  newTransferForm.value.notes = ''
-  newTransferForm.value.transacted_at = new Date().toISOString().slice(0, 16)
-  transferError.value = null
   showTransferModal.value = true
-}
-
-const handleCreateTransfer = async () => {
-  transferError.value = null
-  if (!newTransferForm.value.amount || Number(newTransferForm.value.amount) <= 0) {
-    transferError.value = 'Please enter a valid transfer amount.'
-    return
-  }
-  try {
-    await transactionStore.createTransfer({
-      source_account_id: newTransferForm.value.source_account_id,
-      destination_account_id: newTransferForm.value.destination_account_id,
-      amount: newTransferForm.value.amount,
-      fee: newTransferForm.value.fee || 0,
-      notes: newTransferForm.value.notes || undefined,
-      transacted_at: newTransferForm.value.transacted_at || undefined,
-    })
-    showTransferModal.value = false
-    await refreshDashboard()
-    toast.success('Transfer Completed', 'Account balances updated successfully.')
-  } catch (err: any) {
-    transferError.value = err.message || 'Failed to execute transfer.'
-    toast.error('Transfer Failed', transferError.value)
-  }
 }
 
 const handleDeleteTransaction = (id: string | number, desc: string) => {
@@ -1136,6 +949,10 @@ onMounted(async () => {
         if (!completed) {
           isOnboardingTourOpen.value = true
         }
+        const savedBeginnerMode = localStorage.getItem('nextomni_beginner_mode')
+        if (savedBeginnerMode === 'true') {
+          isBeginnerDashboardMode.value = true
+        }
       } catch {
         // Ignore localStorage restrictions
       }
@@ -1229,6 +1046,17 @@ onUnmounted(() => {
           >
             <HelpCircle class="w-3.5 h-3.5 text-emerald-500" />
             <span class="hidden sm:inline">Help & Tour</span>
+          </button>
+
+          <!-- Financial Terms Glossary Trigger -->
+          <button
+            @click="openGlossary"
+            class="px-2.5 py-1.5 rounded-lg bg-blue-500/10 hover:bg-blue-500/20 text-blue-600 dark:text-blue-400 border border-blue-500/30 transition flex items-center space-x-1.5 text-xs font-semibold cursor-pointer"
+            title="Search Financial Terms & Concepts in Plain English"
+            aria-label="Financial Terms Glossary"
+          >
+            <BookOpen class="w-3.5 h-3.5 text-blue-500" />
+            <span class="hidden sm:inline">Glossary</span>
           </button>
 
           <!-- User Authentication Section -->
@@ -1469,6 +1297,14 @@ onUnmounted(() => {
             <HelpCircle class="w-4 h-4 text-emerald-500" />
             <span>Beginner Guide & Tour</span>
           </button>
+
+          <button
+            @click="openGlossary(); isMobileMenuOpen = false"
+            class="p-3 rounded-xl flex items-center space-x-2.5 text-xs font-semibold bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/30 transition cursor-pointer"
+          >
+            <BookOpen class="w-4 h-4 text-blue-500" />
+            <span>Financial Terms Glossary</span>
+          </button>
         </div>
       </div>
     </div>
@@ -1482,13 +1318,15 @@ onUnmounted(() => {
         :transaction-count="transactionStore.transactions.length"
         :budget-count="budgetStore.budgets.length"
         :recurring-count="recurringStore.recurringTransactions.length"
+        :force-visible="isChecklistForceVisible"
         @navigate="(tab) => activeTab = tab as any"
         @action="handleOnboardingAction"
         @open-tour="openOnboardingTour"
+        @dismiss="isChecklistForceVisible = false"
       />
 
       <!-- Authenticated User Banner with Quick Financial Actions -->
-      <section v-if="authStore.isAuthenticated" class="p-6 rounded-2xl bg-gradient-to-r from-emerald-950/40 via-slate-900 to-slate-900/60 border border-emerald-500/30 shadow-xl backdrop-blur-md flex flex-col md:flex-row md:items-center justify-between gap-4">
+      <section v-if="authStore.isAuthenticated" class="p-6 rounded-2xl bg-gradient-to-r from-emerald-950/40 via-slate-900 to-slate-900/60 border border-emerald-500/30 shadow-xl backdrop-blur-md flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div class="flex items-center space-x-4">
           <div class="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 flex items-center justify-center text-emerald-400">
             <UserCheck class="w-6 h-6" />
@@ -1507,8 +1345,20 @@ onUnmounted(() => {
           </div>
         </div>
 
-        <!-- Quick Financial Action Buttons -->
+        <!-- Quick Financial Actions & View Mode Toggle -->
         <div class="flex flex-wrap items-center gap-2">
+          <!-- View Mode Toggle (Beginner / Simple vs Detailed) -->
+          <button
+            type="button"
+            @click="toggleBeginnerDashboardMode"
+            class="px-3 py-2 rounded-xl text-xs font-semibold border transition flex items-center space-x-1.5 cursor-pointer"
+            :class="isBeginnerDashboardMode ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40' : 'bg-slate-800/80 text-slate-300 border-slate-700 hover:text-white'"
+            :title="isBeginnerDashboardMode ? 'Switch to Detailed Ledger Mode' : 'Switch to Simplified Beginner Mode'"
+          >
+            <SlidersHorizontal class="w-3.5 h-3.5" />
+            <span>{{ isBeginnerDashboardMode ? 'Beginner View' : 'Detailed View' }}</span>
+          </button>
+
           <button
             @click="openAddTransactionModal('expense')"
             class="px-3 py-2 rounded-xl text-xs font-bold bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/40 transition flex items-center space-x-1.5 cursor-pointer"
@@ -1603,6 +1453,39 @@ onUnmounted(() => {
         @import-csv="openImportModal"
         @open-tour="openOnboardingTour"
       />
+
+      <!-- Beginner Mode Notification & Quick Concept Guidance -->
+      <div
+        v-if="authStore.isAuthenticated && activeTab === 'dashboard' && isBeginnerDashboardMode"
+        class="p-4 rounded-2xl bg-gradient-to-r from-emerald-500/10 via-teal-500/5 to-slate-900/40 border border-emerald-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs"
+      >
+        <div class="flex items-center space-x-3">
+          <div class="w-8 h-8 rounded-xl bg-emerald-500/20 text-emerald-400 flex items-center justify-center shrink-0 border border-emerald-500/30">
+            <Sparkles class="w-4 h-4" />
+          </div>
+          <div>
+            <span class="font-bold text-emerald-400">Beginner Focus Mode Active:</span>
+            <span class="text-slate-300 ml-1">Prioritizing your Net Worth, Cash Inflow vs. Outflow, and monthly budget limits. Technical market tickers are collapsed.</span>
+          </div>
+        </div>
+        <div class="flex items-center space-x-2 shrink-0">
+          <button
+            type="button"
+            @click="openGlossary"
+            class="px-2.5 py-1.5 rounded-lg bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 font-semibold transition flex items-center space-x-1 border border-emerald-500/30 cursor-pointer"
+          >
+            <BookOpen class="w-3.5 h-3.5" />
+            <span>Financial Terms</span>
+          </button>
+          <button
+            type="button"
+            @click="toggleBeginnerDashboardMode"
+            class="px-2.5 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 font-semibold transition cursor-pointer"
+          >
+            Switch to Detailed View
+          </button>
+        </div>
+      </div>
 
       <!-- Live Financial Metrics Grid (Bound to Real API Aggregations with Multi-Currency Consolidation) -->
       <section v-if="!authStore.isAuthenticated || activeTab === 'dashboard' || activeTab === 'accounts'" class="space-y-4">
@@ -1806,8 +1689,8 @@ onUnmounted(() => {
         />
       </section>
 
-      <!-- Real-Time Market Overview & Watchlist Widget (Dashboard Overview) -->
-      <section v-if="authStore.isAuthenticated && activeTab === 'dashboard'" class="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none space-y-4">
+      <!-- Real-Time Market Overview & Watchlist Widget (Dashboard Overview - Collapsed in Beginner Mode) -->
+      <section v-if="authStore.isAuthenticated && activeTab === 'dashboard' && !isBeginnerDashboardMode" class="p-6 rounded-2xl bg-white dark:bg-slate-900/60 border border-slate-200 dark:border-slate-800 shadow-sm dark:shadow-none space-y-4">
         <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
           <div class="flex items-center space-x-2">
             <Activity class="w-5 h-5 text-emerald-500" />
@@ -2455,649 +2338,37 @@ onUnmounted(() => {
       <p>NextOmni Finance &copy; 2026 &mdash; Built for Portfolio Demonstration & Technical Rigor. Non-custodial personal finance platform.</p>
     </footer>
 
-    <!-- Interactive Authentication Modal -->
-    <div
-      v-if="showAuthModal"
-      class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4"
-    >
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl relative space-y-6">
-        <button
-          @click="showAuthModal = false"
-          class="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
-        >
-          <X class="w-5 h-5" />
-        </button>
+    <!-- Modular Authentication Modal -->
+    <AuthModal
+      :is-open="showAuthModal"
+      :initial-mode="authMode"
+      @close="showAuthModal = false"
+      @success="handleAuthSuccess"
+    />
 
-        <div class="space-y-3">
-          <div class="flex items-center space-x-2">
-            <div class="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center font-bold">
-              <Lock class="w-4 h-4" />
-            </div>
-            <h3 class="text-lg font-bold text-white">
-              {{ authMode === 'login' ? 'Sign In to NextOmni Finance' : 'Create an Account' }}
-            </h3>
-          </div>
+    <!-- Modular Add Account Modal -->
+    <AddAccountModal
+      :is-open="showAddAccountModal"
+      @close="showAddAccountModal = false"
+      @created="handleAccountCreated"
+    />
 
-          <div class="flex rounded-lg bg-slate-800/60 p-1 border border-slate-700/50">
-            <button
-              @click="authMode = 'login'; authError = null"
-              class="flex-1 py-1.5 text-xs font-medium rounded-md transition text-center"
-              :class="authMode === 'login' ? 'bg-emerald-500 text-slate-950 font-bold shadow' : 'text-slate-400 hover:text-white'"
-            >
-              Sign In
-            </button>
-            <button
-              @click="authMode = 'register'; authError = null"
-              class="flex-1 py-1.5 text-xs font-medium rounded-md transition text-center"
-              :class="authMode === 'register' ? 'bg-emerald-500 text-slate-950 font-bold shadow' : 'text-slate-400 hover:text-white'"
-            >
-              Create Account
-            </button>
-          </div>
-        </div>
+    <!-- Modular Transaction Modal -->
+    <TransactionModal
+      :is-open="showTransactionModal"
+      :default-type="defaultTransactionType"
+      @close="showTransactionModal = false"
+      @created="refreshDashboard"
+      @open-add-account="openAddAccountModal"
+    />
 
-        <div v-if="authError" class="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-300 flex items-start space-x-2">
-          <AlertCircle class="w-4 h-4 flex-shrink-0 mt-0.5 text-red-400" />
-          <span>{{ authError }}</span>
-        </div>
-
-        <!-- Google OAuth 2.0 Action -->
-        <button
-          @click="handleGoogleLogin"
-          :disabled="isAuthSubmitting"
-          type="button"
-          class="w-full py-2.5 px-4 rounded-xl text-xs font-semibold bg-slate-800 hover:bg-slate-700/80 active:bg-slate-700 border border-slate-700/80 text-white transition-all duration-200 flex items-center justify-center space-x-3 shadow-sm hover:shadow hover:border-slate-600 disabled:opacity-50 group cursor-pointer"
-        >
-          <svg class="w-4 h-4 flex-shrink-0 transition-transform group-hover:scale-105" viewBox="0 0 24 24">
-            <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
-            <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
-            <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z" />
-            <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z" />
-          </svg>
-          <span>{{ authMode === 'login' ? 'Continue with Google' : 'Sign up with Google' }}</span>
-        </button>
-
-        <!-- Visual Or Divider -->
-        <div class="relative flex items-center justify-center">
-          <div class="border-t border-slate-800 w-full"></div>
-          <span class="bg-slate-900 px-3 text-[11px] font-medium text-slate-500 uppercase tracking-wider absolute">or continue with email</span>
-        </div>
-
-        <!-- Sign In Form -->
-        <form v-if="authMode === 'login'" @submit.prevent="handleLogin" class="space-y-4">
-          <div class="space-y-1.5">
-            <label class="text-xs font-medium text-slate-300">Email Address</label>
-            <div class="relative">
-              <Mail class="w-4 h-4 text-slate-500 absolute left-3 top-3 pointer-events-none" />
-              <input
-                v-model="loginForm.email"
-                type="email"
-                required
-                placeholder="name@example.com"
-                class="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
-              />
-            </div>
-          </div>
-
-          <div class="space-y-1.5">
-            <label class="text-xs font-medium text-slate-300">Password</label>
-            <div class="relative">
-              <Lock class="w-4 h-4 text-slate-500 absolute left-3 top-3 pointer-events-none" />
-              <input
-                v-model="loginForm.password"
-                type="password"
-                required
-                placeholder="••••••••"
-                class="w-full pl-9 pr-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
-              />
-            </div>
-          </div>
-
-          <button
-            type="submit"
-            :disabled="isAuthSubmitting"
-            class="w-full py-2.5 rounded-lg text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition flex items-center justify-center space-x-2 disabled:opacity-50"
-          >
-            <RefreshCw v-if="isAuthSubmitting" class="w-4 h-4 animate-spin" />
-            <span>{{ isAuthSubmitting ? 'Authenticating...' : 'Sign In' }}</span>
-          </button>
-        </form>
-
-        <!-- Register Form -->
-        <form v-else @submit.prevent="handleRegister" class="space-y-4">
-          <div class="space-y-1.5">
-            <label class="text-xs font-medium text-slate-300">Full Name</label>
-            <input
-              v-model="registerForm.name"
-              type="text"
-              required
-              placeholder="e.g. Ezra Lai"
-              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
-            />
-          </div>
-
-          <div class="space-y-1.5">
-            <label class="text-xs font-medium text-slate-300">Email Address</label>
-            <input
-              v-model="registerForm.email"
-              type="email"
-              required
-              placeholder="name@example.com"
-              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
-            />
-          </div>
-
-          <div class="space-y-1.5">
-            <label class="text-xs font-medium text-slate-300">Password (Min. 8 characters)</label>
-            <input
-              v-model="registerForm.password"
-              type="password"
-              required
-              minlength="8"
-              placeholder="••••••••"
-              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
-            />
-          </div>
-
-          <div class="space-y-1.5">
-            <label class="text-xs font-medium text-slate-300">Base Currency</label>
-            <select
-              v-model="registerForm.base_currency"
-              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500"
-            >
-              <option value="MYR">MYR — Malaysian Ringgit</option>
-              <option value="SGD">SGD — Singapore Dollar</option>
-              <option value="USD">USD — US Dollar</option>
-              <option value="EUR">EUR — Euro</option>
-              <option value="GBP">GBP — British Pound</option>
-            </select>
-          </div>
-
-          <button
-            type="submit"
-            :disabled="isAuthSubmitting"
-            class="w-full py-2.5 rounded-lg text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition flex items-center justify-center space-x-2 disabled:opacity-50"
-          >
-            <RefreshCw v-if="isAuthSubmitting" class="w-4 h-4 animate-spin" />
-            <span>{{ isAuthSubmitting ? 'Creating Account...' : 'Create Account' }}</span>
-          </button>
-        </form>
-
-        <div class="pt-4 border-t border-slate-800 text-center">
-          <p class="text-xs text-slate-400 mb-2">Need a quick preview for review?</p>
-          <button
-            @click="handleDemoLogin"
-            :disabled="isAuthSubmitting"
-            type="button"
-            class="w-full py-2 rounded-lg text-xs font-semibold bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 transition"
-          >
-            Launch Instant Demo Account
-          </button>
-        </div>
-      </div>
-    </div>
-
-    <!-- Add Account Modal -->
-    <div
-      v-if="showAddAccountModal"
-      class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4"
-    >
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl relative space-y-6">
-        <button
-          @click="showAddAccountModal = false"
-          class="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
-        >
-          <X class="w-5 h-5" />
-        </button>
-
-        <div class="space-y-1">
-          <h3 class="text-lg font-bold text-white flex items-center space-x-2">
-            <Plus class="w-5 h-5 text-emerald-400" />
-            <span>Add Financial Account</span>
-          </h3>
-          <p class="text-xs text-slate-400">Configure a bank, e-wallet, or foreign currency ledger</p>
-        </div>
-
-        <div v-if="accountError" class="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-300 flex items-start space-x-2">
-          <AlertCircle class="w-4 h-4 flex-shrink-0 mt-0.5 text-red-400" />
-          <span>{{ accountError }}</span>
-        </div>
-
-        <form @submit.prevent="handleCreateAccount" class="space-y-4">
-          <!-- 1-Click Starter Presets for New Users -->
-          <div class="space-y-1.5 p-3 rounded-xl bg-slate-950/60 border border-slate-800">
-            <div class="flex items-center justify-between">
-              <span class="text-xs font-bold text-emerald-400 flex items-center space-x-1">
-                <Sparkles class="w-3.5 h-3.5" />
-                <span>1-Click Popular Presets</span>
-              </span>
-              <span class="text-[10px] text-slate-400">Pre-fills institution & currency</span>
-            </div>
-            <div class="flex flex-wrap gap-1.5 pt-1">
-              <button
-                v-for="preset in popularAccountPresets"
-                :key="preset.label"
-                type="button"
-                @click="applyAccountPreset(preset)"
-                class="px-2.5 py-1 rounded-lg text-xs font-semibold bg-slate-900 hover:bg-emerald-500/10 text-slate-300 hover:text-emerald-400 border border-slate-800 hover:border-emerald-500/40 transition flex items-center space-x-1.5 cursor-pointer"
-              >
-                <span>{{ preset.flag }}</span>
-                <span>{{ preset.label }}</span>
-                <span class="text-[10px] font-mono text-slate-400">({{ preset.currency }})</span>
-              </button>
-            </div>
-          </div>
-
-          <div class="space-y-2">
-            <div class="flex items-center justify-between">
-              <label class="text-xs font-medium text-slate-300">Financial Institution</label>
-              <span class="text-[10px] text-slate-400 font-mono">1-Click Quick Select</span>
-            </div>
-
-            <!-- Quick Institution Logo Badges -->
-            <div class="grid grid-cols-4 sm:grid-cols-5 gap-2">
-              <button
-                v-for="inst in accountStore.institutions.slice(0, 8)"
-                :key="'quick-' + inst.id"
-                type="button"
-                @click="
-                  newAccountForm.institution_id = inst.id;
-                  if (!newAccountForm.name || newAccountForm.name.startsWith('My ')) {
-                    newAccountForm.name = inst.name;
-                  }
-                  if (inst.code === 'TNG' || inst.code === 'GRAB') {
-                    newAccountForm.account_type = 'e_wallet';
-                  }
-                "
-                class="p-2 rounded-xl border flex flex-col items-center justify-center space-y-1 transition-all duration-200 cursor-pointer text-center group"
-                :class="
-                  newAccountForm.institution_id === inst.id
-                    ? 'border-emerald-500 bg-emerald-500/10 shadow-sm shadow-emerald-500/20'
-                    : 'border-slate-800 bg-slate-950/60 hover:border-slate-700 hover:bg-slate-800/40'
-                "
-                :title="inst.name"
-              >
-                <InstitutionLogo :code="inst.code" :logo-url="inst.logo_url" size="sm" interactive />
-                <span class="text-[10px] font-semibold text-slate-300 truncate max-w-full leading-none group-hover:text-white">
-                  {{ inst.code }}
-                </span>
-              </button>
-            </div>
-
-            <select
-              v-model="newAccountForm.institution_id"
-              required
-              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500 mt-2"
-            >
-              <option
-                v-for="inst in accountStore.institutions"
-                :key="inst.id"
-                :value="inst.id"
-              >
-                {{ inst.name }} ({{ inst.code }}) &bull; {{ inst.country }}
-              </option>
-            </select>
-          </div>
-
-          <div class="space-y-1.5">
-            <label class="text-xs font-medium text-slate-300">Account Label</label>
-            <input
-              v-model="newAccountForm.name"
-              type="text"
-              required
-              placeholder="e.g. Maybank Premier Savings / US Brokerage"
-              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
-            />
-          </div>
-
-          <div class="space-y-1.5">
-            <label class="text-xs font-medium text-slate-300">Account Category</label>
-            <select
-              v-model="newAccountForm.account_type"
-              required
-              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500"
-            >
-              <option value="bank">Bank Account (Checking / Savings)</option>
-              <option value="e_wallet">E-Wallet (TNG, GrabPay, ShopeePay)</option>
-              <option value="credit_card">Credit Card (Liability)</option>
-              <option value="cash">Physical Cash / Wallet</option>
-              <option value="investment">Investment / Brokerage</option>
-              <option value="loan">Loan / Mortgage</option>
-            </select>
-          </div>
-
-          <div class="grid grid-cols-2 gap-3">
-            <div class="space-y-1.5">
-              <label class="text-xs font-medium text-slate-300">Opening Balance</label>
-              <input
-                v-model.number="newAccountForm.opening_balance"
-                type="number"
-                step="0.01"
-                required
-                class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white font-mono focus:outline-none focus:border-emerald-500"
-              />
-            </div>
-            <div class="space-y-1.5">
-              <label class="text-xs font-medium text-slate-300">Account Currency</label>
-              <select
-                v-model="newAccountForm.currency"
-                class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500"
-              >
-                <option value="MYR">MYR</option>
-                <option value="SGD">SGD</option>
-                <option value="USD">USD</option>
-                <option value="EUR">EUR</option>
-                <option value="GBP">GBP</option>
-              </select>
-            </div>
-          </div>
-
-          <div class="space-y-1.5">
-            <label class="text-xs font-medium text-slate-300">Masked Account Number (Optional)</label>
-            <input
-              v-model="newAccountForm.account_number_masked"
-              type="text"
-              placeholder="e.g. ••••4198"
-              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
-            />
-          </div>
-
-          <button
-            type="submit"
-            :disabled="isAccountSubmitting"
-            class="w-full py-2.5 rounded-lg text-xs font-bold bg-emerald-500 hover:bg-emerald-400 text-slate-950 transition flex items-center justify-center space-x-2 disabled:opacity-50"
-          >
-            <RefreshCw v-if="isAccountSubmitting" class="w-4 h-4 animate-spin" />
-            <span>{{ isAccountSubmitting ? 'Provisioning Account...' : 'Confirm & Create Account' }}</span>
-          </button>
-        </form>
-      </div>
-    </div>
-
-    <!-- Record Transaction Modal (Expense / Income) -->
-    <div
-      v-if="showTransactionModal"
-      class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4"
-    >
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl relative space-y-6">
-        <button
-          @click="showTransactionModal = false"
-          class="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
-        >
-          <X class="w-5 h-5" />
-        </button>
-
-        <div class="space-y-1">
-          <h3 class="text-lg font-bold text-white flex items-center space-x-2">
-            <ReceiptText class="w-5 h-5 text-emerald-400" />
-            <span>Record {{ newTransactionForm.type === 'income' ? 'Income' : 'Expense' }}</span>
-          </h3>
-          <p class="text-xs text-slate-400">Atomic ledger posting with balance adjustment</p>
-        </div>
-
-        <div class="flex rounded-lg bg-slate-800/60 p-1 border border-slate-700/50">
-          <button
-            @click="newTransactionForm.type = 'expense'"
-            type="button"
-            class="flex-1 py-1.5 text-xs font-semibold rounded-md transition text-center"
-            :class="newTransactionForm.type === 'expense' ? 'bg-rose-500/30 text-rose-300 border border-rose-500/40 shadow' : 'text-slate-400 hover:text-white'"
-          >
-            Expense (Outflow)
-          </button>
-          <button
-            @click="newTransactionForm.type = 'income'"
-            type="button"
-            class="flex-1 py-1.5 text-xs font-semibold rounded-md transition text-center"
-            :class="newTransactionForm.type === 'income' ? 'bg-emerald-500/30 text-emerald-300 border border-emerald-500/40 shadow' : 'text-slate-400 hover:text-white'"
-          >
-            Income (Inflow)
-          </button>
-        </div>
-
-        <div v-if="transactionError" class="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-300 flex items-start space-x-2">
-          <AlertCircle class="w-4 h-4 flex-shrink-0 mt-0.5 text-red-400" />
-          <span>{{ transactionError }}</span>
-        </div>
-
-        <form @submit.prevent="handleCreateTransaction" class="space-y-4">
-          <div class="space-y-1.5">
-            <label class="text-xs font-medium text-slate-300">Financial Account</label>
-            <select
-              v-model="newTransactionForm.account_id"
-              required
-              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500"
-            >
-              <option v-for="acc in accountStore.accounts" :key="acc.id" :value="acc.id">
-                {{ acc.name }} ({{ acc.currency }}) &mdash; Balance: {{ acc.current_balance_formatted }}
-              </option>
-            </select>
-          </div>
-
-          <div class="space-y-1.5">
-            <label class="text-xs font-medium text-slate-300">Category</label>
-            <select
-              v-model="newTransactionForm.category_id"
-              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500"
-            >
-              <option value="">(No Category / Uncategorized)</option>
-              <optgroup
-                v-for="cat in transactionStore.categories.filter(c => c.type === newTransactionForm.type || c.type === 'expense')"
-                :key="cat.id"
-                :label="cat.name"
-              >
-                <option :value="cat.id">{{ cat.name }} (General)</option>
-                <option
-                  v-for="sub in cat.children || []"
-                  :key="sub.id"
-                  :value="sub.id"
-                >
-                  &nbsp;&nbsp;↳ {{ sub.name }}
-                </option>
-              </optgroup>
-            </select>
-          </div>
-
-          <AmountInput
-            v-model="newTransactionForm.amount"
-            :currency="selectedTransactionAccount?.currency || 'USD'"
-            :max-balance="newTransactionForm.type === 'expense' ? (selectedTransactionAccount?.current_balance ?? null) : null"
-            :show-quick-percent="newTransactionForm.type === 'expense'"
-            required
-          />
-
-          <div class="space-y-1.5">
-            <label class="text-xs font-medium text-slate-300">Description</label>
-            <input
-              v-model="newTransactionForm.description"
-              type="text"
-              required
-              placeholder="e.g. Weekly Groceries / Monthly Salary"
-              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
-            />
-          </div>
-
-          <div class="space-y-1.5">
-            <label class="text-xs font-medium text-slate-300">Date & Time</label>
-            <input
-              v-model="newTransactionForm.transacted_at"
-              type="datetime-local"
-              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-emerald-500"
-            />
-          </div>
-
-          <div class="space-y-1.5">
-            <label class="text-xs font-medium text-slate-300">Optional Notes</label>
-            <input
-              v-model="newTransactionForm.notes"
-              type="text"
-              placeholder="e.g. Receipt #9821"
-              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-emerald-500"
-            />
-          </div>
-
-          <button
-            type="submit"
-            :disabled="transactionStore.isSubmitting"
-            class="w-full py-2.5 rounded-lg text-xs font-bold transition flex items-center justify-center space-x-2 disabled:opacity-50"
-            :class="newTransactionForm.type === 'income' ? 'bg-emerald-500 hover:bg-emerald-400 text-slate-950' : 'bg-rose-500 hover:bg-rose-400 text-white'"
-          >
-            <RefreshCw v-if="transactionStore.isSubmitting" class="w-4 h-4 animate-spin" />
-            <span>{{ transactionStore.isSubmitting ? 'Posting to Ledger...' : `Confirm & Record ${newTransactionForm.type === 'income' ? 'Income' : 'Expense'}` }}</span>
-          </button>
-        </form>
-      </div>
-    </div>
-
-    <!-- Transfer Funds Modal -->
-    <div
-      v-if="showTransferModal"
-      class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4"
-    >
-      <div class="bg-slate-900 border border-slate-800 rounded-2xl w-full max-w-md p-6 shadow-2xl relative space-y-6">
-        <button
-          @click="showTransferModal = false"
-          class="absolute top-4 right-4 p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition"
-        >
-          <X class="w-5 h-5" />
-        </button>
-
-        <div class="space-y-1">
-          <h3 class="text-lg font-bold text-white flex items-center space-x-2">
-            <ArrowRightLeft class="w-5 h-5 text-sky-400" />
-            <span>Transfer Funds (Double-Entry)</span>
-          </h3>
-          <p class="text-xs text-slate-400">Atomic balance shift between two accounts</p>
-        </div>
-
-        <div v-if="transferError" class="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-xs text-red-300 flex items-start space-x-2">
-          <AlertCircle class="w-4 h-4 flex-shrink-0 mt-0.5 text-red-400" />
-          <span>{{ transferError }}</span>
-        </div>
-
-        <form @submit.prevent="handleCreateTransfer" class="space-y-4">
-          <!-- Visual Transfer Route Preview with Authentic Logos -->
-          <div v-if="selectedTransferSourceAccount" class="p-3 rounded-xl bg-slate-950/80 border border-slate-800/80 flex items-center justify-between gap-3 shadow-inner">
-            <div class="flex items-center space-x-2.5 min-w-0 flex-1">
-              <InstitutionLogo
-                :code="selectedTransferSourceAccount?.institution?.code || selectedTransferSourceAccount?.account_type"
-                :name="selectedTransferSourceAccount?.institution?.name || selectedTransferSourceAccount?.name"
-                :logo-url="selectedTransferSourceAccount?.institution?.logo_url"
-                size="sm"
-                interactive
-              />
-              <div class="min-w-0">
-                <div class="text-[9px] text-slate-400 uppercase tracking-wider font-semibold font-mono">Source Account</div>
-                <div class="text-xs font-bold text-white truncate">{{ selectedTransferSourceAccount?.name }}</div>
-              </div>
-            </div>
-
-            <div class="w-7 h-7 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center flex-shrink-0 border border-sky-500/30">
-              <ArrowRightLeft class="w-3.5 h-3.5" />
-            </div>
-
-            <div class="flex items-center space-x-2.5 min-w-0 flex-1 justify-end text-right">
-              <div class="min-w-0">
-                <div class="text-[9px] text-slate-400 uppercase tracking-wider font-semibold font-mono">Destination</div>
-                <div class="text-xs font-bold text-white truncate">{{ selectedTransferDestAccount?.name || 'Select...' }}</div>
-              </div>
-              <InstitutionLogo
-                v-if="selectedTransferDestAccount"
-                :code="selectedTransferDestAccount?.institution?.code || selectedTransferDestAccount?.account_type"
-                :name="selectedTransferDestAccount?.institution?.name || selectedTransferDestAccount?.name"
-                :logo-url="selectedTransferDestAccount?.institution?.logo_url"
-                size="sm"
-                interactive
-              />
-              <div v-else class="w-7 h-7 rounded-md border border-dashed border-slate-700 flex items-center justify-center text-slate-600 text-xs">?</div>
-            </div>
-          </div>
-
-          <div class="space-y-1.5">
-            <label class="text-xs font-medium text-slate-300">From Account (Source)</label>
-            <select
-              v-model="newTransferForm.source_account_id"
-              required
-              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-sky-500"
-            >
-              <option v-for="acc in accountStore.accounts" :key="acc.id" :value="acc.id">
-                {{ acc.name }} ({{ acc.currency }}) &mdash; Balance: {{ acc.current_balance_formatted }}
-              </option>
-            </select>
-          </div>
-
-          <div class="space-y-1.5">
-            <label class="text-xs font-medium text-slate-300">To Account (Destination)</label>
-            <select
-              v-model="newTransferForm.destination_account_id"
-              required
-              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-sky-500"
-            >
-              <option
-                v-for="acc in accountStore.accounts.filter(a => a.id !== newTransferForm.source_account_id)"
-                :key="acc.id"
-                :value="acc.id"
-              >
-                {{ acc.name }} ({{ acc.currency }}) &mdash; Balance: {{ acc.current_balance_formatted }}
-              </option>
-            </select>
-          </div>
-
-          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <AmountInput
-              v-model="newTransferForm.amount"
-              label="Transfer Amount"
-              :currency="selectedTransferSourceAccount?.currency || 'USD'"
-              :max-balance="selectedTransferSourceAccount?.current_balance ?? null"
-              :show-quick-percent="true"
-              required
-            />
-
-            <div class="space-y-1.5">
-              <label class="text-xs font-semibold text-slate-700 dark:text-slate-300">Transfer Fee</label>
-              <div class="relative">
-                <span class="absolute left-3.5 top-1/2 -translate-y-1/2 font-mono font-bold text-sm text-slate-400 dark:text-slate-500">{{ currencySymbol }}</span>
-                <input
-                  v-model="newTransferForm.fee"
-                  type="number"
-                  step="0.01"
-                  min="0.00"
-                  placeholder="0.00"
-                  class="w-full pl-9 pr-3 py-2.5 rounded-xl border border-slate-300 dark:border-slate-700/80 bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-mono text-sm placeholder-slate-400 dark:placeholder-slate-600 focus:outline-none focus:ring-2 focus:border-sky-500 focus:ring-sky-500/20"
-                />
-              </div>
-            </div>
-          </div>
-
-          <div class="space-y-1.5">
-            <label class="text-xs font-medium text-slate-300">Date & Time</label>
-            <input
-              v-model="newTransferForm.transacted_at"
-              type="datetime-local"
-              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white focus:outline-none focus:border-sky-500"
-            />
-          </div>
-
-          <div class="space-y-1.5">
-            <label class="text-xs font-medium text-slate-300">Notes / Purpose</label>
-            <input
-              v-model="newTransferForm.notes"
-              type="text"
-              placeholder="e.g. E-wallet top-up / Credit card settlement"
-              class="w-full px-3 py-2 bg-slate-950 border border-slate-800 rounded-lg text-sm text-white placeholder-slate-500 focus:outline-none focus:border-sky-500"
-            />
-          </div>
-
-          <button
-            type="submit"
-            :disabled="transactionStore.isSubmitting"
-            class="w-full py-2.5 rounded-lg text-xs font-bold bg-sky-500 hover:bg-sky-400 text-slate-950 transition flex items-center justify-center space-x-2 disabled:opacity-50"
-          >
-            <RefreshCw v-if="transactionStore.isSubmitting" class="w-4 h-4 animate-spin" />
-            <span>{{ transactionStore.isSubmitting ? 'Executing Transfer...' : 'Confirm & Execute Transfer' }}</span>
-          </button>
-        </form>
-      </div>
-    </div>
+    <!-- Modular Transfer Modal -->
+    <TransferModal
+      :is-open="showTransferModal"
+      @close="showTransferModal = false"
+      @created="refreshDashboard"
+      @open-add-account="openAddAccountModal"
+    />
 
     <!-- Set Budget Modal -->
     <div
@@ -3778,12 +3049,19 @@ onUnmounted(() => {
       </div>
     </div>
 
+    <!-- Financial Terms & Concepts Glossary Modal -->
+    <FinancialGlossaryModal
+      :is-open="isGlossaryOpen"
+      @close="isGlossaryOpen = false"
+    />
+
     <!-- Interactive Onboarding & Beginner Tutorial Modal -->
     <OnboardingModal
       :is-open="isOnboardingTourOpen"
       @close="isOnboardingTourOpen = false"
       @action="handleOnboardingAction"
       @navigate="(tab) => activeTab = tab as any"
+      @open-glossary="openGlossary"
     />
 
     <!-- High-Trust Confirmation Dialog -->

@@ -27,6 +27,7 @@ import {
 import { useBudgetStore, type CashFlowAnalytics } from '~/stores/budgets'
 import { useAuthStore } from '~/stores/auth'
 import InfoTooltip from '~/components/ui/InfoTooltip.vue'
+import MalaysianInsightsCard from '~/components/analytics/MalaysianInsightsCard.vue'
 
 const props = defineProps<{
   currencySymbol?: string
@@ -498,5 +499,8 @@ const formatNumber = (val: number | string | undefined | null, decimals: number 
         </div>
       </div>
     </div>
+
+    <!-- Malaysian Daily Spending Behavior & Consumer Insights Hub -->
+    <MalaysianInsightsCard />
   </div>
 </template>

@@ -15,6 +15,7 @@ import {
   Smartphone,
   PieChart,
   Repeat,
+  BookOpen,
 } from 'lucide-vue-next'
 
 interface Props {
@@ -27,6 +28,7 @@ const emit = defineEmits<{
   (e: 'close'): void
   (e: 'action', actionName: string): void
   (e: 'navigate', tab: string): void
+  (e: 'open-glossary'): void
 }>()
 
 const currentStep = ref(0)
@@ -210,6 +212,10 @@ const triggerStepAction = () => {
   }
 }
 
+const handleGlossaryClick = () => {
+  emit('open-glossary')
+}
+
 const handleKeydown = (e: KeyboardEvent) => {
   if (!props.isOpen) return
   if (e.key === 'Escape') {
@@ -251,7 +257,7 @@ onUnmounted(() => {
         <div
           class="w-full max-w-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-3xl shadow-2xl overflow-hidden flex flex-col max-h-[90vh] transition-all"
         >
-          <!-- Header Bar with Step Badge & Close Button -->
+          <!-- Header Bar with Step Badge & Controls -->
           <div class="px-6 py-4 border-b border-slate-100 dark:border-slate-800/80 flex items-center justify-between bg-slate-50/50 dark:bg-slate-900/50">
             <div class="flex items-center space-x-2">
               <span
@@ -261,7 +267,15 @@ onUnmounted(() => {
                 <component :is="step.icon" class="w-3.5 h-3.5" />
                 <span>Step {{ currentStep + 1 }} of {{ steps.length }}</span>
               </span>
-              <span class="text-xs text-slate-400 font-medium hidden sm:inline">&bull; Quick Guide</span>
+              <button
+                type="button"
+                @click="handleGlossaryClick"
+                class="text-xs text-emerald-600 dark:text-emerald-400 hover:text-emerald-300 font-medium flex items-center space-x-1 px-2 py-0.5 rounded-lg hover:bg-emerald-500/10 transition-colors"
+                title="View plain-English definitions of financial concepts"
+              >
+                <BookOpen class="w-3 h-3" />
+                <span>Glossary</span>
+              </button>
             </div>
 
             <button
@@ -271,6 +285,21 @@ onUnmounted(() => {
               aria-label="Close Guide"
             >
               <X class="w-5 h-5" />
+            </button>
+          </div>
+
+          <!-- Step Progression Pill Tabs -->
+          <div class="px-6 pt-3 pb-2 bg-slate-100/50 dark:bg-slate-950/40 border-b border-slate-200/40 dark:border-slate-800/40 flex items-center justify-between gap-1 overflow-x-auto">
+            <button
+              v-for="(s, idx) in steps"
+              :key="s.id"
+              type="button"
+              class="flex-1 py-1 px-2 rounded-lg text-[11px] font-medium flex items-center justify-center space-x-1 transition-all"
+              :class="idx === currentStep ? 'bg-emerald-500/20 text-emerald-400 font-bold border border-emerald-500/30' : (idx < currentStep ? 'text-emerald-500/70 hover:text-emerald-400' : 'text-slate-400 hover:text-slate-200')"
+              @click="goToStep(idx)"
+            >
+              <Check v-if="idx < currentStep" class="w-3 h-3 text-emerald-400 shrink-0" />
+              <span class="truncate">{{ s.title.split(' ')[0] }}</span>
             </button>
           </div>
 

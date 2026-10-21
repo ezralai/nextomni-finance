@@ -1,0 +1,6 @@
+payment_channel,channel_name,avg_ticket_size_myr,annual_volume_million,market_share_pct,typical_use_case
+DUITNOW_QR,DuitNow QR Interoperable,28.40,2150.0,42.5,Daily Hawker Mamak F&B & Retail
+TNG_EWALLET,Touch 'n Go eWallet,34.20,1320.0,26.1,Transit Tolls Convenience Stores & Food
+FPX,FPX Online Banking,235.00,480.0,9.5,Bill Payments E-Commerce & Subscriptions
+DEBIT_CARD,MyDebit / Visa / Mastercard,114.20,890.0,17.6,Supermarkets Petrol & Department Stores
+CREDIT_CARD,Credit Card Retail,248.50,220.0,4.3,Dining Out Hotels Electronics & Travel

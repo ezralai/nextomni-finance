@@ -43,6 +43,14 @@ from src.analytics.recurring import (
     compute_recurring_summary,
 )
 from src.models.category_forecasting import forecast_category_expenses
+from src.data.malaysian_data_collector import (
+    load_opendosm_hies_state,
+    load_paynet_payment_statistics,
+)
+from src.analytics.malaysian_spending_analysis import (
+    cluster_malaysian_state_expenditures,
+    estimate_category_income_elasticity,
+)
 
 
 # Page configuration
@@ -150,11 +158,12 @@ st.markdown(
 )
 
 # Tabs
-tab1, tab2, tab3, tab4 = st.tabs([
+tab1, tab2, tab3, tab4, tab5 = st.tabs([
     "📥 Ingestion & Audit",
     "📊 Financial Intelligence",
     "📈 Expense Forecasting Arena",
     "⚠️ Potentially Unusual Transactions",
+    "🇲🇾 Malaysian Macro Intelligence",
 ])
 
 
@@ -606,3 +615,151 @@ with tab4:
         )
     else:
         st.success("No statistical anomalies detected under the current sensitivity threshold.")
+
+
+# ==============================================================================
+# TAB 5: MALAYSIAN MACROECONOMIC & SPENDING INTELLIGENCE
+# ==============================================================================
+with tab5:
+    st.header("🇲🇾 Malaysian Macroeconomic Spending Intelligence & OpenDOSM Benchmarks")
+    st.markdown(
+        "Ingests official datasets from **OpenDOSM**, **Department of Statistics Malaysia (DOSM HIES)**, "
+        "and **PayNet / Bank Negara Malaysia** to evaluate regional spending patterns, "
+        "consumption elasticity, and digital payment velocity."
+    )
+
+    try:
+        hies_df = load_opendosm_hies_state()
+        paynet_df = load_paynet_payment_statistics()
+    except Exception as e:
+        st.error(f"Failed to load OpenDOSM benchmark data: {e}")
+        hies_df = pd.DataFrame()
+        paynet_df = pd.DataFrame()
+
+    if not hies_df.empty:
+        m1, m2, m3, m4 = st.columns(4)
+        m1.metric("Supported States / Territories", f"{len(hies_df)}")
+        m2.metric("Highest Median Income", f"RM {hies_df['income_median'].max():,.0f}", "Putrajaya (MY-16)")
+        m3.metric("National Avg Expenditure", f"RM {hies_df['expenditure_mean'].mean():,.0f} / mo")
+        m4.metric("DuitNow QR Share", "42.5%", "Dominant rail")
+
+        st.subheader("1. State-Level Household Expenditure Profiles (OpenDOSM)")
+        selected_state = st.selectbox(
+            "Select State / Territory for Micro-Analysis:",
+            options=hies_df["state_name"].tolist(),
+            index=1,  # Selangor
+        )
+
+        state_row = hies_df[hies_df["state_name"] == selected_state].iloc[0]
+        cat_cols = [
+            ("Food & Beverage", "food_and_beverage"),
+            ("Groceries", "groceries"),
+            ("Housing & Utilities", "housing_and_utilities"),
+            ("Transportation", "transportation"),
+            ("Health & Wellness", "health_and_wellness"),
+            ("Shopping & Retail", "shopping"),
+            ("Recreation & Culture", "recreation_and_culture"),
+            ("Restaurants & Hotels", "restaurants_and_hotels"),
+        ]
+
+        state_spend_data = []
+        for label, col in cat_cols:
+            if col in state_row:
+                amt = float(state_row[col])
+                pct = float(state_row.get(f"{col}_pct", (amt / state_row["expenditure_mean"]) * 100.0))
+                state_spend_data.append({"Category": label, "Amount (MYR)": amt, "Percentage": round(pct, 1)})
+
+        state_spend_df = pd.DataFrame(state_spend_data)
+
+        c1, c2 = st.columns([1.2, 1])
+        with c1:
+            chart = (
+                alt.Chart(state_spend_df)
+                .mark_bar(cornerRadius=6)
+                .encode(
+                    x=alt.X("Amount (MYR):Q", title="Monthly Mean Spend (MYR)"),
+                    y=alt.Y("Category:N", sort="-x", title=None),
+                    color=alt.Color("Percentage:Q", scale=alt.Scale(scheme="tealblues"), title="% of Budget"),
+                    tooltip=["Category", "Amount (MYR)", "Percentage"],
+                )
+                .properties(height=300)
+            )
+            st.altair_chart(chart, use_container_width=True)
+
+        with c2:
+            st.markdown(f"**Economic Summary for {selected_state}**")
+            st.write(f"- **Mean Household Income**: `RM {state_row['income_mean']:,.2f}`")
+            st.write(f"- **Median Household Income**: `RM {state_row['income_median']:,.2f}`")
+            st.write(f"- **Mean Total Expenditure**: `RM {state_row['expenditure_mean']:,.2f}`")
+            st.write(f"- **Essential Staples Ratio (Food + Utilities)**: `{(state_spend_df[state_spend_df['Category'].isin(['Food & Beverage', 'Housing & Utilities'])]['Percentage'].sum()):.1f}%`")
+
+        st.divider()
+
+        # Section 2: Machine Learning Clustering
+        st.subheader("2. Unsupervised State Spending Archetypes (PCA & K-Means)")
+        st.markdown(
+            "Using Principal Component Analysis (PCA) to reduce 8-dimensional consumption baskets "
+            "and K-Means to cluster Malaysian states into distinct socioeconomic living archetypes."
+        )
+
+        cluster_res = cluster_malaysian_state_expenditures(hies_df, n_clusters=3)
+        clustered_df = cluster_res["clustered_df"]
+
+        pca_chart = (
+            alt.Chart(clustered_df)
+            .mark_circle(size=120)
+            .encode(
+                x=alt.X("pca_x:Q", title=f"PCA Component 1 ({cluster_res['pca_variance_ratio'][0]*100:.1f}% Variance)"),
+                y=alt.Y("pca_y:Q", title=f"PCA Component 2 ({cluster_res['pca_variance_ratio'][1]*100:.1f}% Variance)"),
+                color=alt.Color("cluster:N", scale=alt.Scale(scheme="category10"), title="Cluster Archetype"),
+                tooltip=["state_name", "cluster", "income_mean", "expenditure_mean"],
+            )
+            .properties(height=350)
+        )
+        st.altair_chart(pca_chart, use_container_width=True)
+
+        st.markdown("**Discovered Cluster Profiles:**")
+        for prof in cluster_res["cluster_profiles"]:
+            st.info(
+                f"**Cluster {prof['cluster_id']}: {prof['archetype']}** ({prof['state_count']} states)\n\n"
+                f"{prof['description']}\n\n"
+                f"*States*: {', '.join(prof['states'])} · *Avg Expenditure*: `RM {prof['avg_expenditure_mean']:,.2f}`"
+            )
+
+        st.divider()
+
+        # Section 3: Engel Curve Income Elasticity
+        st.subheader("3. Econometric Engel Curve: Category Income Elasticity")
+        st.markdown(
+            "Estimates empirical elasticity ($\beta$) from OpenDOSM data: $\\ln(\\text{Spend}) = \\alpha + \\beta \\ln(\\text{Income})$. "
+            "Categories with $\\beta < 1.0$ represent inelastic essentials, while $\\beta > 1.0$ indicate discretionary luxuries."
+        )
+
+        elasticity_res = estimate_category_income_elasticity(hies_df)
+        elasticity_df = pd.DataFrame(elasticity_res["elasticities"]).rename(
+            columns={
+                "category": "Category",
+                "elasticity_beta": "Elasticity (β)",
+                "r_squared": "R² Fit",
+                "classification": "Economic Classification",
+                "economic_insight": "Behavioral Insight",
+            }
+        )
+        st.dataframe(elasticity_df, use_container_width=True)
+
+        st.divider()
+
+        # Section 4: PayNet Payment Channel Statistics
+        if not paynet_df.empty:
+            st.subheader("4. Malaysian Payment Rail Adoption & Average Ticket Sizes")
+            st.markdown("Official market share benchmarks derived from PayNet Malaysia and Bank Negara Malaysia payment systems.")
+            st.dataframe(
+                paynet_df.rename(columns={
+                    "channel_name": "Payment Rail",
+                    "avg_ticket_size_myr": "Avg Ticket Size (MYR)",
+                    "annual_volume_million": "Annual Volume (M)",
+                    "market_share_pct": "Market Share (%)",
+                    "typical_use_case": "Typical Use Case",
+                })[["Payment Rail", "Avg Ticket Size (MYR)", "Market Share (%)", "Typical Use Case"]],
+                use_container_width=True,
+            )

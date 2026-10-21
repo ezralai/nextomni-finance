@@ -38,7 +38,9 @@ class TransactionService
     public function createTransaction(User $user, array $data): Transaction
     {
         return DB::transaction(function () use ($user, $data) {
-            $account = Account::where('user_id', $user->id)->findOrFail($data['account_id']);
+            $account = Account::where('user_id', $user->id)
+                ->lockForUpdate()
+                ->findOrFail($data['account_id']);
             $currency = $account->currency ?? 'MYR';
             $amountMoney = Money::of($data['amount'], $currency);
 
@@ -82,20 +84,29 @@ class TransactionService
             // Adjust Account Balance
             $this->applyBalanceDelta($account, $type, $amountMoney);
 
-            $transaction = $this->transactionRepository->create([
-                'user_id' => $user->id,
-                'account_id' => $account->id,
-                'category_id' => $data['category_id'] ?? null,
-                'type' => $type,
-                'amount' => $amountMoney->getAmount(),
-                'currency' => $currency,
-                'transacted_at' => $transactedAt,
-                'description' => $description,
-                'notes' => $data['notes'] ?? null,
-                'reference_number' => $data['reference_number'] ?? null,
-                'deduplication_hash' => $hash,
-                'status' => $data['status'] ?? 'posted',
-            ]);
+            try {
+                $transaction = $this->transactionRepository->create([
+                    'user_id' => $user->id,
+                    'account_id' => $account->id,
+                    'category_id' => $data['category_id'] ?? null,
+                    'type' => $type,
+                    'amount' => $amountMoney->getAmount(),
+                    'currency' => $currency,
+                    'transacted_at' => $transactedAt,
+                    'description' => $description,
+                    'notes' => $data['notes'] ?? null,
+                    'reference_number' => $data['reference_number'] ?? null,
+                    'deduplication_hash' => $hash,
+                    'status' => $data['status'] ?? 'posted',
+                ]);
+            } catch (\Illuminate\Database\QueryException $e) {
+                if (str_contains($e->getMessage(), 'deduplication_hash') || $e->getCode() == 23505 || $e->getCode() == 19) {
+                    throw ValidationException::withMessages([
+                        'amount' => ['A duplicate transaction with the exact same amount, account, date, and description already exists.'],
+                    ]);
+                }
+                throw $e;
+            }
 
             $this->auditLogService->log($user, 'transaction.created', $transaction, null, $transaction->toArray());
 
@@ -109,12 +120,31 @@ class TransactionService
     public function createTransfer(User $user, array $data): Transfer
     {
         return DB::transaction(function () use ($user, $data) {
-            $sourceAccount = Account::where('user_id', $user->id)->findOrFail($data['source_account_id']);
-            $destinationAccount = Account::where('user_id', $user->id)->findOrFail($data['destination_account_id']);
+            $sourceId = $data['source_account_id'];
+            $destId = $data['destination_account_id'];
 
-            if ($sourceAccount->id === $destinationAccount->id) {
+            if ($sourceId === $destId) {
                 throw ValidationException::withMessages([
                     'destination_account_id' => ['Source and destination accounts must be distinct.'],
+                ]);
+            }
+
+            // Deadlock prevention: Lock accounts in deterministic sorted string order
+            $accountIds = [$sourceId, $destId];
+            sort($accountIds, SORT_STRING);
+
+            $lockedAccounts = Account::where('user_id', $user->id)
+                ->whereIn('id', $accountIds)
+                ->lockForUpdate()
+                ->get()
+                ->keyBy('id');
+
+            $sourceAccount = $lockedAccounts->get($sourceId);
+            $destinationAccount = $lockedAccounts->get($destId);
+
+            if (! $sourceAccount || ! $destinationAccount) {
+                throw ValidationException::withMessages([
+                    'source_account_id' => ['One or both accounts could not be found or access is denied.'],
                 ]);
             }
 
@@ -206,8 +236,11 @@ class TransactionService
                 return $this->deleteTransfer($transfer);
             }
 
-            // Normal transaction balance reversal
-            $account = $transaction->account;
+            // Normal transaction balance reversal with pessimistic lock
+            $account = Account::where('id', $transaction->account_id)
+                ->lockForUpdate()
+                ->findOrFail($transaction->account_id);
+
             $amountMoney = Money::of($transaction->amount, $transaction->currency);
 
             // Reverse effect: if it was income, reverse as expense; if expense, reverse as income
@@ -226,18 +259,31 @@ class TransactionService
     public function deleteTransfer(Transfer $transfer): bool
     {
         return DB::transaction(function () use ($transfer) {
-            $sourceAccount = $transfer->sourceAccount;
-            $destinationAccount = $transfer->destinationAccount;
+            // Lock accounts in deterministic sorted string order
+            $accountIds = [$transfer->source_account_id, $transfer->destination_account_id];
+            sort($accountIds, SORT_STRING);
+
+            $lockedAccounts = Account::whereIn('id', $accountIds)
+                ->lockForUpdate()
+                ->get()
+                ->keyBy('id');
+
+            $sourceAccount = $lockedAccounts->get($transfer->source_account_id);
+            $destinationAccount = $lockedAccounts->get($transfer->destination_account_id);
 
             $amountMoney = Money::of($transfer->amount, $transfer->currency);
             $feeMoney = Money::of($transfer->fee, $transfer->currency);
             $totalOutflow = $amountMoney->add($feeMoney);
 
-            // Revert source: add totalOutflow back to source
-            $this->applyBalanceDelta($sourceAccount, 'income', $totalOutflow);
+            if ($sourceAccount) {
+                // Revert source: add totalOutflow back to source
+                $this->applyBalanceDelta($sourceAccount, 'income', $totalOutflow);
+            }
 
-            // Revert destination: remove amount from destination
-            $this->applyBalanceDelta($destinationAccount, 'expense', $amountMoney);
+            if ($destinationAccount) {
+                // Revert destination: remove amount from destination
+                $this->applyBalanceDelta($destinationAccount, 'expense', $amountMoney);
+            }
 
             // Delete transactions
             $sourceTxn = $transfer->sourceTransaction;

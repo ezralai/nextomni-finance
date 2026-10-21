@@ -4,13 +4,15 @@ namespace App\Http\Controllers\Api\V1\Analytics;
 
 use App\Http\Controllers\Controller;
 use App\Services\Analytics\AnalyticsService;
+use App\Services\Analytics\MlIntelligenceService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class AnalyticsController extends Controller
 {
     public function __construct(
-        protected AnalyticsService $analyticsService
+        protected AnalyticsService $analyticsService,
+        protected MlIntelligenceService $mlIntelligenceService
     ) {}
 
     /**
@@ -28,5 +30,23 @@ class AnalyticsController extends Controller
         );
 
         return response()->json($data);
+    }
+
+    /**
+     * Compute predictive ML spending forecasts and anomaly detection.
+     */
+    public function mlIntelligence(Request $request): JsonResponse
+    {
+        $forceRefresh = $request->boolean('refresh', false);
+
+        $data = $this->mlIntelligenceService->getIntelligence(
+            $request->user(),
+            $forceRefresh
+        );
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $data,
+        ]);
     }
 }
