@@ -199,7 +199,7 @@ Deploy this entire stack to production in under 10 minutes for $0/month. For ste
 ### Step 2: Deploy Backend API (Render / Koyeb)
 1. Fork or push this repository to GitHub.
 2. In [Render](https://render.com), create a new **Web Service** from your GitHub repo.
-3. Configure the service:
+3. Configure the services:
    - **Root Directory**: `backend`
    - **Environment**: `Docker` (automatically detects [`backend/Dockerfile`](file:///Users/bluevypc3/projects/backend/Dockerfile))
    - **Environment Variables**: Fill in variables from [`backend/.env.production.example`](file:///Users/bluevypc3/projects/backend/.env.production.example).
