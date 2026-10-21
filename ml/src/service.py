@@ -174,11 +174,20 @@ def run_ml_pipeline(
         recurring_df = detect_recurring_expenses(cleaned)
         if not recurring_df.empty:
             for _, row in recurring_df.iterrows():
+                avg_amt = float(row.get("average_amount", 0.0))
                 recurring_list.append({
                     "merchant": str(row.get("merchant", "")),
-                    "cadence": str(row.get("cadence", "monthly")),
-                    "estimated_amount": float(row.get("estimated_amount", 0.0)),
-                    "confidence": float(row.get("confidence", 0.8)),
+                    "category": str(row.get("category", "general")),
+                    "cadence": str(row.get("cadence", "Monthly")),
+                    "cost_type": str(row.get("cost_type", "Fixed Amount")),
+                    "average_amount": avg_amt,
+                    "estimated_amount": avg_amt,  # backward compatibility alias
+                    "monthly_equivalent": float(row.get("monthly_equivalent", avg_amt)),
+                    "annual_projected": float(row.get("annual_projected", avg_amt * 12.0)),
+                    "recurrence_count": int(row.get("recurrence_count", 0)),
+                    "confidence": 0.9 if str(row.get("cost_type")) == "Fixed Amount" else 0.75,
+                    "last_billed_date": str(row.get("last_billed_date", "")),
+                    "next_expected_date": str(row.get("next_expected_date", "")),
                 })
     except Exception as e:
         pass

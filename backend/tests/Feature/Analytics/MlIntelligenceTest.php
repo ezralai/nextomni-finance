@@ -113,4 +113,43 @@ class MlIntelligenceTest extends TestCase
 
         $this->assertGreaterThanOrEqual(15, $response->json('data.records_analyzed'));
     }
+
+    /**
+     * Test ML intelligence recurring pattern detection.
+     */
+    public function test_ml_intelligence_detects_recurring_expenses(): void
+    {
+        $now = Carbon::now();
+
+        // Seed 4 monthly Spotify recurring transactions
+        for ($i = 0; $i < 4; $i++) {
+            Transaction::create([
+                'user_id' => $this->user->id,
+                'account_id' => $this->account->id,
+                'category_id' => $this->category->id,
+                'type' => 'expense',
+                'amount' => '24.9000',
+                'currency' => 'MYR',
+                'transacted_at' => $now->copy()->subDays($i * 30),
+                'description' => 'Spotify Premium Family',
+                'status' => 'posted',
+            ]);
+        }
+
+        $response = $this->withHeader('Authorization', "Bearer {$this->token}")
+            ->getJson('/api/v1/analytics/ml-intelligence?refresh=1');
+
+        $response->assertStatus(200)
+            ->assertJsonPath('status', 'success');
+
+        $recurring = $response->json('data.recurring');
+        $this->assertIsArray($recurring);
+        $this->assertNotEmpty($recurring);
+
+        $item = $recurring[0];
+        $this->assertStringContainsString('Spotify', $item['merchant']);
+        $this->assertEqualsWithDelta(24.90, (float) $item['average_amount'], 0.01);
+        $this->assertArrayHasKey('cadence', $item);
+        $this->assertArrayHasKey('next_expected_date', $item);
+    }
 }

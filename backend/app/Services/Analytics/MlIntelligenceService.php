@@ -104,6 +104,38 @@ class MlIntelligenceService
         $totalExpense = $expenses->sum('amount');
         $avgExpense = $expenses->count() > 0 ? $totalExpense / $expenses->count() : 0;
 
+        $recurringFallback = [];
+        $grouped = $expenses->groupBy('description');
+        foreach ($grouped as $desc => $items) {
+            if ($items->count() >= 3) {
+                $amounts = $items->pluck('amount')->map(fn ($a) => (float) $a);
+                $avg = $amounts->avg() ?? 0.0;
+                $min = $amounts->min() ?? 0.0;
+                $max = $amounts->max() ?? 0.0;
+                $isFixed = ($max - $min) <= ($avg * 0.05);
+
+                $latest = $items->sortByDesc('transacted_at')->first();
+                $nextExpected = $latest && $latest->transacted_at
+                    ? $latest->transacted_at->copy()->addMonth()->format('Y-m-d')
+                    : now()->addMonth()->format('Y-m-d');
+
+                $recurringFallback[] = [
+                    'merchant' => (string) $desc,
+                    'category' => $items->first()->category?->slug ?? 'general',
+                    'cadence' => 'Monthly',
+                    'cost_type' => $isFixed ? 'Fixed Amount' : 'Variable Metered',
+                    'average_amount' => round($avg, 2),
+                    'estimated_amount' => round($avg, 2),
+                    'monthly_equivalent' => round($avg, 2),
+                    'annual_projected' => round($avg * 12.0, 2),
+                    'recurrence_count' => $items->count(),
+                    'confidence' => $isFixed ? 0.85 : 0.70,
+                    'last_billed_date' => $latest?->transacted_at?->format('Y-m-d') ?? '',
+                    'next_expected_date' => $nextExpected,
+                ];
+            }
+        }
+
         return [
             'status' => 'fallback_heuristic',
             'records_analyzed' => $transactions->count(),
@@ -119,7 +151,7 @@ class MlIntelligenceService
                     'confidence_level' => 0.75,
                 ],
             ],
-            'recurring' => [],
+            'recurring' => $recurringFallback,
         ];
     }
 }
