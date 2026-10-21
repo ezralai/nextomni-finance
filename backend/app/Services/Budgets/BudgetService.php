@@ -124,13 +124,25 @@ class BudgetService
 
         $results = [];
 
+        // Preload child categories in 1 query if not already eager-loaded
+        $unloadedCategoryIds = $budgets->filter(function ($b) {
+            return $b->category && ! $b->category->relationLoaded('children');
+        })->pluck('category_id')->filter()->unique()->all();
+
+        $childCategoriesMap = ! empty($unloadedCategoryIds)
+            ? TransactionCategory::whereIn('parent_id', $unloadedCategoryIds)->where('is_active', true)->get(['id', 'parent_id'])->groupBy('parent_id')
+            : collect();
+
         foreach ($budgets as $budget) {
             // Collect category and all of its subcategories for rollup aggregation
             $category = $budget->category;
             $categoryIds = [$budget->category_id];
 
             if ($category) {
-                $childIds = TransactionCategory::where('parent_id', $category->id)->pluck('id')->all();
+                $childIds = $category->relationLoaded('children')
+                    ? $category->children->pluck('id')->all()
+                    : (isset($childCategoriesMap[$category->id]) ? $childCategoriesMap[$category->id]->pluck('id')->all() : []);
+
                 $categoryIds = array_merge($categoryIds, $childIds);
             }
 

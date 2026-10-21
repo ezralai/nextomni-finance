@@ -5,6 +5,7 @@ namespace App\Repositories\Eloquent;
 use App\Models\Transaction;
 use App\Repositories\Contracts\TransactionRepositoryInterface;
 use App\Support\Money;
+use Carbon\Carbon;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class TransactionRepository implements TransactionRepositoryInterface
@@ -33,11 +34,11 @@ class TransactionRepository implements TransactionRepositoryInterface
         }
 
         if (! empty($filters['start_date'])) {
-            $query->whereDate('transacted_at', '>=', $filters['start_date']);
+            $query->where('transacted_at', '>=', Carbon::parse($filters['start_date'])->startOfDay());
         }
 
         if (! empty($filters['end_date'])) {
-            $query->whereDate('transacted_at', '<=', $filters['end_date']);
+            $query->where('transacted_at', '<=', Carbon::parse($filters['end_date'])->endOfDay());
         }
 
         if (! empty($filters['search'])) {
@@ -82,19 +83,24 @@ class TransactionRepository implements TransactionRepositoryInterface
 
     public function getTotalsForPeriod(string $userId, string $startDate, string $endDate): array
     {
-        $transactions = Transaction::where('user_id', $userId)
-            ->whereBetween('transacted_at', [$startDate, $endDate])
+        $rows = Transaction::where('user_id', $userId)
             ->where('status', 'posted')
+            ->whereBetween('transacted_at', [
+                Carbon::parse($startDate)->startOfDay(),
+                Carbon::parse($endDate)->endOfDay(),
+            ])
+            ->selectRaw('type, currency, SUM(amount) as total')
+            ->groupBy('type', 'currency')
             ->get();
 
         $income = Money::zero();
         $expense = Money::zero();
 
-        foreach ($transactions as $txn) {
-            $money = Money::of($txn->amount, $txn->currency);
-            if ($txn->type === 'income') {
+        foreach ($rows as $row) {
+            $money = Money::of($row->total ?? '0.0000', $row->currency ?? 'MYR');
+            if ($row->type === 'income') {
                 $income = $income->add($money);
-            } elseif ($txn->type === 'expense') {
+            } elseif ($row->type === 'expense') {
                 $expense = $expense->add($money);
             }
         }
