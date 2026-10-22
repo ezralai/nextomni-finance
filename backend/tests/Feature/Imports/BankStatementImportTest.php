@@ -187,4 +187,123 @@ class BankStatementImportTest extends TestCase
 
         $this->assertTrue(in_array($response->status(), [404, 422]));
     }
+
+    public function test_import_automatically_classifies_merchant_categories(): void
+    {
+        $this->seed(\Database\Seeders\CategorySeeder::class);
+
+        $csvContent = implode("\n", [
+            'Date,Description,Amount,Type',
+            '2026-10-01,Starbucks Reserve Mid Valley,25.00,expense',
+            '2026-10-02,GrabFood Delivery Order,42.50,expense',
+            '2026-10-03,Petronas Mesra Station,80.00,expense',
+            '2026-10-04,Netflix Premium Monthly,54.90,expense',
+            '2026-10-05,Unifi Home Broadband,139.00,expense',
+            '2026-10-06,Monthly Salary Transfer,8500.00,income',
+            '2026-10-07,Generic Unmatched Reference,100.00,expense',
+        ]);
+
+        $file = UploadedFile::fake()->createWithContent('merchant_categorized.csv', $csvContent);
+
+        $response = $this->actingAs($this->user)->postJson('/api/v1/imports/statements', [
+            'account_id' => $this->account->id,
+            'file' => $file,
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJsonPath('data.total_rows', 7)
+            ->assertJsonPath('data.imported_count', 7)
+            ->assertJsonPath('data.status', 'completed');
+
+        // Verify Starbucks resolved to restaurants-cafes
+        $starbucksCat = \App\Models\TransactionCategory::where('slug', 'restaurants-cafes')->first();
+        $this->assertDatabaseHas('transactions', [
+            'user_id' => $this->user->id,
+            'description' => 'Starbucks Reserve Mid Valley',
+            'category_id' => $starbucksCat->id,
+        ]);
+
+        // Verify GrabFood resolved to food-delivery
+        $grabCat = \App\Models\TransactionCategory::where('slug', 'food-delivery')->first();
+        $this->assertDatabaseHas('transactions', [
+            'user_id' => $this->user->id,
+            'description' => 'GrabFood Delivery Order',
+            'category_id' => $grabCat->id,
+        ]);
+
+        // Verify Petronas resolved to fuel-petrol
+        $fuelCat = \App\Models\TransactionCategory::where('slug', 'fuel-petrol')->first();
+        $this->assertDatabaseHas('transactions', [
+            'user_id' => $this->user->id,
+            'description' => 'Petronas Mesra Station',
+            'category_id' => $fuelCat->id,
+        ]);
+
+        // Verify Netflix resolved to entertainment-subscriptions
+        $subCat = \App\Models\TransactionCategory::where('slug', 'entertainment-subscriptions')->first();
+        $this->assertDatabaseHas('transactions', [
+            'user_id' => $this->user->id,
+            'description' => 'Netflix Premium Monthly',
+            'category_id' => $subCat->id,
+        ]);
+
+        // Verify Unifi resolved to home-broadband
+        $broadbandCat = \App\Models\TransactionCategory::where('slug', 'home-broadband')->first();
+        $this->assertDatabaseHas('transactions', [
+            'user_id' => $this->user->id,
+            'description' => 'Unifi Home Broadband',
+            'category_id' => $broadbandCat->id,
+        ]);
+
+        // Verify Monthly Salary resolved to salary-wages
+        $salaryCat = \App\Models\TransactionCategory::where('slug', 'salary-wages')->first();
+        $this->assertDatabaseHas('transactions', [
+            'user_id' => $this->user->id,
+            'description' => 'Monthly Salary Transfer',
+            'category_id' => $salaryCat->id,
+        ]);
+
+        // Verify generic unmatched description has null category_id without error
+        $this->assertDatabaseHas('transactions', [
+            'user_id' => $this->user->id,
+            'description' => 'Generic Unmatched Reference',
+            'category_id' => null,
+        ]);
+    }
+
+    public function test_import_reconciles_explicit_category_column_from_csv(): void
+    {
+        $this->seed(\Database\Seeders\CategorySeeder::class);
+
+        $csvContent = implode("\n", [
+            'Date,Description,Amount,Type,Category',
+            '2026-10-10,Custom Gym Membership,150.00,expense,Fitness & Sports',
+            '2026-10-11,Gadget Accessory,99.00,expense,shopping-gadgets',
+        ]);
+
+        $file = UploadedFile::fake()->createWithContent('explicit_categories.csv', $csvContent);
+
+        $response = $this->actingAs($this->user)->postJson('/api/v1/imports/statements', [
+            'account_id' => $this->account->id,
+            'file' => $file,
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJsonPath('data.imported_count', 2)
+            ->assertJsonPath('data.status', 'completed');
+
+        $gymCat = \App\Models\TransactionCategory::where('slug', 'fitness-sports')->first();
+        $this->assertDatabaseHas('transactions', [
+            'user_id' => $this->user->id,
+            'description' => 'Custom Gym Membership',
+            'category_id' => $gymCat->id,
+        ]);
+
+        $gadgetCat = \App\Models\TransactionCategory::where('slug', 'shopping-gadgets')->first();
+        $this->assertDatabaseHas('transactions', [
+            'user_id' => $this->user->id,
+            'description' => 'Gadget Accessory',
+            'category_id' => $gadgetCat->id,
+        ]);
+    }
 }

@@ -4,15 +4,68 @@ namespace App\Services\Imports;
 
 use App\Models\Account;
 use App\Models\StatementImport;
+use App\Models\TransactionCategory;
 use App\Models\User;
 use App\Services\Transactions\TransactionService;
 use Carbon\Carbon;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 
 class BankStatementParserService
 {
+    /**
+     * Merchant-to-category pattern classification rules.
+     */
+    protected array $merchantRules = [
+        'food-delivery' => ['grabfood', 'foodpanda', 'deliveroo', 'shopeefood', 'airasia food', 'beepit'],
+        'ride-hailing' => ['grab', 'airasia ride', 'indrive', 'uber', 'lyft', 'mycar', 'maxim'],
+        'groceries-supermarket' => [
+            'lotus', 'tesco', 'jaya grocer', 'village grocer', 'aeon', 'giant', 'cold storage',
+            'supermarket', 'grocery', 'bens independent', 'mygroser', 'econsave', '99 speedmart',
+            'speedmart', 'hero market', 'nsk', 'segifresh',
+        ],
+        'restaurants-cafes' => [
+            'starbucks', 'mcdonald', 'kfc', 'subway', 'nando', 'coffee bean', 'zus coffee',
+            'bask bear', 'restaurant', 'cafe', 'bistro', 'dining', 'sushi', 'pizza', 'domino',
+            'burger king', 'marrybrown', 'tealive', 'gong cha', 'chagee', 'koi the', 'liho',
+            'boost juice', 'secret recipe', 'kenny rogers', 'bakery', 'bread',
+        ],
+        'hawker-mamak' => ['mamak', 'kopitiam', 'hawker', 'nasi kandar', 'warung', 'kedai kopi', 'restoran nasi'],
+        'fuel-petrol' => ['petronas', 'shell', 'caltex', 'petron', 'bhp', 'fuel', 'petrol', 'mesra'],
+        'tolls-parking' => [
+            'touch n go', 'touch \'n go', 'tng', 'rfid', 'plus expressways', 'parking', 'jomrun',
+            'kiple', 'wilayah parking', 'dbkl', 'mbpj', 'mbsa', 'smart selangor',
+        ],
+        'public-transit' => ['mrt', 'lrt', 'ktm', 'rapidkl', 'prasarana', 'monorail', 'erl', 'klia ekspres', 'transit'],
+        'vehicle-maintenance' => [
+            'car service', 'workshop', 'tyre', 'tayar', 'mechanic', 'auto service', 'honda service',
+            'toyota service', 'perodua', 'proton service', 'car wash',
+        ],
+        'electricity-tnb' => ['tenaga', 'tnb', 'sesb', 'seb', 'electricity'],
+        'water-sewerage' => ['air selangor', 'syabas', 'indah water', 'iwk', 'sains', 'laku', 'saj'],
+        'home-broadband' => ['unifi', 'time dotcom', 'time internet', 'broadband', 'maxis broadband', 'astro'],
+        'mobile-telco' => ['maxis', 'celcom', 'digi', 'umobile', 'u mobile', 'yes 5g', 'telco', 'postpaid', 'hotlink', 'xox', 'yoodo'],
+        'entertainment-subscriptions' => [
+            'netflix', 'spotify', 'youtube', 'disney', 'apple services', 'app store', 'google play',
+            'google storage', 'prime video', 'patreon', 'steam', 'playstation', 'nintendo', 'cinema', 'gsc', 'tgv',
+        ],
+        'shopping-gadgets' => [
+            'shopee', 'lazada', 'amazon', 'tiktok shop', 'taobao', 'ikea', 'uniqlo', 'zara',
+            'h&m', 'padini', 'machines', 'switch', 'apple store', 'harvey norman', 'senheng', 'all it hypermarket',
+        ],
+        'fitness-sports' => ['anytime fitness', 'celebrity fitness', 'fitness first', 'gym', 'badminton', 'decathlon', 'sports direct', 'nike', 'adidas'],
+        'personal-care' => ['watson', 'guardian', 'caring', 'sephora', 'barber', 'hair salon', 'saloon', 'spa'],
+        'medical-clinic' => ['clinic', 'klinik', 'hospital', 'pharmacy', 'farmasi', 'pathlab', 'doctor', 'dental', 'gigi'],
+        'insurance-takaful' => ['prudential', 'great eastern', 'allianz', 'aia', 'etiqa', 'takaful', 'zurich', 'manulife', 'insurance'],
+        'salary-wages' => ['salary', 'payroll', 'wage', 'gaji', 'allowance', 'stipend', 'bonus'],
+        'investments-dividends' => ['dividend', 'stashaway', 'wahed', 'rakuten', 'binance', 'luno', 'kenanga', 'bursa', 'asnb', 'unit trust', 'fund'],
+        'rent-mortgage' => ['rental', 'sewa', 'mortgage', 'housing loan'],
+        'card-settlement' => ['credit card payment', 'cc payment', 'card settlement', 'card payment'],
+        'loan-repayment' => ['hire purchase', 'car loan', 'personal loan', 'repayment', 'ptptn'],
+    ];
+
     public function __construct(
         protected TransactionService $transactionService
     ) {}
@@ -62,12 +115,22 @@ class BankStatementParserService
         $typeIndex = $this->findColumnIndex($headers, ['type', 'txn_type', 'transaction_type', 'cr_dr', 'dr_cr']);
         $debitIndex = $this->findColumnIndex($headers, ['debit', 'withdrawal', 'outflow', 'debit_amount']);
         $creditIndex = $this->findColumnIndex($headers, ['credit', 'deposit', 'inflow', 'credit_amount']);
+        $categoryIndex = $this->findColumnIndex($headers, ['category', 'cat', 'category_name', 'classification']);
 
         if ($dateIndex === null || ($amountIndex === null && $debitIndex === null && $creditIndex === null)) {
             fclose($handle);
             throw ValidationException::withMessages([
                 'file' => ['Unable to detect required statement columns. The CSV must contain at least Date and Amount (or Debit/Credit) columns.'],
             ]);
+        }
+
+        // Pre-cache user accessible categories in memory for O(1) matching
+        $categoryRecords = TransactionCategory::accessibleBy($user->id)->get();
+        $categoriesBySlug = [];
+        $categoriesByName = [];
+        foreach ($categoryRecords as $cat) {
+            $categoriesBySlug[$cat->slug] = $cat;
+            $categoriesByName[strtolower($cat->name)] = $cat;
         }
 
         $totalRows = 0;
@@ -104,9 +167,14 @@ class BankStatementParserService
                     continue;
                 }
 
+                // Resolve category from explicit column or merchant heuristics
+                $rawCategory = $categoryIndex !== null && isset($row[$categoryIndex]) ? trim($row[$categoryIndex]) : null;
+                $category = $this->classifyCategory($description, $type, $rawCategory, $categoriesBySlug, $categoriesByName);
+
                 // Call TransactionService (atomic account balance update & deduplication check)
                 $txn = $this->transactionService->createTransaction($user, [
                     'account_id' => $account->id,
+                    'category_id' => $category?->id,
                     'type' => $type,
                     'amount' => (string) $amount,
                     'description' => $description,
@@ -121,6 +189,9 @@ class BankStatementParserService
                     'description' => $description,
                     'amount' => $amount,
                     'type' => $type,
+                    'category_id' => $category?->id,
+                    'category_name' => $category?->name,
+                    'category_slug' => $category?->slug,
                 ];
             } catch (ValidationException $e) {
                 // If deduplication hash already exists, mark as duplicate
@@ -239,6 +310,45 @@ class BankStatementParserService
         }
 
         return $isNegative ? [$num, 'expense'] : [$num, 'income'];
+    }
+
+    /**
+     * Resolve transaction category using explicit statement data or merchant heuristics.
+     */
+    protected function classifyCategory(
+        string $description,
+        string $type,
+        ?string $rawCategory,
+        array $categoriesBySlug,
+        array $categoriesByName
+    ): ?TransactionCategory {
+        // 1. Explicit Category Matching from Statement
+        if ($rawCategory !== null && $rawCategory !== '') {
+            $cleaned = strtolower(trim($rawCategory));
+            $slugged = Str::slug($rawCategory);
+
+            if (isset($categoriesBySlug[$slugged])) {
+                return $categoriesBySlug[$slugged];
+            }
+            if (isset($categoriesByName[$cleaned])) {
+                return $categoriesByName[$cleaned];
+            }
+        }
+
+        // 2. Intelligent Merchant Pattern Matching
+        $normalizedDesc = strtolower($description);
+
+        foreach ($this->merchantRules as $categorySlug => $patterns) {
+            foreach ($patterns as $pattern) {
+                if (str_contains($normalizedDesc, $pattern)) {
+                    if (isset($categoriesBySlug[$categorySlug])) {
+                        return $categoriesBySlug[$categorySlug];
+                    }
+                }
+            }
+        }
+
+        return null;
     }
 
     /**
