@@ -8,6 +8,7 @@ use App\Http\Requests\Api\V1\Auth\RegisterRequest;
 use App\Http\Requests\Api\V1\Auth\UpdateProfileRequest;
 use App\Http\Resources\Api\V1\UserResource;
 use App\Models\User;
+use App\Services\Audit\AuditLogService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -16,6 +17,10 @@ use Illuminate\Support\Str;
 
 class AuthController extends Controller
 {
+    public function __construct(
+        protected AuditLogService $auditLogService
+    ) {}
+
     /**
      * Register a new user account and issue an access token.
      */
@@ -41,6 +46,19 @@ class AuthController extends Controller
             'password' => $validated['password'], // Casts automatically hash via model
             'base_currency' => strtoupper($validated['base_currency'] ?? 'MYR'),
         ]);
+
+        $this->auditLogService->log(
+            $user,
+            'user.registered',
+            $user,
+            null,
+            [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'base_currency' => $user->base_currency,
+            ]
+        );
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -81,6 +99,17 @@ class AuthController extends Controller
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
+        $this->auditLogService->log(
+            $user,
+            'user.login',
+            $user,
+            null,
+            [
+                'id' => $user->id,
+                'email' => $user->email,
+            ]
+        );
+
         return response()->json([
             'message' => 'Login successful.',
             'user' => new UserResource($user),
@@ -111,7 +140,17 @@ class AuthController extends Controller
             $validated['base_currency'] = strtoupper($validated['base_currency']);
         }
 
+        $oldValues = $user->only(['name', 'base_currency']);
         $user->update($validated);
+        $newValues = $user->only(['name', 'base_currency']);
+
+        $this->auditLogService->log(
+            $user,
+            'user.profile_updated',
+            $user,
+            $oldValues,
+            $newValues
+        );
 
         return response()->json([
             'message' => 'Profile updated successfully.',
@@ -124,7 +163,25 @@ class AuthController extends Controller
      */
     public function logout(Request $request): JsonResponse
     {
-        $request->user()->currentAccessToken()?->delete();
+        $user = $request->user();
+
+        if ($user) {
+            $this->auditLogService->log(
+                $user,
+                'user.logout',
+                $user,
+                null,
+                [
+                    'id' => $user->id,
+                    'email' => $user->email,
+                ]
+            );
+
+            $token = $user->currentAccessToken();
+            if ($token && method_exists($token, 'delete')) {
+                $token->delete();
+            }
+        }
 
         return response()->json([
             'message' => 'Successfully logged out.',

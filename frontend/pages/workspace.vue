@@ -93,6 +93,7 @@ import ContributeModal from '~/components/workspace/modals/ContributeModal.vue'
 import ImportStatementModal from '~/components/workspace/modals/ImportStatementModal.vue'
 import CurrencyConverterModal from '~/components/workspace/modals/CurrencyConverterModal.vue'
 import BudgetModal from '~/components/workspace/modals/BudgetModal.vue'
+import AuditLogModal from '~/components/workspace/modals/AuditLogModal.vue'
 import { useMarketStore } from '~/stores/markets'
 
 const config = useRuntimeConfig()
@@ -218,6 +219,7 @@ const handleGlobalKeydown = (e: KeyboardEvent) => {
     else if (showContributeModal.value) showContributeModal.value = false
     else if (showRecurringModal.value) showRecurringModal.value = false
     else if (showImportModal.value) showImportModal.value = false
+    else if (showAuditModal.value) showAuditModal.value = false
     else if (showConverterModal.value) showConverterModal.value = false
     else if (showAuthModal.value) showAuthModal.value = false
     else if (isMobileMenuOpen.value) isMobileMenuOpen.value = false
@@ -254,6 +256,12 @@ const goalError = ref<string | null>(null)
 const showImportModal = ref(false)
 const importError = ref<string | null>(null)
 const importSuccessMessage = ref<string | null>(null)
+
+// Security & Compliance Audit Trail Modal State
+const showAuditModal = ref(false)
+const openAuditModal = () => {
+  showAuditModal.value = true
+}
 
 // Transaction Filter State
 const filterType = ref<'all' | 'income' | 'expense' | 'transfer'>('all')
@@ -2206,6 +2214,7 @@ onUnmounted(() => {
           :institutions="accountStore.institutions"
           @open-fx="openConverterModal"
           @open-import="openImportModal"
+          @open-audit="openAuditModal"
           @export-csv="handleExportCsv"
           @export-json="handleExportJson"
         />
@@ -2304,6 +2313,11 @@ onUnmounted(() => {
       :error="importError"
       :success-message="importSuccessMessage"
       @submit="handleUploadStatement"
+    />
+
+    <!-- Security & Compliance Audit Trail Modal -->
+    <AuditLogModal
+      v-model="showAuditModal"
     />
 
     <!-- Financial Terms & Concepts Glossary Modal -->

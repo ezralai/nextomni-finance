@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Api\V1\UserResource;
 use App\Models\User;
+use App\Services\Audit\AuditLogService;
 use App\Services\Auth\GoogleAuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -17,7 +18,8 @@ use Illuminate\Support\Str;
 class GoogleAuthController extends Controller
 {
     public function __construct(
-        protected GoogleAuthService $googleAuthService
+        protected GoogleAuthService $googleAuthService,
+        protected AuditLogService $auditLogService
     ) {}
 
     /**
@@ -73,6 +75,18 @@ class GoogleAuthController extends Controller
         try {
             $googleData = $this->googleAuthService->getGoogleUserFromCode($code);
             $user = $this->googleAuthService->findOrCreateUser($googleData);
+
+            $this->auditLogService->log(
+                $user,
+                $user->wasRecentlyCreated ? 'user.oauth_registered' : 'user.oauth_login',
+                $user,
+                null,
+                [
+                    'id' => $user->id,
+                    'email' => $user->email,
+                    'provider' => 'google',
+                ]
+            );
 
             $token = $user->createToken('auth_token')->plainTextToken;
 

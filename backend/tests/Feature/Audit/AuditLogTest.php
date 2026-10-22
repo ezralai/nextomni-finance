@@ -216,4 +216,88 @@ class AuditLogTest extends TestCase
             'event' => 'statement.imported',
         ]);
     }
+
+    public function test_user_registration_and_login_logs_audit_events(): void
+    {
+        // 1. Registration audit logging
+        $regResponse = $this->withServerVariables(['REMOTE_ADDR' => '192.168.1.100', 'HTTP_USER_AGENT' => 'NextOmniTest/1.0'])
+            ->postJson('/api/v1/auth/register', [
+                'name' => 'Alice Auditor',
+                'email' => 'alice.audit@example.com',
+                'password' => 'Password123!',
+                'password_confirmation' => 'Password123!',
+                'base_currency' => 'SGD',
+            ]);
+
+        $regResponse->assertStatus(201);
+        $newUserId = $regResponse->json('user.id');
+
+        $this->assertDatabaseHas('audit_logs', [
+            'user_id' => $newUserId,
+            'event' => 'user.registered',
+            'auditable_type' => User::class,
+            'auditable_id' => (string) $newUserId,
+            'ip_address' => '192.168.1.100',
+            'user_agent' => 'NextOmniTest/1.0',
+        ]);
+
+        $regLog = \App\Models\AuditLog::where('user_id', $newUserId)->where('event', 'user.registered')->first();
+        $this->assertNotNull($regLog);
+        $this->assertArrayNotHasKey('password', $regLog->new_values ?? []);
+        $this->assertEquals('alice.audit@example.com', $regLog->new_values['email']);
+
+        // 2. Login audit logging
+        $loginResponse = $this->withServerVariables(['REMOTE_ADDR' => '192.168.1.101', 'HTTP_USER_AGENT' => 'NextOmniTest/1.0'])
+            ->postJson('/api/v1/auth/login', [
+                'email' => 'alice.audit@example.com',
+                'password' => 'Password123!',
+            ]);
+
+        $loginResponse->assertStatus(200);
+
+        $this->assertDatabaseHas('audit_logs', [
+            'user_id' => $newUserId,
+            'event' => 'user.login',
+            'auditable_type' => User::class,
+            'auditable_id' => (string) $newUserId,
+            'ip_address' => '192.168.1.101',
+        ]);
+    }
+
+    public function test_user_profile_updated_and_logout_logs_audit_events(): void
+    {
+        $oldName = $this->user->name;
+
+        // Profile update
+        $updateResponse = $this->actingAs($this->user)->putJson('/api/v1/auth/profile', [
+            'name' => 'Renamed User',
+            'base_currency' => 'USD',
+        ]);
+
+        $updateResponse->assertStatus(200);
+
+        $this->assertDatabaseHas('audit_logs', [
+            'user_id' => $this->user->id,
+            'event' => 'user.profile_updated',
+            'auditable_type' => User::class,
+            'auditable_id' => (string) $this->user->id,
+        ]);
+
+        $updateLog = \App\Models\AuditLog::where('user_id', $this->user->id)->where('event', 'user.profile_updated')->first();
+        $this->assertNotNull($updateLog);
+        $this->assertEquals($oldName, $updateLog->old_values['name']);
+        $this->assertEquals('Renamed User', $updateLog->new_values['name']);
+        $this->assertEquals('USD', $updateLog->new_values['base_currency']);
+
+        // Logout
+        $logoutResponse = $this->actingAs($this->user)->postJson('/api/v1/auth/logout');
+        $logoutResponse->assertStatus(200);
+
+        $this->assertDatabaseHas('audit_logs', [
+            'user_id' => $this->user->id,
+            'event' => 'user.logout',
+            'auditable_type' => User::class,
+            'auditable_id' => (string) $this->user->id,
+        ]);
+    }
 }
