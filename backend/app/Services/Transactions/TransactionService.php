@@ -288,6 +288,8 @@ class TransactionService
             // Delete transactions
             $sourceTxn = $transfer->sourceTransaction;
             $destTxn = $transfer->destinationTransaction;
+            $transferData = $transfer->toArray();
+            $user = $transfer->user;
 
             $transfer->delete();
 
@@ -296,6 +298,10 @@ class TransactionService
             }
             if ($destTxn) {
                 $destTxn->delete();
+            }
+
+            if ($user) {
+                $this->auditLogService->log($user, 'transfer.deleted', $transfer, $transferData, null);
             }
 
             return true;

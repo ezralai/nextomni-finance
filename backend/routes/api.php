@@ -118,5 +118,8 @@ Route::prefix('v1')->group(function () {
                 ->name('api.v1.imports.statements');
             Route::get('/statements/history', [\App\Http\Controllers\Api\V1\Imports\BankStatementImportController::class, 'history'])->name('api.v1.imports.statements.history');
         });
+
+        // Security & Financial Audit Logs
+        Route::get('/audit-logs', [\App\Http\Controllers\Api\V1\Audit\AuditLogController::class, 'index'])->name('api.v1.audit_logs.index');
     });
 });

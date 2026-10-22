@@ -6,6 +6,7 @@ use App\Models\Account;
 use App\Models\StatementImport;
 use App\Models\TransactionCategory;
 use App\Models\User;
+use App\Services\Audit\AuditLogService;
 use App\Services\Transactions\TransactionService;
 use Carbon\Carbon;
 use Illuminate\Http\UploadedFile;
@@ -67,7 +68,8 @@ class BankStatementParserService
     ];
 
     public function __construct(
-        protected TransactionService $transactionService
+        protected TransactionService $transactionService,
+        protected AuditLogService $auditLogService
     ) {}
 
     /**
@@ -217,6 +219,17 @@ class BankStatementParserService
             'imported_count' => $importedCount,
             'duplicate_count' => $duplicateCount,
             'status' => $importedCount > 0 ? 'completed' : ($duplicateCount > 0 ? 'completed' : 'failed'),
+        ]);
+
+        $this->auditLogService->log($user, 'statement.imported', $importRecord, null, [
+            'import_id' => $importRecord->id,
+            'filename' => $importRecord->filename,
+            'account_id' => $account->id,
+            'account_name' => $account->name,
+            'total_rows' => $totalRows,
+            'imported_count' => $importedCount,
+            'duplicate_count' => $duplicateCount,
+            'status' => $importRecord->status,
         ]);
 
         return [

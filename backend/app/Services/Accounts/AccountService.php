@@ -5,6 +5,7 @@ namespace App\Services\Accounts;
 use App\Models\Account;
 use App\Models\User;
 use App\Repositories\Contracts\AccountRepositoryInterface;
+use App\Services\Audit\AuditLogService;
 use App\Services\Currencies\CurrencyConversionService;
 use App\Support\Money;
 use Illuminate\Database\Eloquent\Collection;
@@ -14,7 +15,8 @@ class AccountService
 {
     public function __construct(
         protected AccountRepositoryInterface $accountRepository,
-        protected CurrencyConversionService $currencyConversionService
+        protected CurrencyConversionService $currencyConversionService,
+        protected AuditLogService $auditLogService
     ) {}
 
     /**
@@ -26,7 +28,7 @@ class AccountService
             $currency = strtoupper($data['currency'] ?? $user->base_currency ?? 'MYR');
             $openingBalanceMoney = Money::of($data['opening_balance'] ?? '0.0000', $currency);
 
-            return $this->accountRepository->create([
+            $account = $this->accountRepository->create([
                 'user_id' => $user->id,
                 'institution_id' => $data['institution_id'],
                 'name' => trim($data['name']),
@@ -38,6 +40,10 @@ class AccountService
                 'notes' => $data['notes'] ?? null,
                 'is_active' => true,
             ]);
+
+            $this->auditLogService->log($user, 'account.created', $account, null, $account->toArray());
+
+            return $account;
         });
     }
 
@@ -65,7 +71,14 @@ class AccountService
                 $payload['is_active'] = (bool) $data['is_active'];
             }
 
-            return $this->accountRepository->update($account, $payload);
+            $oldValues = $account->toArray();
+            $updated = $this->accountRepository->update($account, $payload);
+
+            if ($account->user) {
+                $this->auditLogService->log($account->user, 'account.updated', $updated, $oldValues, $updated->toArray());
+            }
+
+            return $updated;
         });
     }
 
@@ -75,7 +88,16 @@ class AccountService
     public function deleteAccount(Account $account): bool
     {
         return DB::transaction(function () use ($account) {
-            return $this->accountRepository->delete($account);
+            $oldValues = $account->toArray();
+            $user = $account->user;
+
+            $deleted = $this->accountRepository->delete($account);
+
+            if ($deleted && $user) {
+                $this->auditLogService->log($user, 'account.deleted', $account, $oldValues, null);
+            }
+
+            return $deleted;
         });
     }
 

@@ -5,6 +5,7 @@ namespace App\Services\Goals;
 use App\Models\Goal;
 use App\Models\User;
 use App\Repositories\Contracts\GoalRepositoryInterface;
+use App\Services\Audit\AuditLogService;
 use App\Support\Money;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -13,7 +14,8 @@ use Illuminate\Validation\ValidationException;
 class GoalService
 {
     public function __construct(
-        protected GoalRepositoryInterface $goalRepository
+        protected GoalRepositoryInterface $goalRepository,
+        protected AuditLogService $auditLogService
     ) {}
 
     /**
@@ -130,7 +132,7 @@ class GoalService
             ? Money::of($data['current_amount'], $currency)
             : Money::zero($currency);
 
-        return $this->goalRepository->create([
+        $goal = $this->goalRepository->create([
             'user_id' => $user->id,
             'account_id' => $data['account_id'] ?? null,
             'name' => trim($data['name']),
@@ -143,6 +145,10 @@ class GoalService
             'icon' => $data['icon'] ?? 'target',
             'status' => $data['status'] ?? 'in_progress',
         ]);
+
+        $this->auditLogService->log($user, 'goal.created', $goal, null, $goal->toArray());
+
+        return $goal;
     }
 
     /**
@@ -195,7 +201,14 @@ class GoalService
             $updateData['status'] = $data['status'];
         }
 
-        return $this->goalRepository->update($goal, $updateData);
+        $oldValues = $goal->toArray();
+        $updated = $this->goalRepository->update($goal, $updateData);
+
+        if ($goal->user) {
+            $this->auditLogService->log($goal->user, 'goal.updated', $updated, $oldValues, $updated->toArray());
+        }
+
+        return $updated;
     }
 
     /**
@@ -203,7 +216,16 @@ class GoalService
      */
     public function deleteGoal(Goal $goal): bool
     {
-        return $this->goalRepository->delete($goal);
+        $oldValues = $goal->toArray();
+        $user = $goal->user;
+
+        $deleted = $this->goalRepository->delete($goal);
+
+        if ($deleted && $user) {
+            $this->auditLogService->log($user, 'goal.deleted', $goal, $oldValues, null);
+        }
+
+        return $deleted;
     }
 
     /**
@@ -215,6 +237,8 @@ class GoalService
             $lockedGoal = Goal::where('id', $goal->id)
                 ->lockForUpdate()
                 ->findOrFail($goal->id);
+
+            $oldValues = $lockedGoal->toArray();
 
             $contribution = Money::of($amount, $lockedGoal->currency);
             if ($contribution->isZero() || $contribution->isNegative()) {
@@ -235,7 +259,19 @@ class GoalService
                 $updateData['status'] = 'achieved';
             }
 
-            return $this->goalRepository->update($lockedGoal, $updateData);
+            $updatedGoal = $this->goalRepository->update($lockedGoal, $updateData);
+
+            if ($lockedGoal->user) {
+                $this->auditLogService->log(
+                    $lockedGoal->user,
+                    'goal.contributed',
+                    $updatedGoal,
+                    $oldValues,
+                    array_merge($updatedGoal->toArray(), ['contribution_amount' => $contribution->toDecimal()])
+                );
+            }
+
+            return $updatedGoal;
         });
     }
 }
