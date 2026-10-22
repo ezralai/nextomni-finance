@@ -110,12 +110,75 @@ export interface CashFlowAnalytics {
   }>
 }
 
+export interface MlForecastItem {
+  month: string
+  predicted_expense: number
+  confidence_level: number
+  method: string
+}
+
+export interface MlAnomalyItem {
+  id: string
+  description: string
+  amount: number
+  category: string
+  date: string
+  z_score?: number
+  reason?: string
+}
+
+export interface MlRecurringItem {
+  merchant: string
+  category: string
+  cadence: string
+  cost_type: string
+  average_amount: number
+  monthly_equivalent: number
+  annual_projected: number
+  confidence: number
+  last_billed_date: string
+  next_expected_date: string
+}
+
+export interface MlCategoryForecastItem {
+  category: string
+  historical_monthly_avg: number
+  projected_monthly_spend: number
+  budget?: number
+  projected_overrun_risk: boolean
+  trend_slope: 'Surging' | 'Declining' | 'Stable'
+}
+
+export interface MlIntelligenceData {
+  status: string
+  duration_ms?: number
+  records_analyzed: number
+  summary?: {
+    total_income: number
+    total_expenses: number
+    net_savings: number
+    savings_rate_pct: number
+  }
+  anomalies: MlAnomalyItem[]
+  forecast: MlForecastItem[]
+  category_forecast?: {
+    forecast_period?: string
+    total_projected_expense?: number
+    categories_at_risk_count?: number
+    categories?: MlCategoryForecastItem[]
+  }
+  recurring: MlRecurringItem[]
+}
+
 export const useBudgetStore = defineStore('budgets', () => {
   const { request } = useApi()
 
   const budgets = ref<BudgetProgressItem[]>([])
   const summary = ref<BudgetSummary | null>(null)
   const cashFlow = ref<CashFlowAnalytics | null>(null)
+  const mlIntelligence = ref<MlIntelligenceData | null>(null)
+  const isMlLoading = ref(false)
+  const mlError = ref<string | null>(null)
   const isLoading = ref(false)
   const isSubmitting = ref(false)
   const error = ref<string | null>(null)
@@ -201,15 +264,36 @@ export const useBudgetStore = defineStore('budgets', () => {
     }
   }
 
+  const fetchMlIntelligence = async (forceRefresh: boolean = false) => {
+    isMlLoading.value = true
+    mlError.value = null
+    try {
+      const url = forceRefresh ? '/analytics/ml-intelligence?refresh=1' : '/analytics/ml-intelligence'
+      const response = await request<{ status: string; data: MlIntelligenceData }>(url)
+      mlIntelligence.value = response.data
+      return response.data
+    } catch (err: any) {
+      console.error('Failed to fetch ML intelligence:', err)
+      mlError.value = err?.data?.message || err?.message || 'Failed to generate predictive intelligence.'
+      return null
+    } finally {
+      isMlLoading.value = false
+    }
+  }
+
   return {
     budgets,
     summary,
     cashFlow,
+    mlIntelligence,
+    isMlLoading,
+    mlError,
     isLoading,
     isSubmitting,
     error,
     fetchBudgets,
     fetchCashFlow,
+    fetchMlIntelligence,
     createBudget,
     deleteBudget,
   }
