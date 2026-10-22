@@ -216,4 +216,111 @@ class AnalyticsTest extends TestCase
         $this->assertEquals('450.00', $anomalies[0]['amount']);
         $this->assertGreaterThanOrEqual(1.75, $anomalies[0]['z_score']);
     }
+
+    public function test_cash_flow_includes_financial_health_score_with_five_pillars(): void
+    {
+        // 1 Income of 6,000
+        Transaction::create([
+            'user_id' => $this->user->id,
+            'account_id' => $this->account->id,
+            'type' => 'income',
+            'amount' => '6000.00',
+            'currency' => 'MYR',
+            'transacted_at' => Carbon::parse('2026-10-01 10:00:00'),
+            'description' => 'Salary Credit',
+            'status' => 'posted',
+        ]);
+
+        // Expenses across categories: 1,500 groceries, 500 utilities
+        Transaction::create([
+            'user_id' => $this->user->id,
+            'account_id' => $this->account->id,
+            'category_id' => $this->groceries->id,
+            'type' => 'expense',
+            'amount' => '1500.00',
+            'currency' => 'MYR',
+            'transacted_at' => Carbon::parse('2026-10-05 12:00:00'),
+            'description' => 'Grocery Outlay',
+            'status' => 'posted',
+        ]);
+
+        Transaction::create([
+            'user_id' => $this->user->id,
+            'account_id' => $this->account->id,
+            'category_id' => $this->utilities->id,
+            'type' => 'expense',
+            'amount' => '500.00',
+            'currency' => 'MYR',
+            'transacted_at' => Carbon::parse('2026-10-10 15:00:00'),
+            'description' => 'TNB Electric',
+            'status' => 'posted',
+        ]);
+
+        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+            ->getJson('/api/v1/analytics/cash-flow?start_date=2026-10-01&end_date=2026-10-31');
+
+        $response->assertStatus(200)
+            ->assertJsonStructure([
+                'health_score' => [
+                    'score',
+                    'grade',
+                    'tier',
+                    'tier_color',
+                    'pillars' => [
+                        'liquidity' => ['name', 'score', 'weight', 'weighted_score', 'metric_label', 'status'],
+                        'savings' => ['name', 'score', 'weight', 'weighted_score', 'metric_label', 'status'],
+                        'debt_liability' => ['name', 'score', 'weight', 'weighted_score', 'metric_label', 'status'],
+                        'volatility' => ['name', 'score', 'weight', 'weighted_score', 'metric_label', 'status'],
+                        'concentration' => ['name', 'score', 'weight', 'weighted_score', 'metric_label', 'status'],
+                    ],
+                    'diagnostics',
+                    'recommendations',
+                ],
+            ]);
+
+        $health = $response->json('health_score');
+        $this->assertGreaterThanOrEqual(0, $health['score']);
+        $this->assertLessThanOrEqual(100, $health['score']);
+        $this->assertContains($health['grade'], ['A', 'B', 'C', 'D', 'F']);
+        $this->assertEquals(100, $health['pillars']['savings']['score']); // 6000 income - 2000 exp = 66% savings rate >= 20%
+    }
+
+    public function test_financial_health_score_with_recurring_liabilities(): void
+    {
+        // Add recurring subscription
+        \App\Models\RecurringTransaction::create([
+            'user_id' => $this->user->id,
+            'account_id' => $this->account->id,
+            'category_id' => $this->utilities->id,
+            'type' => 'expense',
+            'description' => 'Fiber Internet',
+            'amount' => '150.00',
+            'currency' => 'MYR',
+            'frequency' => 'monthly',
+            'start_date' => Carbon::parse('2026-01-01'),
+            'next_due_date' => Carbon::parse('2026-11-01'),
+            'is_active' => true,
+        ]);
+
+        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+            ->getJson('/api/v1/analytics/cash-flow?start_date=2026-10-01&end_date=2026-10-31');
+
+        $response->assertStatus(200);
+        $health = $response->json('health_score');
+        $this->assertNotNull($health);
+        $this->assertNotNull($health['pillars']['debt_liability']);
+    }
+
+    public function test_financial_health_score_cold_start_zero_transactions(): void
+    {
+        // Query empty date range far in the future
+        $response = $this->withHeader('Authorization', 'Bearer ' . $this->token)
+            ->getJson('/api/v1/analytics/cash-flow?start_date=2029-01-01&end_date=2029-01-31');
+
+        $response->assertStatus(200);
+        $health = $response->json('health_score');
+        $this->assertNotNull($health);
+        $this->assertGreaterThanOrEqual(0, $health['score']);
+        $this->assertLessThanOrEqual(100, $health['score']);
+    }
 }

@@ -29,6 +29,7 @@ import { useAuthStore } from '~/stores/auth'
 import InfoTooltip from '~/components/ui/InfoTooltip.vue'
 import MalaysianInsightsCard from '~/components/analytics/MalaysianInsightsCard.vue'
 import MlForecastCard from '~/components/analytics/MlForecastCard.vue'
+import FinancialHealthScoreCard from '~/components/analytics/FinancialHealthScoreCard.vue'
 
 const props = defineProps<{
   currencySymbol?: string
@@ -200,6 +201,12 @@ const formatNumber = (val: number | string | undefined | null, decimals: number 
 
     <!-- Active Analytics Content -->
     <div v-else class="space-y-6">
+      <!-- Multi-Pillar Financial Health Score & Stability Radar -->
+      <FinancialHealthScoreCard
+        :health-score="cashFlow?.health_score"
+        :currency-symbol="currencySymbol"
+      />
+
       <!-- Machine Learning Predictive Spending Trajectory & Anomaly Intelligence -->
       <MlForecastCard :currency-symbol="currencySymbol" />
 

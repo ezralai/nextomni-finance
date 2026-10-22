@@ -108,6 +108,38 @@ export interface CashFlowAnalytics {
     severity: 'high' | 'medium'
     reason: string
   }>
+  health_score?: FinancialHealthScoreData
+}
+
+export interface HealthScorePillar {
+  name: string
+  score: number
+  weight: number
+  weighted_score: number
+  metric_label: string
+  status: string
+}
+
+export interface HealthScoreDiagnostic {
+  pillar: string
+  type: 'positive' | 'warning' | 'critical'
+  message: string
+}
+
+export interface FinancialHealthScoreData {
+  score: number
+  grade: 'A' | 'B' | 'C' | 'D' | 'F'
+  tier: string
+  tier_color: string
+  pillars: {
+    liquidity: HealthScorePillar
+    savings: HealthScorePillar
+    debt_liability: HealthScorePillar
+    volatility: HealthScorePillar
+    concentration: HealthScorePillar
+  }
+  diagnostics: HealthScoreDiagnostic[]
+  recommendations: string[]
 }
 
 export interface MlForecastItem {
