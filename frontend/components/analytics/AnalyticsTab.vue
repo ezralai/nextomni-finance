@@ -30,6 +30,7 @@ import InfoTooltip from '~/components/ui/InfoTooltip.vue'
 import MalaysianInsightsCard from '~/components/analytics/MalaysianInsightsCard.vue'
 import MlForecastCard from '~/components/analytics/MlForecastCard.vue'
 import FinancialHealthScoreCard from '~/components/analytics/FinancialHealthScoreCard.vue'
+import SpendingPersonaCard from '~/components/analytics/SpendingPersonaCard.vue'
 
 const props = defineProps<{
   currencySymbol?: string
@@ -209,6 +210,12 @@ const formatNumber = (val: number | string | undefined | null, decimals: number 
 
       <!-- Machine Learning Predictive Spending Trajectory & Anomaly Intelligence -->
       <MlForecastCard :currency-symbol="currencySymbol" />
+
+      <!-- Malaysian Consumer Spending Persona Archetype -->
+      <SpendingPersonaCard
+        :persona="budgetStore.mlIntelligence?.spending_persona"
+        :is-loading="budgetStore.isMlLoading"
+      />
 
       <!-- Top Row: Financial Health Runway & Burn Rate Gauge -->
       <div

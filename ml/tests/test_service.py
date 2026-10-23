@@ -103,6 +103,11 @@ def test_run_ml_pipeline_tier1_ridge_forecasting():
         assert step["confidence_level"] == 0.85
         assert step["predicted_expense"] > 0.0
         assert step["month"] in ["2026-07", "2026-08", "2026-09"]
+        assert "lower_bound_80" in step
+        assert "upper_bound_80" in step
+        assert step["lower_bound_80"] <= step["predicted_expense"] <= step["upper_bound_80"]
+        assert step["lower_bound_95"] <= step["lower_bound_80"]
+        assert step["upper_bound_95"] >= step["upper_bound_80"]
 
 
 def test_run_ml_pipeline_tier2_weighted_trend_forecasting():
@@ -142,6 +147,9 @@ def test_run_ml_pipeline_tier2_weighted_trend_forecasting():
         assert step["method"] == "weighted_trend_baseline"
         assert step["confidence_level"] == 0.70
         assert step["predicted_expense"] >= 800.0
+        assert "lower_bound_80" in step
+        assert "upper_bound_80" in step
+        assert step["lower_bound_80"] <= step["predicted_expense"] <= step["upper_bound_80"]
 
 
 def test_run_ml_pipeline_tier3_cold_start_forecasting():
@@ -168,10 +176,13 @@ def test_run_ml_pipeline_tier3_cold_start_forecasting():
         assert step["confidence_level"] == 0.55
         # 250 spent over 9 days = ~27.78/day * 30 days = ~833.33/month
         assert 700.0 <= step["predicted_expense"] <= 1000.0
+        assert "lower_bound_80" in step
+        assert "upper_bound_80" in step
+        assert step["lower_bound_80"] <= step["predicted_expense"] <= step["upper_bound_80"]
 
 
 def test_run_ml_pipeline_category_breakdown():
-    """Verify hierarchical category breakdown and trend output."""
+    """Verify hierarchical category breakdown and dual-alias trend output."""
     records = [
         {"id": "t1", "transacted_at": "2026-04-05", "amount": 600.0, "type": "expense", "category": "groceries", "description": "Market"},
         {"id": "t2", "transacted_at": "2026-04-10", "amount": 200.0, "type": "expense", "category": "dining", "description": "Dinner"},
@@ -187,7 +198,31 @@ def test_run_ml_pipeline_category_breakdown():
     cats = {c["category"]: c for c in cat_forecast["categories"]}
     assert "groceries" in cats
     assert "dining" in cats
+    # Verify backward compatible and frontend compatible dual keys
     assert cats["groceries"]["forecast_amount"] > 0
+    assert cats["groceries"]["projected_monthly_spend"] == cats["groceries"]["forecast_amount"]
+    assert cats["groceries"]["historical_monthly_avg"] == cats["groceries"]["historical_mean"]
+    assert "trend_slope" in cats["groceries"]
     assert cats["dining"]["trend"] in ["Surging (+5%)", "Declining (-5%)", "Stable"]
+
+
+def test_run_ml_pipeline_spending_persona():
+    """Verify spending persona classification in the pipeline."""
+    records = [
+        {"id": "t1", "transacted_at": "2026-05-01", "amount": 5000.0, "type": "income", "category": "salary", "description": "Monthly Salary"},
+        {"id": "t2", "transacted_at": "2026-05-02", "amount": 60.0, "type": "expense", "category": "dining", "description": "Mamak"},
+        {"id": "t3", "transacted_at": "2026-05-03", "amount": 80.0, "type": "expense", "category": "dining", "description": "Kopitiam"},
+        {"id": "t4", "transacted_at": "2026-05-04", "amount": 100.0, "type": "expense", "category": "groceries", "description": "99 Speedmart"},
+    ]
+
+    res = run_ml_pipeline(records)
+    assert res["status"] == "success"
+    persona = res.get("spending_persona", {})
+    assert "id" in persona
+    assert "title" in persona
+    assert "traits" in persona
+    assert "financial_tip" in persona
+    assert "confidence" in persona
+    assert persona["confidence"] >= 0.50
 
 

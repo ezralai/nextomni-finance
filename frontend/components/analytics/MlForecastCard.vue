@@ -196,6 +196,15 @@ const handleRefresh = async () => {
               <div class="text-[10px] text-slate-500 dark:text-slate-400">
                 Estimated Monthly Outflow
               </div>
+              <div
+                v-if="item.lower_bound_80 !== undefined && item.upper_bound_80 !== undefined"
+                class="pt-1 flex items-center justify-between text-[10px] font-mono text-slate-500 dark:text-slate-400 border-t border-slate-200/50 dark:border-slate-700/50 mt-1"
+              >
+                <span>80% CI:</span>
+                <span class="font-semibold text-slate-700 dark:text-slate-300">
+                  {{ currencySymbol }} {{ formatNumber(item.lower_bound_80) }} – {{ formatNumber(item.upper_bound_80) }}
+                </span>
+              </div>
             </div>
 
             <!-- Model Tier & Confidence Bar -->
@@ -258,14 +267,14 @@ const handleRefresh = async () => {
               <span
                 class="px-1.5 py-0.2 rounded text-[9px] font-bold uppercase font-mono"
                 :class="
-                  cat.trend_slope === 'Surging'
+                  (cat.trend_slope && cat.trend_slope.includes('Surging')) || (cat.trend && cat.trend.includes('Surging'))
                     ? 'bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20'
-                    : cat.trend_slope === 'Declining'
+                    : (cat.trend_slope && cat.trend_slope.includes('Declining')) || (cat.trend && cat.trend.includes('Declining'))
                     ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20'
                     : 'bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300'
                 "
               >
-                {{ cat.trend_slope }}
+                {{ cat.trend_slope || cat.trend || 'Stable' }}
               </span>
             </div>
 

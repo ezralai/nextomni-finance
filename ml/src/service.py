@@ -36,6 +36,7 @@ from src.analytics.recurring import detect_recurring_expenses
 from src.features.engineering import build_monthly_spending_series
 from src.models.evaluation import prepare_modeling_dataset
 from src.models.category_forecasting import forecast_category_expenses
+from src.models.spending_personas import classify_spending_persona
 
 
 def generate_spending_forecast(
@@ -59,6 +60,12 @@ def generate_spending_forecast(
                 "predicted_expense": 0.0,
                 "confidence_level": 1.0,
                 "method": "zero_expense_baseline",
+                "lower_bound_80": 0.0,
+                "upper_bound_80": 0.0,
+                "lower_bound_95": 0.0,
+                "upper_bound_95": 0.0,
+                "margin_of_error_80": 0.0,
+                "margin_of_error_95": 0.0,
             }
             for i in range(1, forecast_horizon_months + 1)
         ], {}
@@ -92,14 +99,22 @@ def generate_spending_forecast(
                         "rolling_3m_mean": float(np.mean(history[-3:])),
                         "days_in_month": float(target_dt.days_in_month),
                     }])
-                    pred = float(forecaster.predict(row)[0])
-                    pred = max(pred, recurring_floor, 0.0)
+                    intervals = forecaster.predict_with_intervals(
+                        row, horizon_step=step, recurring_floor=recurring_floor
+                    )
+                    pred = intervals["predicted_expense"]
                     history.append(pred)
                     forecast_list.append({
                         "month": target_dt.strftime("%Y-%m"),
-                        "predicted_expense": round(pred, 2),
+                        "predicted_expense": pred,
                         "confidence_level": 0.85,
                         "method": "ridge_autoregression",
+                        "lower_bound_80": intervals["lower_bound_80"],
+                        "upper_bound_80": intervals["upper_bound_80"],
+                        "lower_bound_95": intervals["lower_bound_95"],
+                        "upper_bound_95": intervals["upper_bound_95"],
+                        "margin_of_error_80": intervals["margin_of_error_80"],
+                        "margin_of_error_95": intervals["margin_of_error_95"],
                     })
         except Exception:
             forecast_list = []
@@ -113,17 +128,30 @@ def generate_spending_forecast(
             weights = np.linspace(0.5, 1.0, len(history))
             weighted_base = float(np.average(history, weights=weights))
             slope = (history[-1] - history[0]) / max(len(history) - 1, 1)
+            hist_std = float(np.std(history)) if len(history) > 1 else max(weighted_base * 0.15, 15.0)
 
             for step in range(1, forecast_horizon_months + 1):
                 target_dt = last_date + pd.DateOffset(months=step)
                 # Dampen slope by 0.8^step to avoid runaway extrapolation
                 pred = weighted_base + slope * (0.8 ** step)
                 pred = max(pred, recurring_floor, 0.0)
+
+                step_factor = float(np.sqrt(1.0 + (step / 3.0)))
+                sigma = max(hist_std * step_factor, pred * 0.08, 15.0)
+                margin_80 = round(float(1.282 * sigma), 2)
+                margin_95 = round(float(1.960 * sigma), 2)
+
                 forecast_list.append({
                     "month": target_dt.strftime("%Y-%m"),
                     "predicted_expense": round(pred, 2),
                     "confidence_level": 0.70,
                     "method": "weighted_trend_baseline",
+                    "lower_bound_80": round(max(pred - margin_80, recurring_floor, 0.0), 2),
+                    "upper_bound_80": round(pred + margin_80, 2),
+                    "lower_bound_95": round(max(pred - margin_95, recurring_floor, 0.0), 2),
+                    "upper_bound_95": round(pred + margin_95, 2),
+                    "margin_of_error_80": margin_80,
+                    "margin_of_error_95": margin_95,
                 })
         except Exception:
             forecast_list = []
@@ -137,16 +165,31 @@ def generate_spending_forecast(
             max_date = pd.to_datetime(expenses["transaction_date"].max())
             days_span = max(1, (max_date - min_date).days + 1)
             daily_rate = float(expenses["amount"].sum()) / days_span
+            daily_std = float(expenses.groupby("transaction_date")["amount"].sum().std()) if days_span > 2 else (daily_rate * 0.3)
 
             for step in range(1, forecast_horizon_months + 1):
                 target_dt = last_date + pd.DateOffset(months=step)
-                monthly_estimate = daily_rate * target_dt.days_in_month
+                days_in_m = float(target_dt.days_in_month)
+                monthly_estimate = daily_rate * days_in_m
                 pred = max(monthly_estimate, recurring_floor, 0.0)
+
+                sigma = max(float(daily_std * np.sqrt(days_in_m)), pred * 0.15, 20.0)
+                step_factor = float(np.sqrt(1.0 + (step / 3.0)))
+                sigma *= step_factor
+                margin_80 = round(float(1.282 * sigma), 2)
+                margin_95 = round(float(1.960 * sigma), 2)
+
                 forecast_list.append({
                     "month": target_dt.strftime("%Y-%m"),
                     "predicted_expense": round(pred, 2),
                     "confidence_level": 0.55,
                     "method": "daily_run_rate_projection",
+                    "lower_bound_80": round(max(pred - margin_80, recurring_floor, 0.0), 2),
+                    "upper_bound_80": round(pred + margin_80, 2),
+                    "lower_bound_95": round(max(pred - margin_95, recurring_floor, 0.0), 2),
+                    "upper_bound_95": round(pred + margin_95, 2),
+                    "margin_of_error_80": margin_80,
+                    "margin_of_error_95": margin_95,
                 })
         except Exception:
             forecast_list = []
@@ -201,7 +244,9 @@ def run_ml_pipeline(
             "duration_ms": round((time.perf_counter() - start_time) * 1000, 2),
             "anomalies": [],
             "forecast": [],
+            "category_forecast": {},
             "recurring": [],
+            "spending_persona": {},
         }
 
     # Normalize into DataFrame with expected column schema
@@ -320,6 +365,13 @@ def run_ml_pipeline(
     except Exception as e:
         pass
 
+    # 6. Malaysian Consumer Spending Persona Classification
+    spending_persona: Dict[str, Any] = {}
+    try:
+        spending_persona = classify_spending_persona(cleaned)
+    except Exception as e:
+        pass
+
     duration_ms = round((time.perf_counter() - start_time) * 1000, 2)
 
     return {
@@ -336,6 +388,7 @@ def run_ml_pipeline(
         "forecast": forecast_list,
         "category_forecast": category_forecast,
         "recurring": recurring_list,
+        "spending_persona": spending_persona,
     }
 
 

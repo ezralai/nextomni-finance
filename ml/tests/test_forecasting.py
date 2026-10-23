@@ -112,6 +112,35 @@ def test_forecaster_fit_and_predict(multi_month_dataset: pd.DataFrame):
     assert len(preds_ols) == len(test_df)
 
 
+def test_forecaster_predict_with_intervals(multi_month_dataset: pd.DataFrame):
+    """Test confidence intervals computation (80% and 95%) from residual variance."""
+    train_df, test_df = train_test_split_chronological(multi_month_dataset, test_months=4)
+    ridge = ExpenseRegressionForecaster(model_type="ridge", alpha=1.0)
+    ridge.fit(train_df, train_df["actual_expense"])
+
+    single_row = test_df.iloc[[0]]
+    result = ridge.predict_with_intervals(single_row, horizon_step=1, recurring_floor=500.0)
+
+    assert "predicted_expense" in result
+    assert "lower_bound_80" in result
+    assert "upper_bound_80" in result
+    assert "lower_bound_95" in result
+    assert "upper_bound_95" in result
+    assert "margin_of_error_80" in result
+    assert "margin_of_error_95" in result
+
+    pred = result["predicted_expense"]
+    assert pred >= 500.0
+    # 80% CI bounds check
+    assert result["lower_bound_80"] <= pred <= result["upper_bound_80"]
+    # 95% CI bounds check
+    assert result["lower_bound_95"] <= pred <= result["upper_bound_95"]
+    # 95% interval must be wider than 80% interval
+    assert result["lower_bound_95"] <= result["lower_bound_80"]
+    assert result["upper_bound_95"] >= result["upper_bound_80"]
+    assert result["margin_of_error_95"] >= result["margin_of_error_80"]
+
+
 def test_forecaster_error_handling():
     """Verify appropriate exceptions for invalid states or inputs."""
     forecaster = ExpenseRegressionForecaster(model_type="ridge")

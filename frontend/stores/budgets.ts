@@ -147,6 +147,12 @@ export interface MlForecastItem {
   predicted_expense: number
   confidence_level: number
   method: string
+  lower_bound_80?: number
+  upper_bound_80?: number
+  lower_bound_95?: number
+  upper_bound_95?: number
+  margin_of_error_80?: number
+  margin_of_error_95?: number
 }
 
 export interface MlAnomalyItem {
@@ -176,9 +182,37 @@ export interface MlCategoryForecastItem {
   category: string
   historical_monthly_avg: number
   projected_monthly_spend: number
+  forecast_amount?: number
+  historical_mean?: number
   budget?: number
-  projected_overrun_risk: boolean
-  trend_slope: 'Surging' | 'Declining' | 'Stable'
+  target_budget?: number | null
+  projected_variance?: number | null
+  budget_utilization_pct?: number | null
+  budget_status?: string
+  projected_overrun_risk?: boolean
+  trend_slope: 'Surging' | 'Declining' | 'Stable' | string
+  trend?: string
+}
+
+export interface SpendingPersonaData {
+  id: string
+  title: string
+  badge: string
+  icon: string
+  description: string
+  traits: string[]
+  financial_tip: string
+  confidence: number
+  features?: {
+    dining_ratio: number
+    groceries_ratio: number
+    transport_ratio: number
+    shopping_ratio: number
+    weekend_skew: number
+    savings_rate: number
+    total_income: number
+    total_expense: number
+  }
 }
 
 export interface MlIntelligenceData {
@@ -200,6 +234,7 @@ export interface MlIntelligenceData {
     categories?: MlCategoryForecastItem[]
   }
   recurring: MlRecurringItem[]
+  spending_persona?: SpendingPersonaData
 }
 
 export const useBudgetStore = defineStore('budgets', () => {

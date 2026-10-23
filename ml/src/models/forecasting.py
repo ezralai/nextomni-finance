@@ -103,6 +103,12 @@ class ExpenseRegressionForecaster:
         self.is_fitted = True
         self.intercept_ = round(float(self.model.intercept_), 2)
 
+        # Calculate residual standard error for confidence interval estimation
+        in_sample_preds = self.model.predict(X_mat)
+        residuals = y_vec - in_sample_preds
+        dof = max(1, len(y_vec) - len(self.feature_cols) - 1)
+        self.residual_std_ = round(float(np.sqrt(np.sum(residuals ** 2) / dof)), 2)
+
         # Record feature coefficients
         coefs = self.model.coef_
         self.feature_importances_ = {
@@ -134,6 +140,56 @@ class ExpenseRegressionForecaster:
         # Ensure predicted expenses cannot be negative
         preds = np.clip(preds, a_min=0.0, a_max=None)
         return np.round(preds, 2)
+
+    def predict_with_intervals(
+        self,
+        X: pd.DataFrame,
+        horizon_step: int = 1,
+        recurring_floor: float = 0.0,
+    ) -> dict[str, float]:
+        """
+        Generate out-of-sample expense prediction with 80% and 95% confidence intervals.
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            Single-row feature DataFrame.
+        horizon_step : int, default 1
+            Forecast month step (1, 2, or 3) to expand uncertainty over time.
+        recurring_floor : float, default 0.0
+            Fixed expense floor to prevent under-predicting committed outlays.
+
+        Returns
+        -------
+        dict[str, float]
+            Dictionary with predicted amount, 80% and 95% bounds, and margin of error.
+        """
+        preds = self.predict(X)
+        pred = float(preds[0]) if len(preds) > 0 else 0.0
+        pred = max(pred, recurring_floor, 0.0)
+
+        # Scale prediction standard error by forecast step (uncertainty expands into future)
+        step_factor = float(np.sqrt(1.0 + (horizon_step / 3.0)))
+        sigma = max(self.residual_std_ * step_factor, pred * 0.05, 10.0)
+
+        # Z-scores: 80% CI -> 1.282, 95% CI -> 1.960
+        margin_80 = round(float(1.282 * sigma), 2)
+        margin_95 = round(float(1.960 * sigma), 2)
+
+        lower_80 = round(max(pred - margin_80, recurring_floor, 0.0), 2)
+        upper_80 = round(pred + margin_80, 2)
+        lower_95 = round(max(pred - margin_95, recurring_floor, 0.0), 2)
+        upper_95 = round(pred + margin_95, 2)
+
+        return {
+            "predicted_expense": round(pred, 2),
+            "lower_bound_80": lower_80,
+            "upper_bound_80": upper_80,
+            "lower_bound_95": lower_95,
+            "upper_bound_95": upper_95,
+            "margin_of_error_80": margin_80,
+            "margin_of_error_95": margin_95,
+        }
 
     def explain(self) -> dict[str, Any]:
         """
