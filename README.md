@@ -215,7 +215,7 @@ Deploy this entire stack to production in under 10 minutes for $0/month. For ste
 
 ---
 
-## 💻 Local Development Workflow
+## 💻 Local Development Workflows
 
 ### Prerequisites
 - **PHP 8.3+** & **Composer 2+**
