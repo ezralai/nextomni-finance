@@ -146,7 +146,7 @@ php artisan test
 
 ## 🧠 Data Science & Machine Learning Engine
 
-NextOmni features a fully reproducible Python Data Science core (`ml/`) dedicated to time-series spending forecasting, behavioral analytics, and dual-engine anomaly detection.
+NextOmni features fully reproducible Python Data Science core (`ml/`) dedicated to time-series spending forecasting, behavioral analytics, and dual-engine anomaly detection.
 
 ```mermaid
 graph LR
