@@ -12,7 +12,7 @@
 [![Tests Passing](https://img.shields.io/badge/Tests-93_Passing_(66_Pest_+_27_Pytest)-success?style=for-the-badge&logo=pytest&logoColor=white)](https://github.com/ezralai/nextomni-finance)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 
-> **NextOmni Finance** is an enterprise-grade personal finance, budget analytics, and non-custodial wealth aggregation platform. Engineered for senior engineering review, it showcases a **100% free, production-grade cloud deployment architecture** (Vercel Edge + Render/Koyeb Container + Supabase/Neon PostgreSQL 16) with zero paid third-party infrastructure dependencies, complemented by a dedicated **Python Data Science & Machine Learning core** for predictive expense forecasting and anomaly detection.
+> **NextOmni Finance** is an enterprise-grade personal finance, budget analytics, and non-custodial wealth aggregation platform. Engineered for senior engineering review, it showcases a **100% free, production-grade cloud deployment architecture** (Vercel Edge + Render/Koyeb Container + Supabase/Neon PostgreSQL 16) with zero paid third-party infrastructure dependencies, complemented by a dedicated **Python Data Science & Machine Learning core** for predictive expense forecasting and anomaly detections.
 
 ---
 
